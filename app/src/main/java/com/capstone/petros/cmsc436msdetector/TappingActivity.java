@@ -47,58 +47,75 @@ public class TappingActivity extends AppCompatActivity {
             // Disable the top bar
             leftButton.setEnabled(false);
             rightButton.setEnabled(false);
+            testBox.setEnabled(false);
 
-            // Start the timer
-            new CountDownTimer(10000, 10) {
+            // I set 3100, 1000 because if the time remaining is less than the interval,
+            // it explicitly does not call onTick() (skip last call) and just delays until complete.
+            // If using 3000, 1000, it would show 2 (1 second), 1 (2 seconds)
+            new CountDownTimer(3100, 1000) {
+                TextView tv = (TextView)findViewById(R.id.start_text);
                 public void onTick(long millisUntilFinished) {
-                    // Update the progress bar
-//                    mTextField.setText("seconds remaining: " + millisUntilFinished / 1000);
-
-                    ProgressBar bar = (ProgressBar) findViewById(R.id.progress_bar);
-                    bar.setProgress((int)millisUntilFinished);
+                    tv.setText(Long.toString(millisUntilFinished / 1000));
                 }
 
                 public void onFinish() {
+                    tv.setText("Tap!");
 
-                    testInProgress = false;
-
-                    previousTextNumberOfTaps = numberOfTaps;
-                    numberOfTaps = 0;
-
-                    // Set screen to red and show Test Over
-                    ImageView testBox = (ImageView)findViewById(R.id.test_box);
-                    testBox.setBackgroundColor(0xFFDD2400);
-                    testBox.setClickable(false);
-
-                    TextView tv = (TextView)findViewById(R.id.start_text);
-                    tv.setText("Test\nOver");
-
-                    // Show Results
-                    new CountDownTimer(2000, 1000){
+                    new CountDownTimer(1000,1000) {
                         public void onTick(long millisUntilFinished) {
                         }
-                        public void onFinish(){
-                            leftButton.setEnabled(true);
-                            rightButton.setEnabled(true);
-                            TextView tv = (TextView)findViewById(R.id.start_text);
-                            tv.setTextSize(30);
-                            tv.setText("You tapped " + previousTextNumberOfTaps + " times.\n" +
-                                    "Tap again to restart.\n\n" +
-                                    "Switch hands with\n" +
-                                    "the buttons above.");
-                            ImageView testBox = (ImageView)findViewById(R.id.test_box);
-                            testBox.setBackgroundColor(0xFFDDDDDD);
-                            testBox.setClickable(true);
 
+                        public void onFinish() {
+                            ImageView testBox = (ImageView)findViewById(R.id.test_box);
+                            testBox.setEnabled(true);
+                            tv.setText("");
+                            // Start the timer
+                            new CountDownTimer(10000, 10) {
+                                public void onTick(long millisUntilFinished) {
+                                    // Update the progress bar
+                                    // mTextField.setText("seconds remaining: " + millisUntilFinished / 1000);
+
+                                    ProgressBar bar = (ProgressBar) findViewById(R.id.progress_bar);
+                                    bar.setProgress((int)millisUntilFinished);
+                                }
+
+                                public void onFinish() {
+
+                                    testInProgress = false;
+
+                                    previousTextNumberOfTaps = numberOfTaps;
+                                    numberOfTaps = 0;
+
+                                    // Set screen to red and show Test Over
+                                    ImageView testBox = (ImageView)findViewById(R.id.test_box);
+                                    testBox.setBackgroundColor(0xFFDD2400);
+                                    testBox.setClickable(false);
+
+                                    tv.setText("Test\nOver");
+
+                                    // Show Results
+                                    new CountDownTimer(2000, 1000){
+                                        public void onTick(long millisUntilFinished) {
+                                        }
+                                        public void onFinish(){
+                                            leftButton.setEnabled(true);
+                                            rightButton.setEnabled(true);
+                                            tv.setTextSize(30);
+                                            tv.setText("You tapped " + previousTextNumberOfTaps + " times.\n" +
+                                                    "Tap again to restart.\n\n" +
+                                                    "Switch hands with\n" +
+                                                    "the buttons above.");
+                                            ImageView testBox = (ImageView)findViewById(R.id.test_box);
+                                            testBox.setBackgroundColor(0xFFDDDDDD);
+                                            testBox.setClickable(true);
+                                        }
+                                    }.start();
+                                }
+                            }.start();
                         }
                     }.start();
-
-
-
                 }
             }.start();
-
-            // Make the start text disappear
         }
         else {
             // Register the tap and show green
