@@ -19,6 +19,7 @@ public class TappingActivity extends AppCompatActivity {
 
     boolean testInProgress = false;
     boolean isLeftHand = false;
+    boolean firstTest = true;
     int numberOfTaps, previousTextNumberOfTaps;
 
     @Override
@@ -33,6 +34,8 @@ public class TappingActivity extends AppCompatActivity {
         previousTextNumberOfTaps = 0;
 
         ProgressBar bar = (ProgressBar) findViewById(R.id.progress_bar);
+        bar.getIndeterminateDrawable().setColorFilter(0xFFDD2400, android.graphics.PorterDuff.Mode.SRC_IN);
+        bar.getProgressDrawable().setColorFilter(0xFFDD2400, PorterDuff.Mode.SRC_IN);
     }
 
     public void processTap(View v) {
@@ -48,6 +51,24 @@ public class TappingActivity extends AppCompatActivity {
             leftButton.setEnabled(false);
             rightButton.setEnabled(false);
             testBox.setEnabled(false);
+
+            // If it is not the first test, animate the "time" bar refilling.
+            if(!firstTest) {
+                new CountDownTimer(1501, 10) {
+                    public void onTick(long millisUntilFinished) {
+                        ProgressBar bar = (ProgressBar) findViewById(R.id.progress_bar);
+                        float scale = (bar.getMax() * 1.0f) / 1500.0f; //Scale of total progress to refill rate.
+                        bar.setProgress((int)(scale * (1500 - millisUntilFinished)));
+                    }
+
+                    public void onFinish() {
+                        ProgressBar bar = (ProgressBar) findViewById(R.id.progress_bar);
+                        bar.setProgress(bar.getMax());
+                    }
+                }.start();
+            }
+
+            firstTest = false;
 
             // I set 3100, 1000 because if the time remaining is less than the interval,
             // it explicitly does not call onTick() (skip last call) and just delays until complete.
@@ -73,7 +94,6 @@ public class TappingActivity extends AppCompatActivity {
                             new CountDownTimer(10000, 10) {
                                 public void onTick(long millisUntilFinished) {
                                     // Update the progress bar
-                                    // mTextField.setText("seconds remaining: " + millisUntilFinished / 1000);
 
                                     ProgressBar bar = (ProgressBar) findViewById(R.id.progress_bar);
                                     bar.setProgress((int)millisUntilFinished);
@@ -92,6 +112,10 @@ public class TappingActivity extends AppCompatActivity {
                                     testBox.setClickable(false);
 
                                     tv.setText("Test\nOver");
+
+                                    // Set Progress bar to 0:
+                                    ProgressBar bar = (ProgressBar) findViewById(R.id.progress_bar);
+                                    bar.setProgress(0);
 
                                     // Show Results
                                     new CountDownTimer(2000, 1000){
