@@ -12,10 +12,19 @@
     android:orientation="vertical"
     tools:context="com.capstone.petros.cmsc436msdetector.SpiralActivity">
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight=".2"
+        android:text="Put your finger \n in the middle of the Spiral"
+        android:textSize="30sp"
+        android:gravity="center_horizontal|center_vertical"
+        android:id="@+id/Instructions"/>
+
     <Button
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight=".3"
+        android:layout_weight=".1"
         android:text="SAAAAAAAVE"
         android:textSize="30sp"
         android:onClick="saveImage"
