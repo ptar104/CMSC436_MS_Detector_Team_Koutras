@@ -21,4 +21,9 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, TappingActivity.class);
         startActivity(intent);
     }
+
+    public void startSpiralTest(View view){
+        Intent intent = new Intent(this, SpiralActivity.class);
+        startActivity(intent);
+    }
 }
