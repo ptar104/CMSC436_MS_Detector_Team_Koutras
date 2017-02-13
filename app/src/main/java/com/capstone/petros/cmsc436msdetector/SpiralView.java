@@ -39,6 +39,10 @@ public class SpiralView extends View {
     private Path currPath = new Path();
     private Paint touchPaint = new Paint();
 
+    boolean firstTouchRecorded = false;
+    long startTime;
+    long endTime;
+
     int numCycles;
     Point closestPoint;
 
@@ -147,6 +151,12 @@ public class SpiralView extends View {
 
         switch (motionEvent.getAction()) {
             case MotionEvent.ACTION_DOWN:
+                // recording how long it takes for them to complete the test
+                if (firstTouchRecorded == false) {
+                    startTime = System.currentTimeMillis();
+                    firstTouchRecorded = true;
+                }
+
                 currPath.moveTo(x, y);
 
                 // Keep track of the user path
@@ -303,7 +313,9 @@ public class SpiralView extends View {
     // The save feature
     // Taken from code in Jon Froehlich's CMSC434 class.
     public void saveTestToGallery(ContentResolver cr){
-
+        // recording how much time the test took
+        endTime = System.currentTimeMillis();
+        long testDuration = endTime - startTime;
         //Set up the report.
 
         //Dividing line
@@ -330,6 +342,7 @@ public class SpiralView extends View {
         // Just add _offScreenCanvas.getHeight() to every y value.
         SimpleDateFormat date = new SimpleDateFormat("MM/dd/yyyy hh:mm a");
         _reportCanvas.drawText("Time of test: "+date.format(new Date()), 0,_offScreenCanvas.getHeight()+200, paintText);
+        _reportCanvas.drawText("Duration of test: "+ testDuration/1000.0 + " seconds", 0,_offScreenCanvas.getHeight()+250, paintText);
 
         String fName = UUID.randomUUID().toString() + ".png";
         File folder = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "/Spiral Test Results");
