@@ -18,7 +18,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".TappingActivity" />
-        <activity android:name=".SpiralActivity"></activity>
+        <activity android:name=".SpiralActivity" android:screenOrientation="portrait" />
     </application>
 
 </manifest>

@@ -5,11 +5,16 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.Point;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.AttributeSet;
+import android.util.DisplayMetrics;
+import android.util.Log;
+import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
@@ -18,7 +23,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 
@@ -27,11 +34,17 @@ import java.util.UUID;
  */
 
 public class SpiralView extends View {
-
     private Canvas _offScreenCanvas = null, _reportCanvas = null;
     private Bitmap _offScreenBitmap = null, _reportBitmap = null;
     private Path currPath = new Path();
     private Paint touchPaint = new Paint();
+
+    int numCycles;
+    Point closestPoint;
+
+    double spiralScale;
+
+    List<ArrayList<Point>> userTrace;
 
     public SpiralView(Context context) {
         super(context);
@@ -49,7 +62,6 @@ public class SpiralView extends View {
     }
 
     private void init(AttributeSet attrs, int defStyleAttr) {
-
         // Set setDrawingCacheEnabled to true to support generating a bitmap copy of the view (for saving)
         // See: http://developer.android.com/reference/android/view/View.html#setDrawingCacheEnabled(boolean)
         //      http://developer.android.com/reference/android/view/View.html#getDrawingCache()
@@ -58,12 +70,16 @@ public class SpiralView extends View {
         touchPaint.setStrokeWidth(5);
         touchPaint.setAntiAlias(true);
         touchPaint.setStyle(Paint.Style.STROKE);
-        touchPaint.setColor(0xFFFF0000); // Red.
+        touchPaint.setColor(Color.RED);
 
+        numCycles = 4;
+
+        closestPoint = new Point(0,0);
+
+        userTrace = new ArrayList<>();
     }
 
-    private void initSpiral(){
-
+    private void initSpiral() {
         // Make the background white
         Paint background = new Paint();
         background.setStrokeWidth(0);
@@ -84,19 +100,24 @@ public class SpiralView extends View {
         shadowPaint.setColor(0x22DD0000);
         shadowPaint.setStyle(Paint.Style.STROKE);
 
+        float width = this.getWidth();
+        float height = this.getHeight();
+        float middleX = width/2.0f;
+        float middleY = height/2.0f;
+
         Path path = new Path();
-        float middleX = this.getWidth()/2.0f;
-        float middleY = this.getHeight()/2.0f;
         path.moveTo(middleX,middleY);
 
+        // Calculate the spiralScale
+        spiralScale = Math.min(middleX,middleY)/(numCycles*Math.PI*2.0);
 
-        for(int i = 0; i < 720; i++){
-            double angle = 0.1 * i;
-            double x=20*(0+angle)*Math.cos(angle) + middleX;
-            double y=20*(0+angle)*Math.sin(angle) + middleY;
-
-            path.lineTo((float)x, (float)y);
+        // Draw the spiral
+        for(float t = 0; t < 2 * Math.PI * numCycles; t += 0.1) {
+            double x = spiralScale*t*Math.cos(t) + middleX;
+            double y = spiralScale*t*Math.sin(t) + middleY;
+            path.lineTo((float)x,(float)y);
         }
+
         _offScreenCanvas.drawPath(path,shadowPaint);
         _offScreenCanvas.drawPath(path,paint);
         _reportCanvas.drawPath(path,shadowPaint);
@@ -116,12 +137,10 @@ public class SpiralView extends View {
         }
 
         canvas.drawBitmap(_offScreenBitmap, 0, 0, new Paint());
-
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent motionEvent){
-
         float x = motionEvent.getX(), y = motionEvent.getY();
 
         boolean up = false;
@@ -129,13 +148,32 @@ public class SpiralView extends View {
         switch (motionEvent.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 currPath.moveTo(x, y);
+
+                // Keep track of the user path
+                ArrayList<Point> newPath = new ArrayList<>();
+                newPath.add(new Point((int)x,(int)y));
+                userTrace.add(newPath);
+
+                //closestPoint = getClosestPointToTouch((int)x,(int)y);
+
                 break;
             case MotionEvent.ACTION_MOVE:
                 currPath.lineTo(x,y);
+
+                ArrayList<Point> lastPath = userTrace.get(userTrace.size()-1);
+                Point lastPoint = lastPath.get(lastPath.size()-1);
+
+                if(dist(lastPoint.x,lastPoint.y,(int)x,(int)y) > 5) {  // Make sure the point is far enough from the last for meaningful data and to conserve space
+                    lastPath.add(new Point((int) x, (int) y));
+                }
+
+                //closestPoint = getClosestPointToTouch((int)x,(int)y);
                 break;
             case MotionEvent.ACTION_UP:
                 up = true;
                 currPath.lineTo(x,y);
+
+                evaluateTrace();
                 break;
         }
 
@@ -150,7 +188,117 @@ public class SpiralView extends View {
         return true;
     }
 
+    // Computes the average radial slope difference
+    public void evaluateTrace() {
+        // Examine the slope of the trace at each point
+        // Compute the difference of the slope of the userTrace with the expected slope
 
+        double width = this.getWidth();
+        double height = this.getHeight();
+
+        int numSamples = 0;
+        double sum = 0;
+        double userRadialSlope, expectedRadialSlope = spiralScale;
+
+        double subSlope1, subSlope2;
+
+        Point p1, p2, p3;
+        double r1, r2, r3;
+        double t1, t2, t3;
+
+        for(ArrayList<Point> traceSegment: userTrace) {
+            for (int i = 1; i < traceSegment.size() - 1; i++) {
+                p1 = traceSegment.get(i - 1);
+                p2 = traceSegment.get(i);
+                p3 = traceSegment.get(i + 1);
+
+                r1 = Math.sqrt(Math.pow(p1.x - width/2, 2) + Math.pow(p1.y - height/2, 2));
+                r2 = Math.sqrt(Math.pow(p2.x - width/2, 2) + Math.pow(p2.y - height/2, 2));
+                r3 = Math.sqrt(Math.pow(p3.x - width/2, 2) + Math.pow(p3.y - height/2, 2));
+
+                t1 = getAngleAtPoint(p1);
+                t2 = getAngleAtPoint(p2);
+                t3 = getAngleAtPoint(p3);
+
+                subSlope1 = (r1 - r2) / (t1 - t2);
+                subSlope2 = (r2 - r3) / (t2 - t3);
+
+                userRadialSlope = (subSlope1 + subSlope2) / 2;
+
+                double difference = Math.abs(expectedRadialSlope - userRadialSlope);
+
+                sum += difference;
+                numSamples++;
+            }
+        }
+        double average = sum / numSamples;
+
+        Log.d("Mark","Number of points: "+numSamples);
+        Log.d("Mark","Average radial slope difference: "+average);
+
+        double threshold = 110;
+        if(average > threshold) {
+            Toast.makeText(getContext(),"You may have PD",Toast.LENGTH_LONG).show();
+        }
+        else {
+            Toast.makeText(getContext(),"You most likely don't have PD",Toast.LENGTH_LONG).show();
+        }
+    }
+
+    // Converts pixel units to Millimeters. Found on Stack Overflow
+    public static float pxToMm(final float px, final Context context) {
+        final DisplayMetrics dm = context.getResources().getDisplayMetrics();
+        return px / TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_MM, 1, dm);
+    }
+
+    public double dist(int x, int y, int x2, int y2) {
+        return Math.sqrt(Math.pow(x-x2,2)+Math.pow(y-y2,2));
+    }
+
+    public double getAngleAtPoint(Point p) {
+        double width = this.getWidth();
+        double height = this.getHeight();
+
+        // Center the point
+        int centeredX = (int)(p.x - width/2.0);
+        int centeredY = (int)(p.y - height/2.0);
+
+        // Get the angle
+        double angle;
+        if(centeredX < 0) {
+            angle = Math.atan((double)(centeredY)/centeredX)+Math.PI;
+        }
+        else if(centeredY > 0) {
+            angle = Math.atan((double)(centeredY)/centeredX);
+        }
+        else {
+            angle = Math.atan((double)(centeredY)/centeredX)+2*Math.PI;
+        }
+
+        return angle;
+    }
+
+    // Returns the closest point on the spiral from the point (px,py)
+    public Point getClosestPointToTouch(int px, int py) {
+        double width = this.getWidth();
+        double height = this.getHeight();
+
+        // Get the angle
+        double angle = getAngleAtPoint(new Point(px, py));
+
+        Point result = new Point();
+        result.set((int)(width/2.0+spiralScale*angle*Math.cos(angle)),(int)(height/2.0+spiralScale*angle*Math.sin(angle)));
+
+        double tempAngle = angle;
+
+        while(dist(result.x,result.y,px,py) >= spiralScale*Math.PI) {
+            result.set((int)(width/2.0+spiralScale*tempAngle*Math.cos(tempAngle)),(int)(height/2.0+spiralScale*tempAngle*Math.sin(tempAngle)));
+
+            tempAngle += 2*Math.PI;
+        }
+
+        return result;
+    }
 
     // The save feature
     // Taken from code in Jon Froehlich's CMSC434 class.
