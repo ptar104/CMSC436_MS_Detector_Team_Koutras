@@ -28,7 +28,7 @@
             android:layout_height="wrap_content"
             android:layout_weight=".45"
             android:text="Reset Test"
-            android:textSize="25sp"
+            android:textSize="20sp"
             android:onClick="resetTest" />
         <Space
             android:layout_width="0dp"
@@ -39,7 +39,7 @@
             android:layout_height="wrap_content"
             android:layout_weight=".45"
             android:text="Save Test"
-            android:textSize="25sp"
+            android:textSize="20sp"
             android:onClick="saveImage" />
     </LinearLayout>
 
