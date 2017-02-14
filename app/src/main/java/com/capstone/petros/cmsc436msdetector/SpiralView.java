@@ -198,7 +198,7 @@ public class SpiralView extends View {
                 up = true;
                 endTime = System.currentTimeMillis();
                 currPath.lineTo(x,y);
-                evaluateTrace();
+
                 countdown = new CountDownTimer(5000, 100) {
                     public void onTick(long millisUntilFinished) {
                         if(!up){
@@ -245,8 +245,8 @@ public class SpiralView extends View {
         return true;
     }
 
-    // Computes the average radial slope difference
-    public void evaluateTrace() {
+    // Computes the letterGrade using average radial slope difference
+    public String evaluateTrace() {
         // Examine the slope of the trace at each point
         // Compute the difference of the slope of the userTrace with the expected slope
 
@@ -293,15 +293,21 @@ public class SpiralView extends View {
         Log.d("Mark","Number of points: "+numSamples);
         Log.d("Mark","Average radial slope difference: "+average);
 
-        /*
-        double threshold = 110;
-        if(average > threshold) {
-            Toast.makeText(getContext(),"You may have PD",Toast.LENGTH_LONG).show();
+        if(average < 100) {
+            return "A";
+        }
+        else if (average < 120) {
+            return "B";
+        }
+        else if (average < 150) {
+            return "C";
+        }
+        else if (average < 200) {
+            return "D";
         }
         else {
-            Toast.makeText(getContext(),"You most likely don't have PD",Toast.LENGTH_LONG).show();
+            return "F";
         }
-        */
     }
 
     // Converts pixel units to Millimeters. Found on Stack Overflow
@@ -336,6 +342,7 @@ public class SpiralView extends View {
 
         return angle;
     }
+
 
     // Returns the closest point on the spiral from the point (px,py)
     // We are not using this metric right now, but are saving it in case we do need it.
@@ -396,7 +403,7 @@ public class SpiralView extends View {
         SimpleDateFormat date = new SimpleDateFormat("MM/dd/yyyy hh:mm a");
         _reportCanvas.drawText("Time of test: "+date.format(new Date()), 20,_offScreenCanvas.getHeight()+200, paintText);
         _reportCanvas.drawText("Duration of test: "+ testDuration/1000.0 + " seconds", 20,_offScreenCanvas.getHeight()+250, paintText);
-        _reportCanvas.drawText("Test score: "+ ""/*Mark fill this in with the score*/, 20,_offScreenCanvas.getHeight()+300, paintText);
+        _reportCanvas.drawText("Test grade: "+ evaluateTrace(), 20,_offScreenCanvas.getHeight()+300, paintText);
 
         // Taken from code in Jon Froehlich's CMSC434 class.
         String fName = UUID.randomUUID().toString() + ".png";
@@ -434,6 +441,7 @@ public class SpiralView extends View {
         _offScreenBitmap = null;
         firstTouchRecorded = false;
         countdown.cancel();
+        userTrace.clear();
         TextView instruction = (TextView) getRootView().findViewById(R.id.Instructions);
         instruction.setText("Test reset. Put finger in center of spiral to begin again.");
         invalidate();
