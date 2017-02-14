@@ -9,6 +9,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Point;
+import android.os.CountDownTimer;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.AttributeSet;
@@ -17,6 +18,7 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
@@ -26,6 +28,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.UUID;
 
 
@@ -47,6 +51,12 @@ public class SpiralView extends View {
     Point closestPoint;
 
     double spiralScale;
+
+    boolean up = false;
+    //Variables for 5 sec timeout
+    long elapsed;
+    final static long INTERVAL=1000;
+    final static long TIMEOUT=5000;
 
     List<ArrayList<Point>> userTrace;
 
@@ -147,8 +157,21 @@ public class SpiralView extends View {
     public boolean onTouchEvent(MotionEvent motionEvent){
         float x = motionEvent.getX(), y = motionEvent.getY();
 
-        boolean up = false;
+        CountDownTimer countdown = new CountDownTimer(5000, 100) {
+            public void onTick(long millisUntilFinished) {
+                if(!up){
+                    this.cancel();
+                }
+            }
 
+            public void onFinish() {
+                if(up){
+                    TextView instruction = (TextView) getRootView().findViewById(R.id.Instructions);
+                    instruction.setText("Test Completed! \n Check gallery for image");
+                    saveTestToGallery();
+                }
+            }
+        };
         switch (motionEvent.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 // recording how long it takes for them to complete the test
@@ -158,7 +181,7 @@ public class SpiralView extends View {
                 }
 
                 currPath.moveTo(x, y);
-
+                up = false;
                 // Keep track of the user path
                 ArrayList<Point> newPath = new ArrayList<>();
                 newPath.add(new Point((int)x,(int)y));
@@ -184,6 +207,7 @@ public class SpiralView extends View {
                 currPath.lineTo(x,y);
 
                 evaluateTrace();
+                countdown.start();
                 break;
         }
 
@@ -370,5 +394,7 @@ public class SpiralView extends View {
         }
 
     }
+
+
 
 }
