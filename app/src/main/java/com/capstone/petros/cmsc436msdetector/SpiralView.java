@@ -1,8 +1,10 @@
 package com.capstone.petros.cmsc436msdetector;
 
+import android.app.AlertDialog;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -168,7 +170,23 @@ public class SpiralView extends View {
                 if(up){
                     TextView instruction = (TextView) getRootView().findViewById(R.id.Instructions);
                     instruction.setText("Test Completed! \n Check gallery for image");
-                    saveTestToGallery();
+
+                    AlertDialog builder;
+                    builder = new AlertDialog.Builder((SpiralActivity)getContext()).create();
+                    builder.setTitle("Test Ended");
+                    builder.setMessage("No movement detected in last 5 seconds.");
+                    builder.setButton(AlertDialog.BUTTON_POSITIVE, "Save", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            saveTestToGallery();
+                        }
+                    });
+                    builder.setButton(AlertDialog.BUTTON_NEGATIVE, "Reset", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            // User cancelled the dialog
+                        }
+                    });
+
+                    builder.show();
                 }
             }
         };
