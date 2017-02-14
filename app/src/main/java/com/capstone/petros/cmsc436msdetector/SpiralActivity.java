@@ -33,6 +33,6 @@ public class SpiralActivity extends AppCompatActivity {
     }
 
     public void saveImage(View view){
-        ((SpiralView)findViewById(R.id.SpiralView)).saveTestToGallery(getContentResolver());
+        ((SpiralView)findViewById(R.id.SpiralView)).saveTestToGallery();
     }
 }
