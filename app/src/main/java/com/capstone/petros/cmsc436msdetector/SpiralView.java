@@ -1,7 +1,6 @@
 package com.capstone.petros.cmsc436msdetector;
 
 import android.app.AlertDialog;
-import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -30,8 +29,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.UUID;
 
 
@@ -53,6 +50,8 @@ public class SpiralView extends View {
     Point closestPoint;
 
     double spiralScale;
+
+    CountDownTimer countdown;
 
     boolean up = false;
     //Variables for 5 sec timeout
@@ -163,37 +162,6 @@ public class SpiralView extends View {
     public boolean onTouchEvent(MotionEvent motionEvent){
         float x = motionEvent.getX(), y = motionEvent.getY();
 
-        CountDownTimer countdown = new CountDownTimer(5000, 100) {
-            public void onTick(long millisUntilFinished) {
-                if(!up){
-                    this.cancel();
-                }
-            }
-
-            public void onFinish() {
-                if(up){
-                    TextView instruction = (TextView) getRootView().findViewById(R.id.Instructions);
-                    instruction.setText("Test Completed! \n Check gallery for image");
-
-                    AlertDialog builder;
-                    builder = new AlertDialog.Builder((SpiralActivity)getContext()).create();
-                    builder.setTitle("Test Ended");
-                    builder.setMessage("No movement detected in last 5 seconds.");
-                    builder.setButton(AlertDialog.BUTTON_POSITIVE, "Save", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            saveTestToGallery();
-                        }
-                    });
-                    builder.setButton(AlertDialog.BUTTON_NEGATIVE, "Reset", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            // User cancelled the dialog
-                        }
-                    });
-
-                    builder.show();
-                }
-            }
-        };
         switch (motionEvent.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 // recording how long it takes for them to complete the test
@@ -201,7 +169,9 @@ public class SpiralView extends View {
                     startTime = System.currentTimeMillis();
                     firstTouchRecorded = true;
                 }
-
+                else{
+                    countdown.cancel();
+                }
                 currPath.moveTo(x, y);
                 up = false;
                 // Keep track of the user path
@@ -226,9 +196,40 @@ public class SpiralView extends View {
                 break;
             case MotionEvent.ACTION_UP:
                 up = true;
+                endTime = System.currentTimeMillis();
                 currPath.lineTo(x,y);
-
                 evaluateTrace();
+                countdown = new CountDownTimer(5000, 100) {
+                    public void onTick(long millisUntilFinished) {
+                        if(!up){
+                            this.cancel();
+                        }
+                    }
+
+                    public void onFinish() {
+                        if(up){
+                            TextView instruction = (TextView) getRootView().findViewById(R.id.Instructions);
+                            instruction.setText("Test halted...");
+
+                            AlertDialog builder;
+                            builder = new AlertDialog.Builder((SpiralActivity)getContext()).create();
+                            builder.setTitle("Test Ended");
+                            builder.setMessage("No movement detected in last 5 seconds.");
+                            builder.setButton(AlertDialog.BUTTON_POSITIVE, "Save", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    saveTestToGallery();
+                                }
+                            });
+                            builder.setButton(AlertDialog.BUTTON_NEGATIVE, "Reset", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    resetSpiralTest();
+                                }
+                            });
+
+                            builder.show();
+                        }
+                    }
+                };
                 countdown.start();
                 break;
         }
@@ -292,6 +293,7 @@ public class SpiralView extends View {
         Log.d("Mark","Number of points: "+numSamples);
         Log.d("Mark","Average radial slope difference: "+average);
 
+        /*
         double threshold = 110;
         if(average > threshold) {
             Toast.makeText(getContext(),"You may have PD",Toast.LENGTH_LONG).show();
@@ -299,6 +301,7 @@ public class SpiralView extends View {
         else {
             Toast.makeText(getContext(),"You most likely don't have PD",Toast.LENGTH_LONG).show();
         }
+        */
     }
 
     // Converts pixel units to Millimeters. Found on Stack Overflow
@@ -335,6 +338,8 @@ public class SpiralView extends View {
     }
 
     // Returns the closest point on the spiral from the point (px,py)
+    // We are not using this metric right now, but are saving it in case we do need it.
+    /*
     public Point getClosestPointToTouch(int px, int py) {
         double width = this.getWidth();
         double height = this.getHeight();
@@ -355,12 +360,12 @@ public class SpiralView extends View {
 
         return result;
     }
+    */
 
     // The save feature
-    // Taken from code in Jon Froehlich's CMSC434 class.
     public void saveTestToGallery(){
+        countdown.cancel();
         // recording how much time the test took
-        endTime = System.currentTimeMillis();
         long testDuration = endTime - startTime;
         //Set up the report.
 
@@ -382,19 +387,24 @@ public class SpiralView extends View {
                 _offScreenCanvas.getHeight()+500,rectPaint);
 
         Paint paintText = new Paint();
-        paintText.setTextSize(30);
+        paintText.setTextSize(40);
 
         // Here is where we would add the stats, such as score or lifts, to the report bitmap.
         // Just add _offScreenCanvas.getHeight() to every y value.
+        _reportCanvas.drawText("Test report:", 10,_offScreenCanvas.getHeight()+100, paintText);
+        paintText.setTextSize(30);
         SimpleDateFormat date = new SimpleDateFormat("MM/dd/yyyy hh:mm a");
-        _reportCanvas.drawText("Time of test: "+date.format(new Date()), 0,_offScreenCanvas.getHeight()+200, paintText);
-        _reportCanvas.drawText("Duration of test: "+ testDuration/1000.0 + " seconds", 0,_offScreenCanvas.getHeight()+250, paintText);
+        _reportCanvas.drawText("Time of test: "+date.format(new Date()), 20,_offScreenCanvas.getHeight()+200, paintText);
+        _reportCanvas.drawText("Duration of test: "+ testDuration/1000.0 + " seconds", 20,_offScreenCanvas.getHeight()+250, paintText);
+        _reportCanvas.drawText("Test score: "+ ""/*Mark fill this in with the score*/, 20,_offScreenCanvas.getHeight()+300, paintText);
 
+        // Taken from code in Jon Froehlich's CMSC434 class.
         String fName = UUID.randomUUID().toString() + ".png";
         File folder = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "/Spiral Test Results");
         if(!folder.exists()){
             if(!folder.mkdirs()){
-                System.out.println("MOTHER FUCK!!!");
+                System.out.println("Folder creation failed...");
+                Toast.makeText(getContext(), "Error saving test results.", Toast.LENGTH_LONG).show();
             }
         }
 
@@ -410,13 +420,23 @@ public class SpiralView extends View {
 
             getContext().getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
 
-            Toast.makeText(getContext(), "Saved!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Saved Test results to gallery.", Toast.LENGTH_LONG).show();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
+            Toast.makeText(getContext(), "Error saving test results.", Toast.LENGTH_LONG).show();
         }
 
+        TextView instruction = (TextView) getRootView().findViewById(R.id.Instructions);
+        instruction.setText("Test Completed! \n Check gallery for image");
     }
 
-
+    public void resetSpiralTest(){
+        _offScreenBitmap = null;
+        firstTouchRecorded = false;
+        countdown.cancel();
+        TextView instruction = (TextView) getRootView().findViewById(R.id.Instructions);
+        instruction.setText("Test reset. Put finger in center of spiral to begin again.");
+        invalidate();
+    }
 
 }
