@@ -336,7 +336,7 @@ public class SpiralView extends View {
 
     // The save feature
     // Taken from code in Jon Froehlich's CMSC434 class.
-    public void saveTestToGallery(ContentResolver cr){
+    public void saveTestToGallery(){
         // recording how much time the test took
         endTime = System.currentTimeMillis();
         long testDuration = endTime - startTime;
