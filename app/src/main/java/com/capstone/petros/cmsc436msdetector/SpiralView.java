@@ -102,6 +102,9 @@ public class SpiralView extends View {
         _offScreenCanvas.drawRect(0,0,_offScreenCanvas.getWidth(),_offScreenCanvas.getHeight(), background);
         _reportCanvas.drawRect(0,0,_offScreenCanvas.getWidth(),_offScreenCanvas.getHeight()+500, background);
 
+        // Margin for spiral
+        int margin = this.getWidth()/16;
+
         // Draw spiral/touch lines here.
         Paint paint = new Paint();
         paint.setStrokeWidth(3);
@@ -109,7 +112,8 @@ public class SpiralView extends View {
         paint.setStyle(Paint.Style.STROKE);
 
         Paint shadowPaint = new Paint();
-        shadowPaint.setStrokeWidth(90);
+        shadowPaint.setStrokeWidth((this.getWidth()-2*margin)/12);
+        shadowPaint.setStrokeCap(Paint.Cap.ROUND);
         shadowPaint.setAntiAlias(true);
         shadowPaint.setColor(0x22DD0000);
         shadowPaint.setStyle(Paint.Style.STROKE);
@@ -123,7 +127,7 @@ public class SpiralView extends View {
         path.moveTo(middleX,middleY);
 
         // Calculate the spiralScale
-        spiralScale = Math.min(middleX,middleY)/(numCycles*Math.PI*2.0);
+        spiralScale = (Math.min(middleX,middleY)-margin)/(numCycles*Math.PI*2.0);
 
         // Draw the spiral
         for(float t = 0; t < 2 * Math.PI * numCycles; t += 0.1) {
