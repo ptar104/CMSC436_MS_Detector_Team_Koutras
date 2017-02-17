@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.capstone.petros.cmsc436msdetector">
 
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -18,7 +18,13 @@
             </intent-filter>
         </activity>
         <activity android:name=".TappingActivity" />
-        <activity android:name=".SpiralActivity" android:screenOrientation="portrait" />
+        <activity
+            android:name=".SpiralActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".BallActivity"
+            android:label="@string/title_activity_ball"
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
     </application>
 
 </manifest>

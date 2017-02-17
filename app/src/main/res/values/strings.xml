@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">CMSC436MSDetector</string>
+    <string name="title_activity_ball">BallActivity</string>
 </resources>

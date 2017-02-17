@@ -26,4 +26,9 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, SpiralActivity.class);
         startActivity(intent);
     }
+
+    public void startBallTest(View view) {
+        Intent intent = new Intent(this, BallActivity.class);
+        startActivity(intent);
+    }
 }
