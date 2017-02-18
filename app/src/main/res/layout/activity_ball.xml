@@ -10,4 +10,26 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.capstone.petros.cmsc436msdetector.BallActivity">
 
+    <!--<TextView android:id="@+id/instructionsText"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:textSize="20sp"
+        android:clickable="true"
+        android:onClick="startTest"
+        android:layout_centerInParent="true"
+        android:text="Tilt to keep ball in \nthe center of screen \n for 10 seconds \n \n Tap anywhere to continue"/> -->
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:id="@+id/instructionFragmentContainer" />
+
+
+    <com.capstone.petros.cmsc436msdetector.BallView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#3BBBBB"
+        android:layout_centerInParent="true"
+        android:id="@+id/ballView"/>
 </RelativeLayout>

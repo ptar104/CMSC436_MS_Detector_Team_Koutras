@@ -1,4 +1,12 @@
 <resources>
     <string name="app_name">CMSC436MSDetector</string>
     <string name="title_activity_ball">BallActivity</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <!-- fragment strings -->
+    <string name="fragment_text">Tilt to keep ball in the center of the screen</string>
+    <string name="continue_string">Continue</string>
+    <string name="back_string">Back</string>
+
 </resources>
