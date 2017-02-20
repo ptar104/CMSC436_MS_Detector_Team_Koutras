@@ -4,12 +4,15 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.os.CountDownTimer;
 import android.util.AttributeSet;
 
 import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.TextView;
+import android.widget.Toast;
 
 /**
  * Created by MarkCreamer on 2/16/17.
@@ -32,6 +35,18 @@ public class BallView extends View {
 
     static final double MAGTHRESHOLD = 45.0, ANGLETHRESHOLD = 72.0; // From experience
     double PITODEG = (360 / (2 * Math.PI));
+
+    CountDownTimer timer = new CountDownTimer(10000, 1000) {
+        @Override
+        public void onTick(long l) {
+
+        }
+
+        @Override
+        public void onFinish() {
+            Toast.makeText(getContext(), "Test is complete!", Toast.LENGTH_SHORT).show();
+        }
+    };
 
     public BallView(Context context) {
         super(context);
@@ -208,5 +223,9 @@ public class BallView extends View {
 
     public double getAverageFscore(){
         return totalScore / (samples * 1.0);
+    }
+
+    public void startTest() {
+        timer.start();
     }
 }

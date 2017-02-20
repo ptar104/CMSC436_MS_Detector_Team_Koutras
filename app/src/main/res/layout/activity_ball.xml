@@ -22,11 +22,29 @@
         android:layout_centerInParent="true"
         android:id="@+id/instructionFragmentContainer" />
 
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
 
-    <com.capstone.petros.cmsc436msdetector.BallView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#FF88AAE0"
-        android:layout_centerInParent="true"
-        android:id="@+id/ballView"/>
+        <com.capstone.petros.cmsc436msdetector.BallView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#FF88AAE0"
+            android:layout_centerInParent="true"
+            android:id="@+id/ballView"/>
+
+        <TextView
+            android:id="@+id/start_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="Start"
+            android:textSize="100sp"
+            android:textColor="#000000"
+            android:textStyle="normal|bold"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"/>
+
+    </RelativeLayout>
+
 </RelativeLayout>
