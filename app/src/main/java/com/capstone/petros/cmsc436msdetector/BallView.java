@@ -342,7 +342,7 @@ public class BallView extends View {
         if(fscore <= 0.025){
             grade = "A";
         }
-        else if(fscore <= 0.5){
+        else if(fscore <= 0.05){
             grade = "B";
         }
         else if(fscore <= 0.1){
