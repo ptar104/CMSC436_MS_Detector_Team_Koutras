@@ -24,6 +24,8 @@ public class BallActivity extends Activity {
 
     BallView ballView;
     TextView threeSecondCountdownText;
+    boolean doneRightTest = false;
+    public static final String HANDEDNESS_KEY = "HANDEDNESS_KEY";
 
     // 3 second timer that counts down before the test starts
     CountDownTimer prepTimer = new CountDownTimer(3100, 1000) {
@@ -36,7 +38,33 @@ public class BallActivity extends Activity {
         public void onFinish() {
             ballView.toggleTestActive(true);
             threeSecondCountdownText.setText("");
-            ballView.startTest();
+            testTimer.start();
+        }
+    };
+
+    CountDownTimer testTimer = new CountDownTimer(10000, 1000) {
+        @Override
+        public void onTick(long l) {
+
+        }
+
+        @Override
+        public void onFinish() {    // Start the next test if you still need to
+            ballView.toggleTestActive(false);
+            if(!doneRightTest) {
+                doneRightTest = true;
+                FragmentManager fragmentManager = getFragmentManager();
+                InstructionFragment frag = new InstructionFragment();
+                Bundle bundle = new Bundle();
+                bundle.putString(HANDEDNESS_KEY, "right");
+                frag.setArguments(bundle);
+                frag.show(fragmentManager, null);
+            }
+            else {
+                FragmentManager fragmentManager = getFragmentManager();
+                CompletionFragment frag = new CompletionFragment();
+                frag.show(fragmentManager, null);
+            }
         }
     };
 
@@ -44,10 +72,6 @@ public class BallActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ball);
-
-        FragmentManager fragmentManager = getFragmentManager();
-        InstructionFragment frag = new InstructionFragment();
-        frag.show(fragmentManager, null);
 
         ballView = (BallView) findViewById(R.id.ballView);
         threeSecondCountdownText = (TextView)findViewById(R.id.start_text);
@@ -82,6 +106,9 @@ public class BallActivity extends Activity {
             public void onAccuracyChanged(Sensor sensor, int accuracy) {/*cough*/}
         };
 
+        doneRightTest = false;
+
+        startTest();
     }
 
     @Override
@@ -97,7 +124,18 @@ public class BallActivity extends Activity {
         sensorManager.unregisterListener(sel);
     }
 
-    public void startTimer() {
+    public void startTest() {
+        FragmentManager fragmentManager = getFragmentManager();
+        InstructionFragment frag = new InstructionFragment();
+
+        Bundle bundle = new Bundle();
+        bundle.putString(HANDEDNESS_KEY,"left");
+        frag.setArguments(bundle);
+
+        frag.show(fragmentManager, null);
+    }
+
+    public void startPrepTimer() {
         prepTimer.start();
     }
 

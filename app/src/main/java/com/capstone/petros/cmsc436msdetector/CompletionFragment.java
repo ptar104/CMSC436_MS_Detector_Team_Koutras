@@ -3,16 +3,19 @@ package com.capstone.petros.cmsc436msdetector;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Canvas;
-import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
+public class CompletionFragment extends DialogFragment {
 
-public class InstructionFragment extends DialogFragment {
-
-    public InstructionFragment() {
+    public CompletionFragment() {
         // Required empty public constructor
 
     }
@@ -22,22 +25,11 @@ public class InstructionFragment extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         // Use the Builder class for convenient dialog construction
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        String handedness = getArguments().getString(BallActivity.HANDEDNESS_KEY);
 
-        builder.setMessage("Use your "+handedness+" hand to keep the ball in the center of the screen")
+        builder.setMessage("Test done!")
                 .setPositiveButton(R.string.continue_string, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        //show the view
-
-                        //testing functionality
-                        BallActivity ballActivity = (BallActivity) getActivity();
-                        ballActivity.startPrepTimer();
-
                         // getActivity().findViewById(R.id.ballView).setBackgroundColor(Color.RED);
-                    }
-                })
-                .setNegativeButton(R.string.back_string, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
                         getActivity().finish();
                     }
                 });
