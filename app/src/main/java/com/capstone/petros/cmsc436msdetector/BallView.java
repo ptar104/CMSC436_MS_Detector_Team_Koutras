@@ -41,6 +41,7 @@ public class BallView extends View {
     float currRoll = 0, currPitch = 0;
     float prevRoll = 0, prevPitch = 0;
     double totalScore = 0;
+    double leftHandScore = -1, rightHandScore = -1;
     boolean testActive = false, first = true;
 
     static final double MAGTHRESHOLD = 45.0, ANGLETHRESHOLD = 72.0; // From experience
@@ -111,6 +112,8 @@ public class BallView extends View {
         first = false;
         x = -1;
         y = -1;
+        samples = 0;
+        totalScore = 0;
         currPath = new Path();
         touchPaint = new Paint();
         _reportCanvas = null;
@@ -123,7 +126,7 @@ public class BallView extends View {
         paint2.setColor(Color.BLACK);
         paint3.setColor(Color.WHITE);
         ball.setColor(Color.RED);
-
+        
         double xDeg = currRoll*PITODEG;
         double yDeg = -1*currPitch*PITODEG;
 
@@ -260,6 +263,14 @@ public class BallView extends View {
 
     public double getAverageFscore(){
         return totalScore / (samples * 1.0);
+    }
+
+    public void saveLeftHandFscore(){
+        leftHandScore = getAverageFscore();
+    }
+
+    public void saveRightHandFscore(){
+        rightHandScore = getAverageFscore();
     }
 
     public void savePathToGallery() {

@@ -55,6 +55,7 @@ public class BallActivity extends Activity {
             ((BallView)findViewById(R.id.ballView)).resetTest();
             if(!doneRightTest) {
                 doneRightTest = true;
+                ballView.saveLeftHandFscore();
                 FragmentManager fragmentManager = getFragmentManager();
                 InstructionFragment frag = new InstructionFragment();
                 Bundle bundle = new Bundle();
@@ -63,6 +64,7 @@ public class BallActivity extends Activity {
                 frag.show(fragmentManager, null);
             }
             else {
+                ballView.saveRightHandFscore();
                 FragmentManager fragmentManager = getFragmentManager();
                 CompletionFragment frag = new CompletionFragment();
                 frag.show(fragmentManager, null);
