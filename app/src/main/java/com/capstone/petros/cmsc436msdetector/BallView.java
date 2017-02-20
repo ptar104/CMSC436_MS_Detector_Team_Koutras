@@ -19,6 +19,8 @@ import android.widget.Toast;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.UUID;
 
 /**
@@ -115,7 +117,6 @@ public class BallView extends View {
         samples = 0;
         totalScore = 0;
         currPath = new Path();
-        touchPaint = new Paint();
         _reportCanvas = null;
     }
 
@@ -274,6 +275,27 @@ public class BallView extends View {
     }
 
     public void savePathToGallery() {
+        //Dividing line
+        Paint dividingLinePaint = new Paint();
+        dividingLinePaint.setStrokeWidth(6);
+        dividingLinePaint.setColor(0xFF00FF00);
+        dividingLinePaint.setStyle(Paint.Style.STROKE);
+        Path dividingLinePath = new Path();
+        dividingLinePath.moveTo(0,_reportCanvas.getHeight()*2/3);
+        dividingLinePath.lineTo(_reportCanvas.getWidth(),_reportCanvas.getHeight()*2/3);
+        _reportCanvas.drawPath(dividingLinePath,dividingLinePaint);
+
+        Paint paintText = new Paint();
+        paintText.setTextSize(40);
+        _reportCanvas.drawText("Test Report:", 10,_reportCanvas.getHeight()*2/3+80, paintText);
+        SimpleDateFormat date = new SimpleDateFormat("MM/dd/yyyy hh:mm a");
+        _reportCanvas.drawText("Time of test: "+date.format(new Date()), 20,_reportCanvas.getHeight()*2/3+180, paintText);
+        _reportCanvas.drawText("Time spent: ", 20,_reportCanvas.getHeight()*2/3+230, paintText);
+        _reportCanvas.drawText("    Innermost circle: "+ "Data" + " seconds", 20,_reportCanvas.getHeight()*2/3+280, paintText);
+        _reportCanvas.drawText("    Middle circle: "+ "Data" + " seconds", 20,_reportCanvas.getHeight()*2/3+330, paintText);
+        _reportCanvas.drawText("    Outside circle: "+ "Data" + " seconds", 20,_reportCanvas.getHeight()*2/3+380, paintText);
+        _reportCanvas.drawText("Jitteryness Score: "+ "Data", 20,_reportCanvas.getHeight()*2/3+460, paintText);
+
         String fName = UUID.randomUUID().toString() + ".png";
 
         File folder = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "/Ball Test Results");
