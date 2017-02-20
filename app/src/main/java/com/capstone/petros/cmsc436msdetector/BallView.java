@@ -114,9 +114,6 @@ public class BallView extends View {
         currPath = new Path();
         touchPaint = new Paint();
         _reportCanvas = null;
-        paint1.setColor(Color.WHITE);
-        paint2.setColor(Color.BLACK);
-        paint3.setColor(Color.WHITE);
     }
 
     @Override
@@ -190,9 +187,15 @@ public class BallView extends View {
             _reportBitmap = Bitmap.createBitmap(canvas.getWidth(), canvas.getHeight()+500, Bitmap.Config.ARGB_8888);
             _reportCanvas = new Canvas(_reportBitmap);
             _reportCanvas.drawRect(0,0,getWidth(),getHeight()+500, background);
-            _reportCanvas.drawCircle(getWidth()/2, getHeight()/2, getWidth()/2, paint1);
-            _reportCanvas.drawCircle(getWidth()/2, getHeight()/2, getWidth()/3, paint2);
-            _reportCanvas.drawCircle(getWidth()/2, getHeight()/2, getWidth()/6, paint3);
+            Paint reportPaint1 = new Paint();
+            Paint reportPaint2 = new Paint();
+            Paint reportPaint3 = new Paint();
+            reportPaint1.setColor(Color.WHITE);
+            reportPaint2.setColor(Color.BLACK);
+            reportPaint3.setColor(Color.WHITE);
+            _reportCanvas.drawCircle(getWidth()/2, getHeight()/2, getWidth()/2, reportPaint1);
+            _reportCanvas.drawCircle(getWidth()/2, getHeight()/2, getWidth()/3, reportPaint2);
+            _reportCanvas.drawCircle(getWidth()/2, getHeight()/2, getWidth()/6, reportPaint3);
         }
 
         canvas.drawCircle(getWidth()/2, getHeight()/2, getWidth()/2, paint1);
