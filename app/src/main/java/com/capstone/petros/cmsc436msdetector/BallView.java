@@ -31,7 +31,7 @@ public class BallView extends View {
     float currRoll = 0, currPitch = 0;
     float prevRoll = 0, prevPitch = 0;
     double totalScore = 0;
-    boolean first = true;
+    boolean testActive = false, first = true;
 
     static final double MAGTHRESHOLD = 45.0, ANGLETHRESHOLD = 72.0; // From experience
     double PITODEG = (360 / (2 * Math.PI));
@@ -44,6 +44,7 @@ public class BallView extends View {
 
         @Override
         public void onFinish() {
+            toggleTestActive(false);
             Toast.makeText(getContext(), "Test is complete!", Toast.LENGTH_SHORT).show();
         }
     };
@@ -62,27 +63,44 @@ public class BallView extends View {
 
     }
 
+    public void toggleTestActive(boolean active){
+        testActive = active;
+    }
+
     public void recieveSensorInput(float roll, float pitch, float azimuth){
-        // Roll would change x...
-        // Pitch would change y...
-        currRoll = roll;
-        currPitch = pitch;
+        if(testActive) {
+            // Roll would change x...
+            // Pitch would change y...
+            currRoll = roll;
+            currPitch = pitch;
 
-        if(currRoll > Math.PI/2.0){
-            currRoll = (float)(Math.PI/2.0);
-        }
-        if(currRoll < -1*(Math.PI/2.0)){
-            currRoll = -1*(float)(Math.PI/2.0);
-        }
-        if(currPitch > (Math.PI/2.0)){
-            currPitch = (float)(Math.PI/2.0);
-        }
-        if(currPitch < -1*(Math.PI/2.0)){
-            currPitch = -1*(float)(Math.PI/2.0);
-        }
+            if (currRoll > Math.PI / 2.0) {
+                currRoll = (float) (Math.PI / 2.0);
+            }
+            if (currRoll < -1 * (Math.PI / 2.0)) {
+                currRoll = -1 * (float) (Math.PI / 2.0);
+            }
+            if (currPitch > (Math.PI / 2.0)) {
+                currPitch = (float) (Math.PI / 2.0);
+            }
+            if (currPitch < -1 * (Math.PI / 2.0)) {
+                currPitch = -1 * (float) (Math.PI / 2.0);
+            }
 
-        // If roll/pitch escape -90 to 90, phone waaaay too tilted.
-        invalidate();
+            // If roll/pitch escape -90 to 90, phone waaaay too tilted.
+            invalidate();
+        }
+    }
+
+    // Call when resetting the test.
+    public void resetTest(){
+        currRoll = 0;
+        currPitch = 0;
+        prevRoll = 0;
+        prevPitch = 0;
+        first = false;
+        x = (disp.getWidth() / 2);
+        y = (disp.getHeight() / 2);
     }
 
     @Override
@@ -98,10 +116,10 @@ public class BallView extends View {
         double yDeg = -1*currPitch*PITODEG;
 
         // Parsing out slight degrees.
-        if(xDeg < 2 && xDeg > -2){
+        if(xDeg < 1 && xDeg > -1){
             xDeg = 0;
         }
-        if(yDeg < 2 && yDeg > -2){
+        if(yDeg < 1 && yDeg > -1){
             yDeg = 0;
         }
 
@@ -124,14 +142,16 @@ public class BallView extends View {
 
         double midX = getWidth() / 2, midY = getHeight() / 2;
         double distance = Math.sqrt((1.0*(x-midX))*(1.0*(x-midX)) + (1.0*(y-midY))*(1.0*(y-midY)));
-        if(distance <= getWidth()/6){
-            paint3.setColor(Color.GREEN);
-        }
-        else if(distance <= getWidth()/3){
-            paint2.setColor(Color.GREEN);
-        }
-        else{
-            paint1.setColor(Color.GREEN);
+        if(testActive) {
+            if (distance <= getWidth() / 6) {
+                paint3.setColor(Color.GREEN);
+            }
+            else if (distance <= getWidth() / 3) {
+                paint2.setColor(Color.GREEN);
+            }
+            else {
+                paint1.setColor(Color.GREEN);
+            }
         }
 
         if(distance >= getWidth()/2){
@@ -140,36 +160,12 @@ public class BallView extends View {
             x = (int)(midX + (getWidth()/2.0) * Math.cos(angle));
             y = (int)(midY - (getWidth()/2.0) * Math.sin(angle));
         }
-        //canvas.drawText("Angle: " + angle, 10, getHeight()-100, paint1);
 
         canvas.drawCircle(getWidth()/2, getHeight()/2, getWidth()/2, paint1);
         canvas.drawCircle(getWidth()/2, getHeight()/2, getWidth()/3, paint2);
         canvas.drawCircle(getWidth()/2, getHeight()/2, getWidth()/6, paint3);
-        canvas.drawCircle(x, y, 60, ball);
+        canvas.drawCircle(x, y, getWidth()/11, ball);
         calculateJitteryness();
-    }
-
-    public boolean onTouchEvent(MotionEvent event) {
-        /*
-        switch (event.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-
-            case MotionEvent.ACTION_MOVE:
-
-            case MotionEvent.ACTION_UP:
-
-                x = (int) event.getX();
-                y = (int) event.getY();
-                break;
-        }
-        int width = getWidth() / 2;
-        int height = getHeight() / 2;
-
-        if (x >= width - width && y >= height - width && x <= width + width && y <= height + width) {
-            invalidate();
-        }
-        */
-        return true;
     }
 
     public void calculateJitteryness() {

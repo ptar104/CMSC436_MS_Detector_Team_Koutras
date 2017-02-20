@@ -34,6 +34,7 @@ public class BallActivity extends Activity {
 
         @Override
         public void onFinish() {
+            ballView.toggleTestActive(true);
             threeSecondCountdownText.setText("");
             ballView.startTest();
         }
