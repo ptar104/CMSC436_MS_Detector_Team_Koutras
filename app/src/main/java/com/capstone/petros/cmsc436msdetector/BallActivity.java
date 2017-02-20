@@ -114,6 +114,13 @@ public class BallActivity extends Activity {
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        prepTimer.cancel();
+        testTimer.cancel();
+    }
+
+    @Override
     protected void onResume(){
         super.onResume();
         sensorManager.registerListener(sel, accelerometer, SensorManager.SENSOR_DELAY_GAME);
