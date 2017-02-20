@@ -12,9 +12,9 @@ import android.os.Bundle;
 
 public class InstructionFragment extends DialogFragment {
 
-
     public InstructionFragment() {
         // Required empty public constructor
+
     }
 
 
@@ -28,6 +28,9 @@ public class InstructionFragment extends DialogFragment {
                         //show the view
 
                         //testing functionality
+                        BallActivity ballActivity = (BallActivity) getActivity();
+                        ballActivity.startTimer();
+
                         // getActivity().findViewById(R.id.ballView).setBackgroundColor(Color.RED);
                     }
                 })

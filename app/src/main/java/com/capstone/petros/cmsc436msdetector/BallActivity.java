@@ -9,14 +9,35 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.TextView;
+
+import org.w3c.dom.Text;
 
 public class BallActivity extends Activity {
 
     SensorEventListener sel;
     SensorManager sensorManager;
     Sensor accelerometer, magnetometer;
+
+    BallView ballView;
+    TextView threeSecondCountdownText;
+
+    // 3 second timer that counts down before the test starts
+    CountDownTimer prepTimer = new CountDownTimer(3100, 1000) {
+        @Override
+        public void onTick(long millisUntilFinished) {
+            threeSecondCountdownText.setText(Long.toString(millisUntilFinished / 1000));
+        }
+
+        @Override
+        public void onFinish() {
+            threeSecondCountdownText.setText("");
+            ballView.startTest();
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +47,9 @@ public class BallActivity extends Activity {
         FragmentManager fragmentManager = getFragmentManager();
         InstructionFragment frag = new InstructionFragment();
         frag.show(fragmentManager, null);
+
+        ballView = (BallView) findViewById(R.id.ballView);
+        threeSecondCountdownText = (TextView)findViewById(R.id.start_text);
 
         sensorManager = (SensorManager) this.getSystemService(this.SENSOR_SERVICE);
         accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
@@ -72,6 +96,9 @@ public class BallActivity extends Activity {
         sensorManager.unregisterListener(sel);
     }
 
+    public void startTimer() {
+        prepTimer.start();
+    }
 
     /*public void startTest(View v){
         findViewById(R.id.instructionsText).setVisibility(View.GONE);
