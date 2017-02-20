@@ -51,17 +51,12 @@ public class BallActivity extends Activity {
         @Override
         public void onFinish() {    // Start the next test if you still need to
             ballView.toggleTestActive(false);
-            ((BallView)findViewById(R.id.ballView)).savePathToGallery();
-
-            System.out.println("Time spent in innermost circle: " + ((BallView)findViewById(R.id.ballView)).timeInCircleOne/1000.0 + " seconds");
-            System.out.println("Time spent in middle circle: " + ((BallView)findViewById(R.id.ballView)).timeInCircleTwo/1000.0 + " seconds");
-            System.out.println("Time spent in outermost circle: " + ((BallView)findViewById(R.id.ballView)).timeInCircleThree/1000.0 + " seconds");
-
-            ((BallView)findViewById(R.id.ballView)).resetTest();
 
             if(!doneRightTest) {
                 doneRightTest = true;
                 ballView.saveLeftHandFscore();
+                ((BallView)findViewById(R.id.ballView)).savePathToGallery(true);
+                ((BallView)findViewById(R.id.ballView)).resetTest();
                 FragmentManager fragmentManager = getFragmentManager();
                 InstructionFragment frag = new InstructionFragment();
                 Bundle bundle = new Bundle();
@@ -71,6 +66,8 @@ public class BallActivity extends Activity {
             }
             else {
                 ballView.saveRightHandFscore();
+                ((BallView)findViewById(R.id.ballView)).savePathToGallery(false);
+                ((BallView)findViewById(R.id.ballView)).resetTest();
                 FragmentManager fragmentManager = getFragmentManager();
                 CompletionFragment frag = new CompletionFragment();
                 frag.show(fragmentManager, null);

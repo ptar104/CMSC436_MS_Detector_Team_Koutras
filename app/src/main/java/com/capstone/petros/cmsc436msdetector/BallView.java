@@ -19,6 +19,7 @@ import android.widget.Toast;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.UUID;
@@ -55,7 +56,9 @@ public class BallView extends View {
     boolean testActive = false, first = true;
 
     static final double MAGTHRESHOLD = 45.0, ANGLETHRESHOLD = 72.0; // From experience
-    double PITODEG = (360 / (2 * Math.PI));
+    static final double PITODEG = (360 / (2 * Math.PI));
+    static final double MILISACROSSSCREEN = 100; // Takes 1/3 of a second to get across the screen
+                                                    // at full tilt.
 
     public BallView(Context context) {
         super(context);
@@ -158,8 +161,19 @@ public class BallView extends View {
             yDeg = 0;
         }
 
-        x += xDeg;
-        y += yDeg;
+        //Adding slope to x/y
+
+        //Units: Screen distance / miliseconds
+        double ellapsedMillis = 10; // Just something small for the first nudge.
+        if(prevTime != 0)
+            ellapsedMillis = currTime - prevTime;
+        double unit = getWidth() / MILISACROSSSCREEN;
+
+        double scale = ellapsedMillis * unit;
+
+
+        x += (xDeg/90.0) * scale;
+        y += (yDeg/90.0) * scale;
 
         if(x < 0){
             x = 0;
@@ -181,7 +195,7 @@ public class BallView extends View {
             prevTime = currTime;
             currTime = System.currentTimeMillis();
 
-            if (distance <= getWidth() / 6) {
+            if (distance <= getWidth() / 8) {
                 paint3.setColor(Color.GREEN);
 
                 if (prevTime != 0)
@@ -224,12 +238,12 @@ public class BallView extends View {
             reportPaint3.setColor(Color.WHITE);
             _reportCanvas.drawCircle(getWidth()/2, getHeight()/2, getWidth()/2, reportPaint1);
             _reportCanvas.drawCircle(getWidth()/2, getHeight()/2, getWidth()/3, reportPaint2);
-            _reportCanvas.drawCircle(getWidth()/2, getHeight()/2, getWidth()/6, reportPaint3);
+            _reportCanvas.drawCircle(getWidth()/2, getHeight()/2, getWidth()/8, reportPaint3);
         }
 
         canvas.drawCircle(getWidth()/2, getHeight()/2, getWidth()/2, paint1);
         canvas.drawCircle(getWidth()/2, getHeight()/2, getWidth()/3, paint2);
-        canvas.drawCircle(getWidth()/2, getHeight()/2, getWidth()/6, paint3);
+        canvas.drawCircle(getWidth()/2, getHeight()/2, getWidth()/8, paint3);
 
         canvas.drawCircle(x, y, getWidth()/11, ball);
         currPath.lineTo(x,y);
@@ -299,7 +313,7 @@ public class BallView extends View {
         rightHandScore = getAverageFscore();
     }
 
-    public void savePathToGallery() {
+    public void savePathToGallery(boolean leftHand) {
         //Dividing line
         Paint dividingLinePaint = new Paint();
         dividingLinePaint.setStrokeWidth(6);
@@ -311,15 +325,35 @@ public class BallView extends View {
         _reportCanvas.drawPath(dividingLinePath,dividingLinePaint);
 
         Paint paintText = new Paint();
-        paintText.setTextSize(40);
-        _reportCanvas.drawText("Test Report:", 10,_reportCanvas.getHeight()*2/3+80, paintText);
+        paintText.setTextSize(30);
+        if(leftHand)
+            _reportCanvas.drawText("Test Report (left hand):", 10,_reportCanvas.getHeight()*2/3+80, paintText);
+        else _reportCanvas.drawText("Test Report (right hand):", 10,_reportCanvas.getHeight()*2/3+80, paintText);
         SimpleDateFormat date = new SimpleDateFormat("MM/dd/yyyy hh:mm a");
         _reportCanvas.drawText("Time of test: "+date.format(new Date()), 20,_reportCanvas.getHeight()*2/3+180, paintText);
         _reportCanvas.drawText("Time spent: ", 20,_reportCanvas.getHeight()*2/3+230, paintText);
-        _reportCanvas.drawText("    Innermost circle: "+ "Data" + " seconds", 20,_reportCanvas.getHeight()*2/3+280, paintText);
-        _reportCanvas.drawText("    Middle circle: "+ "Data" + " seconds", 20,_reportCanvas.getHeight()*2/3+330, paintText);
-        _reportCanvas.drawText("    Outside circle: "+ "Data" + " seconds", 20,_reportCanvas.getHeight()*2/3+380, paintText);
-        _reportCanvas.drawText("Jitteryness Score: "+ "Data", 20,_reportCanvas.getHeight()*2/3+460, paintText);
+        DecimalFormat df = new DecimalFormat("#.000");
+        _reportCanvas.drawText("    Innermost circle: "+ df.format(timeInCircleOne/1000.0) + " seconds", 20,_reportCanvas.getHeight()*2/3+280, paintText);
+        _reportCanvas.drawText("    Middle circle: "+ df.format(timeInCircleTwo/1000.0) + " seconds", 20,_reportCanvas.getHeight()*2/3+330, paintText);
+        _reportCanvas.drawText("    Outside circle: "+ df.format(timeInCircleThree/1000.0) + " seconds", 20,_reportCanvas.getHeight()*2/3+380, paintText);
+
+        String grade = "N/A";
+        double fscore = leftHand ? leftHandScore : rightHandScore;
+        if(fscore <= 0.025){
+            grade = "A";
+        }
+        else if(fscore <= 0.5){
+            grade = "B";
+        }
+        else if(fscore <= 0.1){
+            grade = "C";
+        }
+        else if(fscore <= 0.25){
+            grade = "D";
+        }
+        else grade = "E";
+
+        _reportCanvas.drawText("Jitteryness Score: "+ df.format(fscore) + " (Grade: " + grade + ")", 20,_reportCanvas.getHeight()*2/3+460, paintText);
 
         String fName = UUID.randomUUID().toString() + ".png";
 
