@@ -39,6 +39,14 @@ public class BallView extends View {
     private int x = -1;
     private int y = -1;
 
+    // these variables represent the amount of time that the user spent in each particular circle for the duration of the test
+    // CircleOne is the innermost, CircleTwo is the middle circle, CircleThree is the outermost
+    long timeInCircleOne = 0;
+    long timeInCircleTwo = 0;
+    long timeInCircleThree = 0;
+    private long prevTime = 0;
+    private long currTime = 0;
+
     long samples = 0;
     float currRoll = 0, currPitch = 0;
     float prevRoll = 0, prevPitch = 0;
@@ -118,6 +126,11 @@ public class BallView extends View {
         totalScore = 0;
         currPath = new Path();
         _reportCanvas = null;
+        prevTime = 0;
+        currTime = 0;
+        timeInCircleOne = 0;
+        timeInCircleTwo = 0;
+        timeInCircleThree = 0;
     }
 
     @Override
@@ -165,14 +178,26 @@ public class BallView extends View {
         double midX = getWidth() / 2, midY = getHeight() / 2;
         double distance = Math.sqrt((1.0*(x-midX))*(1.0*(x-midX)) + (1.0*(y-midY))*(1.0*(y-midY)));
         if(testActive) {
+            prevTime = currTime;
+            currTime = System.currentTimeMillis();
+
             if (distance <= getWidth() / 6) {
                 paint3.setColor(Color.GREEN);
+
+                if (prevTime != 0)
+                    timeInCircleOne += currTime - prevTime;
             }
             else if (distance <= getWidth() / 3) {
                 paint2.setColor(Color.GREEN);
+
+                if (prevTime != 0)
+                    timeInCircleTwo += currTime - prevTime;
             }
             else {
                 paint1.setColor(Color.GREEN);
+
+                if (prevTime != 0)
+                    timeInCircleThree += currTime - prevTime;
             }
         }
 
