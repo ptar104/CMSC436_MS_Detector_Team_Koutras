@@ -51,6 +51,8 @@ public class BallActivity extends Activity {
         @Override
         public void onFinish() {    // Start the next test if you still need to
             ballView.toggleTestActive(false);
+            ((BallView)findViewById(R.id.ballView)).savePathToGallery();
+            ((BallView)findViewById(R.id.ballView)).resetTest();
             if(!doneRightTest) {
                 doneRightTest = true;
                 FragmentManager fragmentManager = getFragmentManager();
