@@ -31,4 +31,9 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, BallActivity.class);
         startActivity(intent);
     }
+
+    public void startReactionTest(View view) {
+        Intent intent = new Intent(this,ReactionActivity.class);
+        startActivity(intent);
+    }
 }

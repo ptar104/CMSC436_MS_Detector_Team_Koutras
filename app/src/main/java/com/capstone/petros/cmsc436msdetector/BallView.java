@@ -9,9 +9,11 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.os.CountDownTimer;
 import android.os.Environment;
+import android.os.SystemClock;
 import android.provider.MediaStore;
 import android.util.AttributeSet;
 
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -117,7 +119,7 @@ public class BallView extends View {
     }
 
     // Call when resetting the test.
-    public void resetTest(){
+    public void resetTest() {
         currRoll = 0;
         currPitch = 0;
         prevRoll = 0;
@@ -139,6 +141,7 @@ public class BallView extends View {
     @Override
     public void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+
         paint1.setColor(Color.WHITE);
         paint2.setColor(Color.BLACK);
         paint3.setColor(Color.WHITE);
@@ -253,7 +256,7 @@ public class BallView extends View {
     }
 
     public void calculateJitteryness() {
-        // Idea: to get jitteryness, get an average of angle and magnitue of orientation changes
+        // Idea: to get jitteryness, get an average of angle and magnitude of orientation changes
         // over the points. Take the f-score (harmonic mean),
         // so BOTH have to be high for jitter score to be high.
         // Magnitude is between 0 and 90, based on how much the phone is tilted?

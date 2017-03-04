@@ -1,7 +1,5 @@
 package com.capstone.petros.cmsc436msdetector;
 
-import android.content.Context;
-import android.graphics.Color;
 import android.app.FragmentManager;
 import android.app.Activity;
 import android.hardware.Sensor;
@@ -10,14 +8,9 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.view.MotionEvent;
-import android.view.View;
 import android.widget.TextView;
 
-import org.w3c.dom.Text;
-
-public class BallActivity extends Activity {
-
+public class BallActivity extends Activity  implements TimedActivity {
     SensorEventListener sel;
     SensorManager sensorManager;
     Sensor accelerometer, magnetometer;
@@ -25,7 +18,6 @@ public class BallActivity extends Activity {
     BallView ballView;
     TextView threeSecondCountdownText;
     boolean doneRightTest = false;
-    public static final String HANDEDNESS_KEY = "HANDEDNESS_KEY";
 
     // 3 second timer that counts down before the test starts
     CountDownTimer prepTimer = new CountDownTimer(3100, 1000) {
@@ -60,7 +52,7 @@ public class BallActivity extends Activity {
                 FragmentManager fragmentManager = getFragmentManager();
                 InstructionFragment frag = new InstructionFragment();
                 Bundle bundle = new Bundle();
-                bundle.putString(HANDEDNESS_KEY, "right");
+                bundle.putString(InstructionFragment.MESSAGE_KEY, "Use your right hand to keep the ball in the center of the screen");
                 frag.setArguments(bundle);
                 frag.show(fragmentManager, null);
             }
@@ -123,6 +115,7 @@ public class BallActivity extends Activity {
         super.onPause();
         prepTimer.cancel();
         testTimer.cancel();
+        finish();
     }
 
     @Override
@@ -143,7 +136,7 @@ public class BallActivity extends Activity {
         InstructionFragment frag = new InstructionFragment();
 
         Bundle bundle = new Bundle();
-        bundle.putString(HANDEDNESS_KEY,"left");
+        bundle.putString(InstructionFragment.MESSAGE_KEY,"Use your left hand to keep the ball in the center of the screen");
         frag.setArguments(bundle);
 
         frag.show(fragmentManager, null);
@@ -153,9 +146,4 @@ public class BallActivity extends Activity {
         prepTimer.start();
     }
 
-    /*public void startTest(View v){
-        findViewById(R.id.instructionsText).setVisibility(View.GONE);
-        findViewById(R.id.ballView).setBackgroundColor(Color.GREEN);
-
-    }*/
 }

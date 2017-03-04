@@ -21,12 +21,12 @@
         <activity
             android:name=".SpiralActivity"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".BallActivity"
             android:label="@string/title_activity_ball"
-            android:theme="@style/Theme.AppCompat.NoActionBar"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
+        <activity android:name=".ReactionActivity"></activity>
     </application>
 
 </manifest>
