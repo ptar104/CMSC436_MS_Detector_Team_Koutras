@@ -26,7 +26,7 @@
             android:label="@string/title_activity_ball"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
-        <activity android:name=".ReactionActivity"></activity>
+        <activity android:name=".ReactionActivity" />
     </application>
 
 </manifest>

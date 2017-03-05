@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void startReactionTest(View view) {
-        Intent intent = new Intent(this,ReactionActivity.class);
+        Intent intent = new Intent(this, ReactionActivity.class);
         startActivity(intent);
     }
 }
