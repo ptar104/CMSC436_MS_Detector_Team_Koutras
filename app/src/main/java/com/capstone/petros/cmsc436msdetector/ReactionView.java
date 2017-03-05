@@ -13,7 +13,10 @@ import android.util.AttributeSet;
 import android.view.View;
 
 public class ReactionView extends View {
-    Paint textPaint;
+    Paint bubblePaint = new Paint();
+    float x = -1;
+    float y = -1;
+
 
     double totalScore = 0;
     double leftHandScore = -1, rightHandScore = -1;
@@ -35,7 +38,7 @@ public class ReactionView extends View {
     }
 
     private void init(AttributeSet attrs, int defStyle) {
-        textPaint = new Paint(Color.RED);
+
     }
 
     public void toggleTestActive(boolean active){
@@ -50,7 +53,12 @@ public class ReactionView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+        if (x == -1) {
+            x = getWidth()/2;
+            y = getHeight()/2;
+        }
 
-        canvas.drawText("Test",getWidth()/2,getHeight(),textPaint);
+        bubblePaint.setColor(Color.RED);
+        canvas.drawCircle(x, y, getWidth()/18, bubblePaint);
     }
 }
