@@ -86,7 +86,7 @@ public class ReactionView extends View {
                 y = generator.nextInt(adjustHeight - getHeight()/10) + getHeight()/10;
             }
         }
-        canvas.drawCircle(x, y, getWidth()/14, bubblePaint);
+        canvas.drawCircle(x, y, getWidth()/12, bubblePaint);
     }
 
     private boolean isInCircle(float x, float y, float circleX, float circleY, float radius) {
@@ -104,7 +104,7 @@ public class ReactionView extends View {
     public boolean onTouchEvent(MotionEvent event) {
         switch(event.getAction()){
             case MotionEvent.ACTION_DOWN:
-                if (isInCircle(event.getX(), event.getY(), x, y, getWidth()/14)) {
+                if (isInCircle(event.getX(), event.getY(), x, y, getWidth()/12)) {
                     if (count == 0) {
                         long sum = 0;
                         for (long i : reactTime) {
@@ -126,9 +126,6 @@ public class ReactionView extends View {
                     destroy = true;
                     //we only do 10 times.
                     count--;
-                    Toast.makeText(getContext(),"Bingo!",Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(getContext(),"Hit Again!",Toast.LENGTH_SHORT).show();
                 }
                 break;
 
