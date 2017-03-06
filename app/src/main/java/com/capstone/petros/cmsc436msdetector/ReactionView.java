@@ -10,13 +10,20 @@ import android.graphics.Path;
 import android.graphics.drawable.Drawable;
 import android.text.TextPaint;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Toast;
+
+import java.util.Random;
 
 public class ReactionView extends View {
+    Random generator = new Random();
     Paint bubblePaint = new Paint();
+    boolean destroy = false;
     float x = -1;
     float y = -1;
-
+    int adjustWidth;
+    int adjustHeight;
 
     double totalScore = 0;
     double leftHandScore = -1, rightHandScore = -1;
@@ -53,12 +60,49 @@ public class ReactionView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+        bubblePaint.setColor(Color.RED);
+        adjustWidth = getWidth() - getWidth()/10;
+        adjustHeight = getHeight() - getHeight()/10;
         if (x == -1) {
             x = getWidth()/2;
             y = getHeight()/2;
         }
 
-        bubblePaint.setColor(Color.RED);
-        canvas.drawCircle(x, y, getWidth()/18, bubblePaint);
+        if (destroy) {
+            x = generator.nextInt(adjustWidth - getWidth()/10) + getWidth()/10;
+            y = generator.nextInt(adjustHeight - getHeight()/10) + getHeight()/10;
+        }
+        canvas.drawCircle(x, y, getWidth()/14, bubblePaint);
+    }
+
+    private boolean isInCircle(float x, float y, float circleX, float circleY, float radius) {
+        double dx = Math.pow(x - circleX, 2);
+        double dy = Math.pow(y - circleY, 2);
+
+        if ((dx + dy) < Math.pow(radius, 2)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        switch(event.getAction()){
+            case MotionEvent.ACTION_DOWN:
+                if (isInCircle(event.getX(), event.getY(), x, y, getWidth()/14)) {
+                    destroy = true;
+                    Toast.makeText(getContext(),"Bingo!",Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getContext(),"Hit Again!",Toast.LENGTH_SHORT).show();
+                }
+                break;
+
+            case MotionEvent.ACTION_MOVE: case MotionEvent.ACTION_UP:
+                destroy = false;
+                break;
+        }
+        invalidate();
+        return true;
     }
 }
