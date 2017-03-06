@@ -2,13 +2,26 @@ package com.capstone.petros.cmsc436msdetector;
 
 import android.app.FragmentManager;
 import android.app.Activity;
+import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.util.Log;
 import android.widget.TextView;
+
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 public class BallActivity extends Activity  implements TimedActivity {
     SensorEventListener sel;
@@ -59,13 +72,22 @@ public class BallActivity extends Activity  implements TimedActivity {
             else {
                 ballView.saveRightHandFscore();
                 ((BallView)findViewById(R.id.ballView)).savePathToGallery(false);
+
+                // Save results
+                Log.d("Mark","Test is done, and the score was "+ballView.totalScore);
+                appendResultsToInternalStorage(ballView.totalScore);
+
                 ((BallView)findViewById(R.id.ballView)).resetTest();
+
                 FragmentManager fragmentManager = getFragmentManager();
                 CompletionFragment frag = new CompletionFragment();
                 frag.show(fragmentManager, null);
             }
         }
     };
+
+    public static final String BALL_TEST_DATA_FILENAME = "ball_test_data";
+    SortedMap<Long, Double> recordMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,6 +129,14 @@ public class BallActivity extends Activity  implements TimedActivity {
 
         doneRightTest = false;
 
+        // load the previous results
+        recordMap = getResultsFromInternalStorage();
+        if(recordMap != null) {
+            for (Long date : recordMap.keySet()) {
+                Log.d("Mark", "At " + date + ", you got " + recordMap.get(date));
+            }
+        }
+
         startTest();
     }
 
@@ -146,4 +176,48 @@ public class BallActivity extends Activity  implements TimedActivity {
         prepTimer.start();
     }
 
+    private void appendResultsToInternalStorage(double score) {
+        Long date = System.currentTimeMillis();
+
+        SortedMap<Long, Double> map = getResultsFromInternalStorage();
+
+        if(map == null) {
+            map = new TreeMap<>();
+        }
+
+        map.put(date,score);
+
+        FileOutputStream outputStream;
+        try {
+            outputStream = openFileOutput(BALL_TEST_DATA_FILENAME, Context.MODE_PRIVATE);
+            ObjectOutputStream writer = new ObjectOutputStream(outputStream);
+            writer.writeObject(map);
+            writer.close();
+            outputStream.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private SortedMap getResultsFromInternalStorage() {
+        FileInputStream inputStream;
+        ObjectInputStream objectInputStream;
+
+        TreeMap<Long, Double> map = null;
+
+        try {
+            inputStream = openFileInput(BALL_TEST_DATA_FILENAME);
+            objectInputStream = new ObjectInputStream(inputStream);
+
+            map = (TreeMap) objectInputStream.readObject();
+            objectInputStream.close();
+            inputStream.close();
+        } catch(FileNotFoundException e) {
+            // The file hasn't been created
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+
+        return map;
+    }
 }
