@@ -20,31 +20,19 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Choose Hand:"
+            android:text="Current Hand:"
             android:textSize="30sp"
             android:layout_marginBottom="10dp"/>
 
-        <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:checkedButton="@+id/Right">
-            <RadioButton android:id="@+id/Left"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Left"
-                android:textSize="30sp"
-                android:layout_marginRight="15dp"
-                android:onClick="onHandChanged"/>
-            <RadioButton android:id="@+id/Right"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Right"
-                android:textSize="30sp"
-                android:layout_marginLeft="15dp"
-                android:checked="true"
-                android:onClick="onHandChanged"/>
-        </RadioGroup>
+            android:text="Right"
+            android:id="@+id/currentHandText"
+            android:textSize="30sp"
+            />
+
+
     </LinearLayout>
 
     <ProgressBar
