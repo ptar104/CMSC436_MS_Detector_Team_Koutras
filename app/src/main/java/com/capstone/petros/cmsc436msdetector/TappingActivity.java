@@ -2,11 +2,14 @@ package com.capstone.petros.cmsc436msdetector;
 
 import android.graphics.PorterDuff;
 import android.os.CountDownTimer;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+
 import android.widget.TextView;
 
 import java.text.DecimalFormat;
@@ -17,8 +20,9 @@ public class TappingActivity extends AppCompatActivity {
     boolean firstTest = true;
     int numberOfTaps, previousTextNumberOfTaps, tryNumber = 1;
     float rightSum = 0, leftSum = 0;
-    TextView tv;
+    TextView tv, tutorialView;
     CountDownTimer countDown, clearText, tenSeconds, finishedText;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -139,6 +143,18 @@ public class TappingActivity extends AppCompatActivity {
         clearText.cancel();
         tenSeconds.cancel();
         finishedText.cancel();
+    }
+
+    public void showTutorial(View v) {
+       tutorialView = (TextView) findViewById(R.id.tutorial_view);
+
+        if (tutorialView.getVisibility() == View.GONE) {
+            tutorialView.setVisibility(View.VISIBLE);
+            tutorialView.setText("This is the tapping test. It measures how many taps you can make on the screen in a 10-second period. Tap the screen to begin, then tap as many times as you can. The test will automatically end after 10 seconds.");
+        }
+        else {
+            tutorialView.setVisibility(View.GONE);
+        }
     }
 
     public void processTap(View v) {
