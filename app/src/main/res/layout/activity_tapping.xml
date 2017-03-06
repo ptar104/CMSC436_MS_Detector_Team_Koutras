@@ -1,97 +1,105 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.capstone.petros.cmsc436msdetector.TappingActivity"
     android:id="@+id/activity_tapping"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="#FF88AAE0"
-    tools:context="com.capstone.petros.cmsc436msdetector.TappingActivity">
-
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:orientation="vertical"
-        android:gravity="center"
-        android:layout_weight=".2"
-        android:id="@+id/settings_bar"
-        android:background="#FF333333">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Choose Hand:"
-            android:textSize="30sp"
-            android:layout_marginBottom="10dp"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:layout_weight=".2"
+            android:id="@+id/settings_bar"
+            android:background="#FF333333">
 
-        <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:checkedButton="@+id/Right">
-            <RadioButton android:id="@+id/Left"
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Left"
+                android:text="Current Hand:"
                 android:textSize="30sp"
-                android:layout_marginRight="15dp"
-                android:onClick="onHandChanged"/>
-            <RadioButton android:id="@+id/Right"
+                android:layout_marginBottom="10dp"/>
+
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Right"
+                android:id="@+id/currentHandText"
                 android:textSize="30sp"
-                android:layout_marginLeft="15dp"
-                android:checked="true"
-                android:onClick="onHandChanged"/>
-        </RadioGroup>
-    </LinearLayout>
+                />
+        </LinearLayout>
 
-    <ProgressBar
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:layout_weight=".1"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:scaleY="5"
-        android:scaleX="-1"
-        android:max="10000"
-        android:progress="10000"
-        android:id="@+id/progress_bar"/>
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight=".6">
-
-        <ImageView
-            android:id="@+id/test_box"
+        <ProgressBar
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="#FFDDDDDD"
+            android:layout_height="0dp"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_weight=".1"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
-            android:clickable="true"
-            android:onClick="processTap"/>
+            android:scaleY="5"
+            android:scaleX="-1"
+            android:max="10000"
+            android:progress="10000"
+            android:id="@+id/progress_bar"/>
 
-        <TextView
-            android:id="@+id/start_text"
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight=".6">
+
+            <ImageView
+                android:id="@+id/test_box"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#FFDDDDDD"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:clickable="true"
+                android:onClick="processTap"/>
+
+            <TextView
+                android:id="@+id/start_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="Start"
+                android:textSize="100sp"
+                android:textColor="#000000"
+                android:textStyle="normal|bold"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"/>
+        </RelativeLayout>
+
+        <ImageView
+            android:id="@+id/tutorial_button"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_help_outline_black_24dp"
+            android:clickable="true"
+            android:onClick="showTutorial"/>
+
+        <Space
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:text="Start"
-            android:textSize="100sp"
-            android:textColor="#000000"
-            android:textStyle="normal|bold"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"/>
+            android:layout_weight=".1"/>
+    </LinearLayout>
 
 
-    </RelativeLayout>
-
-    <Space
+    <TextView
+        android:id="@+id/tutorial_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight=".1"/>
-</LinearLayout>
+        android:layout_centerInParent="true"
+        android:visibility="gone"
+        android:background="@android:color/holo_blue_dark"
+        android:text=""
+        />
+
+</RelativeLayout>

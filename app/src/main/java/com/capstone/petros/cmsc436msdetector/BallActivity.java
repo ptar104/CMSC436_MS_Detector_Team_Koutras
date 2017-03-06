@@ -27,10 +27,12 @@ public class BallActivity extends Activity  implements TimedActivity {
     SensorEventListener sel;
     SensorManager sensorManager;
     Sensor accelerometer, magnetometer;
-
+    Activity activity = this;
     BallView ballView;
     TextView threeSecondCountdownText;
     boolean doneRightTest = false;
+
+    public static final String BALL_TEST_DATA_FILENAME = "ball_test_data";
 
     // 3 second timer that counts down before the test starts
     CountDownTimer prepTimer = new CountDownTimer(3100, 1000) {
@@ -75,7 +77,7 @@ public class BallActivity extends Activity  implements TimedActivity {
 
                 // Save results
                 Log.d("Mark","Test is done, and the score was "+ballView.totalScore);
-                appendResultsToInternalStorage(ballView.totalScore);
+                Utils.appendResultsToInternalStorage(activity, BALL_TEST_DATA_FILENAME, ballView.totalScore);
 
                 ((BallView)findViewById(R.id.ballView)).resetTest();
 
@@ -86,8 +88,6 @@ public class BallActivity extends Activity  implements TimedActivity {
         }
     };
 
-    public static final String BALL_TEST_DATA_FILENAME = "ball_test_data";
-    SortedMap<Long, Double> recordMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -129,14 +129,6 @@ public class BallActivity extends Activity  implements TimedActivity {
 
         doneRightTest = false;
 
-        // load the previous results
-        recordMap = getResultsFromInternalStorage();
-        if(recordMap != null) {
-            for (Long date : recordMap.keySet()) {
-                Log.d("Mark", "At " + date + ", you got " + recordMap.get(date));
-            }
-        }
-
         startTest();
     }
 
@@ -176,48 +168,4 @@ public class BallActivity extends Activity  implements TimedActivity {
         prepTimer.start();
     }
 
-    private void appendResultsToInternalStorage(double score) {
-        Long date = System.currentTimeMillis();
-
-        SortedMap<Long, Double> map = getResultsFromInternalStorage();
-
-        if(map == null) {
-            map = new TreeMap<>();
-        }
-
-        map.put(date,score);
-
-        FileOutputStream outputStream;
-        try {
-            outputStream = openFileOutput(BALL_TEST_DATA_FILENAME, Context.MODE_PRIVATE);
-            ObjectOutputStream writer = new ObjectOutputStream(outputStream);
-            writer.writeObject(map);
-            writer.close();
-            outputStream.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private SortedMap getResultsFromInternalStorage() {
-        FileInputStream inputStream;
-        ObjectInputStream objectInputStream;
-
-        TreeMap<Long, Double> map = null;
-
-        try {
-            inputStream = openFileInput(BALL_TEST_DATA_FILENAME);
-            objectInputStream = new ObjectInputStream(inputStream);
-
-            map = (TreeMap) objectInputStream.readObject();
-            objectInputStream.close();
-            inputStream.close();
-        } catch(FileNotFoundException e) {
-            // The file hasn't been created
-        } catch(Exception e) {
-            e.printStackTrace();
-        }
-
-        return map;
-    }
 }

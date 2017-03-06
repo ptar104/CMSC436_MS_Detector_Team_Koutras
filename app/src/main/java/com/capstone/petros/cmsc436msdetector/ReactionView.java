@@ -1,6 +1,8 @@
 package com.capstone.petros.cmsc436msdetector;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -77,11 +79,14 @@ public class ReactionView extends View {
             endTime = System.currentTimeMillis();
             reactTime.add(endTime-startTime);
             startTime = System.currentTimeMillis();
-            x = generator.nextInt(adjustWidth - getWidth()/10) + getWidth()/10;
-            y = generator.nextInt(adjustHeight - getHeight()/10) + getHeight()/10;
-
+            float oldX = x;
+            float oldY = y;
+            while (x==oldX && y==oldY) {
+                x = generator.nextInt(adjustWidth - getWidth()/10) + getWidth()/10;
+                y = generator.nextInt(adjustHeight - getHeight()/10) + getHeight()/10;
+            }
         }
-        canvas.drawCircle(x, y, getWidth()/14, bubblePaint);
+        canvas.drawCircle(x, y, getWidth()/12, bubblePaint);
     }
 
     private boolean isInCircle(float x, float y, float circleX, float circleY, float radius) {
@@ -99,13 +104,28 @@ public class ReactionView extends View {
     public boolean onTouchEvent(MotionEvent event) {
         switch(event.getAction()){
             case MotionEvent.ACTION_DOWN:
-                if (isInCircle(event.getX(), event.getY(), x, y, getWidth()/14)) {
+                if (isInCircle(event.getX(), event.getY(), x, y, getWidth()/12)) {
+                    if (count == 0) {
+                        long sum = 0;
+                        for (long i : reactTime) {
+                            sum += i;
+                        }
+                        double average = (double) (sum/reactTime.size()/((double) 1000));
+                        AlertDialog builder;
+                        builder = new AlertDialog.Builder((ReactionActivity)getContext()).create();
+                        builder.setTitle("Test Ended");
+                        builder.setMessage("Average reaction time: " + average + " seconds");
+                        builder.setButton(AlertDialog.BUTTON_NEGATIVE, "Reset", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                resetReactionTest();
+                            }
+                        });
+
+                        builder.show();
+                    }
                     destroy = true;
                     //we only do 10 times.
                     count--;
-                    Toast.makeText(getContext(),"Bingo!",Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(getContext(),"Hit Again!",Toast.LENGTH_SHORT).show();
                 }
                 break;
 
@@ -115,5 +135,15 @@ public class ReactionView extends View {
         }
         invalidate();
         return true;
+    }
+
+    private void resetReactionTest() {
+        reactTime = new ArrayList<Long>();
+        count = 10;
+        x = -1;
+        y = -1;
+        destroy = false;
+        startTime = System.currentTimeMillis();
+        invalidate();
     }
 }

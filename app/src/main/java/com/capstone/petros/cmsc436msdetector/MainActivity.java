@@ -1,18 +1,35 @@
 package com.capstone.petros.cmsc436msdetector;
 
+import android.app.Activity;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        /*
+        String tempFile = "tempFile";
+        try {
+            Utils.appendResultsToInternalStorage(this, tempFile, 1);
+            Thread.sleep(100);
+            Utils.appendResultsToInternalStorage(this, tempFile, 2.1);
+            Thread.sleep(100);
+            Utils.appendResultsToInternalStorage(this, tempFile, 3.2);
+            Thread.sleep(100);
+            Utils.appendResultsToInternalStorage(this, tempFile, 4.3);
+        }
+        catch (Exception e){
+            // So?
+        }
+        GraphFragment gf = (GraphFragment) getFragmentManager().findFragmentById(R.id.graph);
+        gf.fillWithData(tempFile,4);
+        */
     }
 
 
