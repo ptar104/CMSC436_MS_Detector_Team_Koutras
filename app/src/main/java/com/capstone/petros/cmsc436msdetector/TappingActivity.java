@@ -3,14 +3,18 @@ package com.capstone.petros.cmsc436msdetector;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.CountDownTimer;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.RelativeLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,6 +25,7 @@ public class TappingActivity extends AppCompatActivity {
     boolean isLeftHand = false;
     boolean firstTest = true;
     int numberOfTaps, previousTextNumberOfTaps;
+    TextView tutorialView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +41,18 @@ public class TappingActivity extends AppCompatActivity {
         ProgressBar bar = (ProgressBar) findViewById(R.id.progress_bar);
         bar.getIndeterminateDrawable().setColorFilter(0xFFDD2400, android.graphics.PorterDuff.Mode.SRC_IN);
         bar.getProgressDrawable().setColorFilter(0xFFDD2400, PorterDuff.Mode.SRC_IN);
+    }
+
+    public void showTutorial(View v) {
+       tutorialView = (TextView) findViewById(R.id.tutorial_view);
+
+        if (tutorialView.getVisibility() == View.GONE) {
+            tutorialView.setVisibility(View.VISIBLE);
+            tutorialView.setText("This is the tapping test. It measures how many taps you can make on the screen in a 10-second period. Tap the screen to begin, then tap as many times as you can. The test will automatically end after 10 seconds.");
+        }
+        else {
+            tutorialView.setVisibility(View.GONE);
+        }
     }
 
     public void processTap(View v) {
