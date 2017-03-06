@@ -14,12 +14,17 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 public class ReactionView extends View {
     Random generator = new Random();
     Paint bubblePaint = new Paint();
     boolean destroy = false;
+    int count = 10;
+    ArrayList<Long> reactTime = new ArrayList<Long>();
+    long startTime = System.currentTimeMillis();
+    long endTime;
     float x = -1;
     float y = -1;
     int adjustWidth;
@@ -69,8 +74,12 @@ public class ReactionView extends View {
         }
 
         if (destroy) {
+            endTime = System.currentTimeMillis();
+            reactTime.add(endTime-startTime);
+            startTime = System.currentTimeMillis();
             x = generator.nextInt(adjustWidth - getWidth()/10) + getWidth()/10;
             y = generator.nextInt(adjustHeight - getHeight()/10) + getHeight()/10;
+
         }
         canvas.drawCircle(x, y, getWidth()/14, bubblePaint);
     }
@@ -92,6 +101,8 @@ public class ReactionView extends View {
             case MotionEvent.ACTION_DOWN:
                 if (isInCircle(event.getX(), event.getY(), x, y, getWidth()/14)) {
                     destroy = true;
+                    //we only do 10 times.
+                    count--;
                     Toast.makeText(getContext(),"Bingo!",Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(getContext(),"Hit Again!",Toast.LENGTH_SHORT).show();
