@@ -36,6 +36,7 @@ public class GraphView extends View {
     Paint dataTextPaint; // For the data text
     Paint popupPaint; // For the popup
     Paint popupTextPaint; // For the popup text
+    Paint noDataTextPaint; // For the noData text
 
     public GraphView(Context context) {
         super(context);
@@ -117,12 +118,27 @@ public class GraphView extends View {
         popupTextPaint.setStyle(Paint.Style.STROKE);
         popupTextPaint.setColor(Color.BLACK);
 
+        noDataTextPaint = new Paint();
+        noDataTextPaint.setAntiAlias(true);
+        noDataTextPaint.setTextSize(20); // I hope it's px...
+        noDataTextPaint.setStyle(Paint.Style.STROKE);
+        noDataTextPaint.setColor(Color.BLACK);
     }
 
 
     @Override
     public void onDraw(Canvas canvas) {
         int width = canvas.getWidth(), height = canvas.getHeight();
+
+        if(data == null || data.isEmpty()){
+            String noData = "[No data to show for this graph.]";
+            canvas.drawText(noData,
+                    getWidth()/2 - noDataTextPaint.measureText(noData)/2,
+                    getHeight()/2 -10,
+                    noDataTextPaint);
+            canvas.drawRect(0,0,getWidth(),getHeight(),axisPaint);
+            return;
+        }
 
         // Want to draw a graph here, given certain X and Y data.
         // Graph will scale according to width and height necessary.

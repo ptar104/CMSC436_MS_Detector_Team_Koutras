@@ -100,21 +100,34 @@
 
     </RelativeLayout>
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight=".25">
+
+        <Button
+            android:text="Graph Demo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_weight=".1"
+            android:scaleX="2"
+            android:scaleY="2"
+            android:id="@+id/ReactionGraphButton"
+            android:onClick="startReactionGraphDemo"/>
+
+    </RelativeLayout>
+
     <!--
 
     <fragment
         android:name="com.capstone.petros.cmsc436msdetector.GraphFragment"
-        android:id="@+id/graph"
+        android:id="@+i/graph"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
         />
 
      -->
-
-    <Space
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight=".25"/>
 
 </LinearLayout>

@@ -7,17 +7,100 @@
     android:background="#FF88AAE0"
     tools:context="com.capstone.petros.cmsc436msdetector.ReactionActivity">
 
+    <com.capstone.petros.cmsc436msdetector.ReactionView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#FF88AAE0"
+        android:layout_centerInParent="true"
+        android:id="@+id/reactionView"/>
+
+    <LinearLayout
+        android:id="@+id/reactionTextLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:orientation="vertical">
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight=".1"/>
+
+        <TextView
+            android:id="@+id/reactionTopText"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight=".3"
+            android:text="REACTION TEST:\n\nTap the moving red dot as fast as you can."
+            android:textSize="30sp"
+            android:textAlignment="center"/>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight=".2"/>
+
+        <TextView
+            android:id="@+id/reactionBottomText"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight=".3"
+            android:text="\nTap the red dot above to begin the test."
+            android:textSize="30sp"
+            android:textAlignment="center"/>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight=".1"/>
+
+
+    </LinearLayout>
+
     <RelativeLayout
+        android:id="@+id/reactionShader"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#CC000000"
+        android:visibility="gone"
+        android:clickable="true"
+        android:onClick="showTutorial"/>
+
+
+    <FrameLayout
+        android:id="@+id/reactionFrame"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:ignore="ExtraText">
+        android:background="#FFF6FF00"
+        android:layout_centerInParent="true"
+        android:layout_margin="15dp"
+        android:padding="2dp"
+        android:visibility="gone">
 
-        <com.capstone.petros.cmsc436msdetector.ReactionView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="#FF88AAE0"
-            android:layout_centerInParent="true"
-            android:id="@+id/reactionView"/>
-    </RelativeLayout>
+        <TextView
+            android:id="@+id/reactionInstructions"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="15dp"
+            android:background="#FF0b1b33"
+            android:text=""
+            android:textAlignment="center"
+            android:textSize="20sp"
+            />
+
+    </FrameLayout>
+
+
+    <ImageView
+        android:id="@+id/reactionTutorialButton"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/ic_help_outline_black_24dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:clickable="true"
+        android:onClick="showTutorial"/>
+
 
 </RelativeLayout>
