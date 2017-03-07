@@ -7,9 +7,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.text.DecimalFormat;
@@ -100,38 +103,39 @@ public class TappingActivity extends AppCompatActivity {
             }
             public void onFinish(){
                 tv.setTextSize(30);
-                String output = " You tapped " + previousTextNumberOfTaps + " times!\n";
+                String output = "You tapped " + previousTextNumberOfTaps + " times!\n";
 
                 if(tryNumber < 4){
                     rightSum += previousTextNumberOfTaps;
                     if(tryNumber == 3){
-                        output += " That was trial " + tryNumber + " of 3\n "
-                                + "with your right hand."
-                                + "\n\n Switch to your left\n hand and tap to restart";
+                        output += "That was trial " + tryNumber + " of 3 with your right hand.\n\n" +
+                                "Switch to your left hand and tap to restart.";
                     } else {
-                        output += " Tap again to restart.\n\n"
-                                + " That was trial " + tryNumber + " of 3\n "
-                                + "with your right hand.";
+                        output += "Tap again to restart.\n\n"
+                                + "That was trial " + tryNumber + " of 3 with your right hand.";
                     }
 
                 } else if(tryNumber == 6) {
                     DecimalFormat df = new DecimalFormat("#.#");
 
-                    output += " Test complete! \n\n Right average: "+ df.format(rightSum/3) + " taps"
-                           + "\n Left average: " + df.format(leftSum/3) +" taps";
+                    output += "\nAll tests complete!\n\n" +
+                            "Right average: "+ df.format(rightSum/3) + " taps.\n" +
+                            "Left average: " + df.format(leftSum/3) +" taps.";
 
                     //save averages using utils or something
                 } else {
                     leftSum += previousTextNumberOfTaps;
-                    output += " Tap again to restart.\n\n"
-                            + " That was trial " + (6-tryNumber) + " of 3\n "
-                            + "with your left hand.";
+                    output += "Tap again to restart.\n\n"
+                            + "That was trial " + (tryNumber-3) + " of 3 with your left hand.";
                 }
                 tryNumber++;
                 tv.setText(output);
                 ImageView testBox = (ImageView)findViewById(R.id.test_box);
                 testBox.setBackgroundColor(0xFFDDDDDD);
                 testBox.setClickable(true);
+
+                // Show the "?" again.
+                findViewById(R.id.tutorial_button).setVisibility(View.VISIBLE);
             }
         };
     }
@@ -146,14 +150,28 @@ public class TappingActivity extends AppCompatActivity {
     }
 
     public void showTutorial(View v) {
-       tutorialView = (TextView) findViewById(R.id.tutorial_view);
+        FrameLayout frame = (FrameLayout)findViewById(R.id.tappingFrame);
+        tutorialView = (TextView) findViewById(R.id.tappingInstructions);
+        RelativeLayout shader = (RelativeLayout)findViewById(R.id.tappingShader);
+        ImageView tutorialButton = (ImageView)findViewById(R.id.tutorial_button);
 
-        if (tutorialView.getVisibility() == View.GONE) {
-            tutorialView.setVisibility(View.VISIBLE);
-            tutorialView.setText("This is the tapping test. It measures how many taps you can make on the screen in a 10-second period. Tap the screen to begin, then tap as many times as you can. The test will automatically end after 10 seconds.");
+        if (frame.getVisibility() == View.GONE) {
+            frame.setVisibility(View.VISIBLE);
+            tutorialView.setText("INSTRUCTIONS:\n\n" +
+                    "This is the tapping test.\n\n" +
+                    "It measures how many taps you can make on the screen in a 10-second period.\n\n" +
+                    "This test will require you to perform three trials with each hand. " +
+                    "First your right hand, then your left hand.\n\n" +
+                    "Please only tap with one finger during the tests, preferably your index finger.\n\n" +
+                    "Tap the screen to begin, then tap as many times as you can. " +
+                    "The on-screen prompts will guide you throughout the test.");
+            shader.setVisibility(View.VISIBLE);
+            tutorialButton.setColorFilter(0xFFF6FF00);
         }
         else {
-            tutorialView.setVisibility(View.GONE);
+            frame.setVisibility(View.GONE);
+            shader.setVisibility(View.GONE);
+            tutorialButton.setColorFilter(0xFF000000);
         }
     }
 
@@ -192,6 +210,10 @@ public class TappingActivity extends AppCompatActivity {
             }
 
             firstTest = false;
+
+            // Hide the "?" button
+            findViewById(R.id.tutorial_button).setVisibility(View.GONE);
+
             countDown.start();
 
         } else {

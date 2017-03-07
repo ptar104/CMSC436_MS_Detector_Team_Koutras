@@ -27,6 +27,11 @@
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
         <activity android:name=".ReactionActivity" />
+        <activity
+            android:name=".ReactionGraphDemo"
+            android:label="@string/title_activity_reaction_graph_demo"
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
+        <activity android:name=".ReactionGraphDemoActivity"></activity>
     </application>
 
 </manifest>

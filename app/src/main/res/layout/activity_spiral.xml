@@ -1,54 +1,108 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/activity_spiral"
+    tools:context="com.capstone.petros.cmsc436msdetector.SpiralActivity"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FF88AAE0"
-    android:orientation="vertical"
-    tools:context="com.capstone.petros.cmsc436msdetector.SpiralActivity">
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight=".2"
-        android:text="Put your finger \n in the middle of the Spiral"
-        android:textSize="30sp"
-        android:gravity="center_horizontal|center_vertical"
-        android:id="@+id/Instructions"/>
+    android:id="@+id/activity_spiral">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:orientation="horizontal"
-        android:layout_weight=".1">
+        android:layout_height="match_parent"
+        android:background="#FF88AAE0"
+        android:orientation="vertical">
 
-        <Button
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight=".45"
-            android:text="Reset Test"
-            android:textSize="20sp"
-            android:onClick="resetTest" />
-        <Space
-            android:layout_width="0dp"
+        <TextView
+            android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight=".1"/>
-        <Button
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight=".45"
-            android:text="Save Test"
-            android:textSize="20sp"
-            android:onClick="saveImage" />
+            android:layout_weight=".2"
+            android:text="Put your finger \n in the middle of the Spiral"
+            android:textSize="30sp"
+            android:gravity="center_horizontal|center_vertical"
+            android:id="@+id/Instructions"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:orientation="horizontal"
+            android:layout_weight=".1">
+
+            <Button
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight=".45"
+                android:text="Reset Test"
+                android:textSize="20sp"
+                android:onClick="resetTest" />
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight=".1"/>
+            <Button
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight=".45"
+                android:text="Save Test"
+                android:textSize="20sp"
+                android:onClick="saveImage" />
+        </LinearLayout>
+
+        <com.capstone.petros.cmsc436msdetector.SpiralView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:background="#FFFFFFFF"
+            android:layout_weight=".7"
+            android:id="@+id/SpiralView"
+            />
+
     </LinearLayout>
 
-    <com.capstone.petros.cmsc436msdetector.SpiralView
+    <RelativeLayout
+        android:id="@+id/spiralShader"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:background="#FFFFFFFF"
-        android:layout_weight=".7"
-        android:id="@+id/SpiralView"
-        />
+        android:layout_height="match_parent"
+        android:background="#CC000000"
+        android:visibility="gone"
+        android:clickable="true"
+        android:onClick="showTutorial"/>
 
-</LinearLayout>
+
+    <ScrollView
+        android:id="@+id/spiralFrame"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#FFF6FF00"
+        android:layout_marginRight="15dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="37dp"
+        android:padding="2dp"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/spiralInstructions"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="15dp"
+            android:background="#FF0b1b33"
+            android:text=""
+            android:textAlignment="center"
+            android:textSize="20sp"
+            />
+
+    </ScrollView>
+
+
+    <ImageView
+        android:id="@+id/spiralTutorialButton"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/ic_help_outline_black_24dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:clickable="true"
+        android:onClick="showTutorial"/>
+
+</RelativeLayout>

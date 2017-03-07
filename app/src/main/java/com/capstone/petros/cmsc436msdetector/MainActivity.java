@@ -53,4 +53,9 @@ public class MainActivity extends Activity {
         Intent intent = new Intent(this, ReactionActivity.class);
         startActivity(intent);
     }
+
+    public void startReactionGraphDemo(View view){
+        Intent intent = new Intent(this, ReactionGraphDemoActivity.class);
+        startActivity(intent);
+    }
 }

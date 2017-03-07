@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_reaction_graph_demo"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FF88AAE0"
+    android:orientation="vertical"
+    tools:context="com.capstone.petros.cmsc436msdetector.ReactionGraphDemoActivity">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight=".4"
+        android:padding="30dp"
+        android:textAlignment="center"
+        android:text="\nThis is the graph of the scores from the last 10 reaction tests:"
+        android:textSize="30sp"/>
+
+    <fragment
+        android:name="com.capstone.petros.cmsc436msdetector.GraphFragment"
+        android:id="@+id/graph"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_margin="10dp"
+        android:layout_weight=".5"
+        />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight=".1"/>
+
+</LinearLayout>

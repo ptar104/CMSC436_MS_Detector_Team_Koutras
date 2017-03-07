@@ -5,6 +5,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 public class SpiralActivity extends AppCompatActivity {
@@ -38,5 +42,33 @@ public class SpiralActivity extends AppCompatActivity {
 
     public void resetTest(View view){
         ((SpiralView)findViewById(R.id.SpiralView)).resetSpiralTest();
+    }
+
+    public void showTutorial(View v) {
+        ScrollView frame = (ScrollView)findViewById(R.id.spiralFrame);
+        TextView tutorialView = (TextView) findViewById(R.id.spiralInstructions);
+        RelativeLayout shader = (RelativeLayout)findViewById(R.id.spiralShader);
+        ImageView tutorialButton = (ImageView)findViewById(R.id.spiralTutorialButton);
+
+        if (frame.getVisibility() == View.GONE) {
+            frame.setVisibility(View.VISIBLE);
+            tutorialView.setText("INSTRUCTIONS:\n\n" +
+                    "This is the spiral test.\n\n" +
+                    "It measures how closely you can trace a spiral.\n\n" +
+                    "To do the spiral test, simply place your finger in the middle of the spiral, " +
+                    "and trace until you reach the end of the spiral.\n\n" +
+                    "You are free to lift your finger and put it back down on the screen while " +
+                    "drawing the spiral, but doing so for more than 10 seconds will end the test.\n\n" +
+                    "The \"SAVE TEST\" button will finish the test, and the \"RESET TEST\" button " +
+                    "will restart the test from the beginning.\n\n" +
+                    "Once the test finishes, a report will be saved to your gallery.");
+            shader.setVisibility(View.VISIBLE);
+            tutorialButton.setColorFilter(0xFFF6FF00);
+        }
+        else {
+            frame.setVisibility(View.GONE);
+            shader.setVisibility(View.GONE);
+            tutorialButton.setColorFilter(0xFF000000);
+        }
     }
 }
