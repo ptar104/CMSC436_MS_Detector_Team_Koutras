@@ -67,7 +67,6 @@
         android:clickable="true"
         android:onClick="showTutorial"/>
 
-
     <FrameLayout
         android:id="@+id/reactionFrame"
         android:layout_width="wrap_content"
@@ -90,7 +89,6 @@
             />
 
     </FrameLayout>
-
 
     <ImageView
         android:id="@+id/reactionTutorialButton"

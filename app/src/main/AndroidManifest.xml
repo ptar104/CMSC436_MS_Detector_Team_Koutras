@@ -3,6 +3,7 @@
     package="com.capstone.petros.cmsc436msdetector">
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.VIBRATE"/>
 
     <application
         android:allowBackup="true"
@@ -30,6 +31,8 @@
         <activity android:name=".ReactionActivity"
             android:screenOrientation="portrait"/>
         <activity android:name=".ReactionGraphDemoActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".FlexActivity"
             android:screenOrientation="portrait"/>
     </application>
 
