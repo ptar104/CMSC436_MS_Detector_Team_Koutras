@@ -31,7 +31,8 @@
             android:name=".ReactionGraphDemo"
             android:label="@string/title_activity_reaction_graph_demo"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
-        <activity android:name=".ReactionGraphDemoActivity"></activity>
+        <activity android:name=".ReactionGraphDemoActivity" />
+        <activity android:name=".FlexActivity"></activity>
     </application>
 
 </manifest>

@@ -26,7 +26,7 @@
         android:textSize="36sp"
         android:fontFamily="sans-serif"
         android:textStyle="normal|bold"
-        android:layout_weight=".3"/>
+        android:layout_weight=".15"/>
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -115,6 +115,26 @@
             android:scaleY="2"
             android:id="@+id/ReactionGraphButton"
             android:onClick="startReactionGraphDemo"/>
+
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight=".25">
+
+        <Button
+            android:text="Flex Demo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_weight=".1"
+            android:scaleX="2"
+            android:scaleY="2"
+            android:id="@+id/FlexButton"
+            android:onClick="startFlexDemo"/>
+
 
     </RelativeLayout>
 

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_flex"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FF88AAE0"
+    tools:context="com.capstone.petros.cmsc436msdetector.FlexActivity">
+
+    <LinearLayout
+        android:id="@+id/flexScreen"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/flexRollText"
+            android:layout_margin="30dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Roll: "
+            android:textSize="30sp"/>
+
+        <TextView
+            android:id="@+id/flexTestText"
+            android:layout_margin="30dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="waiting..."
+            android:textSize="30sp"/>
+
+        <TextView
+            android:id="@+id/flexCompleteText"
+            android:layout_margin="30dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Completed cycles: 0"
+            android:textSize="30sp"/>
+
+        <TextView
+            android:id="@+id/flexIncompleteText"
+            android:layout_margin="30dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Incomplete cycles: 0"
+            android:textSize="30sp"/>
+
+        <TextView
+            android:id="@+id/flexTimeText"
+            android:layout_margin="30dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Time: ..."
+            android:textSize="30sp"/>
+
+    </LinearLayout>
+
+</RelativeLayout>

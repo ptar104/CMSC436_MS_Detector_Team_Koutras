@@ -58,4 +58,9 @@ public class MainActivity extends Activity {
         Intent intent = new Intent(this, ReactionGraphDemoActivity.class);
         startActivity(intent);
     }
+
+    public void startFlexDemo(View view){
+        Intent intent = new Intent(this, FlexActivity.class);
+        startActivity(intent);
+    }
 }
