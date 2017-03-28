@@ -1,7 +1,12 @@
 package com.capstone.petros.cmsc436msdetector;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.DialogFragment;
+import android.app.FragmentManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -34,6 +39,7 @@ public class FlexActivity extends Activity {
     private static final int VIBRATE_DURATION = 500;
     TextView flexCompleteCount, flexIncompleteCount;
     MediaPlayer mediaPlayer;
+    boolean doneRightTest = false;
 
     private boolean touchedShoulder = false;
     private int completedCycles = 0, incompletedCycles = 0;
@@ -52,6 +58,9 @@ public class FlexActivity extends Activity {
 
         flexCompleteCount = (TextView)findViewById(R.id.flexCompleteText);
         flexIncompleteCount = (TextView)findViewById(R.id.flexIncompleteText);
+
+        vibrator = (Vibrator)getSystemService(Context.VIBRATOR_SERVICE);
+        doneRightTest = false;
 
         sel = new SensorEventListener() {
             float[] mGravity;
@@ -107,7 +116,14 @@ public class FlexActivity extends Activity {
             }
         });
 
-        vibrator = (Vibrator)getSystemService(Context.VIBRATOR_SERVICE);
+        FragmentManager fragmentManager = getFragmentManager();
+        FlexInstructionFragment frag = new FlexInstructionFragment();
+
+        Bundle bundle = new Bundle();
+        bundle.putString(InstructionFragment.MESSAGE_KEY,"Retract and extend your left arm 10 times.");
+        frag.setArguments(bundle);
+
+        frag.show(fragmentManager, null);
     }
 
     private void resetTest(){
@@ -192,6 +208,25 @@ public class FlexActivity extends Activity {
                     }
                     mediaPlayer = MediaPlayer.create(this, R.raw.completion);
                     mediaPlayer.start();
+
+                    // If right's not done, start that
+                    if(!doneRightTest) {
+                        doneRightTest = true;
+                        FragmentManager fragmentManager = getFragmentManager();
+                        FlexInstructionFragment frag = new FlexInstructionFragment();
+
+                        Bundle bundle = new Bundle();
+                        bundle.putString(InstructionFragment.MESSAGE_KEY,"Retract and extend your right arm 10 times.");
+                        frag.setArguments(bundle);
+
+                        frag.show(fragmentManager, null);
+                    }
+                    else {
+                        FragmentManager fragmentManager = getFragmentManager();
+                        CompletionFragment frag = new CompletionFragment();
+
+                        frag.show(fragmentManager, null);
+                    }
                 }
                 break;
         }
