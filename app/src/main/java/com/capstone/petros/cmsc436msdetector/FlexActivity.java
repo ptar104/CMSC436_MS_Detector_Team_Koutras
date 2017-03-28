@@ -22,6 +22,8 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import java.text.DecimalFormat;
+
 public class FlexActivity extends Activity {
     SensorEventListener sel;
     SensorManager sensorManager;
@@ -34,12 +36,12 @@ public class FlexActivity extends Activity {
             STATE_OUT_SECOND_HALF = 3;
     private int state = STATE_IN_FIRST_HALF;
 
-    private static final int GIVE = 15, MID_GIVE = 10;  // The "give" to be considered at the start or end
+    private static final int GIVE = 15, MID_GIVE = 15;  // The "give" to be considered at the start or end
     private Vibrator vibrator;                          // Provides feedback upon a complete cycle
     private static final int VIBRATE_DURATION = 500;
     TextView flexCompleteCount, flexIncompleteCount;
     MediaPlayer mediaPlayer;
-    boolean doneRightTest = false;
+    boolean doneRightTest = false, doneBothTests = false;
 
     private boolean touchedShoulder = false;
     private int completedCycles = 0, incompletedCycles = 0;
@@ -82,7 +84,7 @@ public class FlexActivity extends Activity {
                         roll = (float)(orientation[2] * (180/Math.PI)); // convert to degs.
                         roll = Math.abs(roll); // Orientation of roll doesn't matter
                         //((TextView)findViewById(R.id.flexRollText)).setText("Roll: "+roll);
-                        if(down && released && !testInProgress && roll < 15){
+                        if(down && released && !testInProgress && roll < 15 && !doneBothTests){
                             // Clear old test
                             resetTest();
                             // Start the test
@@ -143,7 +145,7 @@ public class FlexActivity extends Activity {
     private void rollUpdated(float roll){
         // Since going "in" all the way isn't exactly 180 degrees...
         // 80 will be the midpoint.
-        int startPoint = 0, endpoint = 160, midpoint = (endpoint + startPoint) / 2; // The start/end points
+        int startPoint = 0, endpoint = 180, midpoint = (endpoint + startPoint) / 2; // The start/end points
         switch (state){
             case STATE_IN_FIRST_HALF:
                 if(roll > midpoint + MID_GIVE){
@@ -209,8 +211,15 @@ public class FlexActivity extends Activity {
                     mediaPlayer = MediaPlayer.create(this, R.raw.completion);
                     mediaPlayer.start();
 
+
+
                     // If right's not done, start that
                     if(!doneRightTest) {
+                        // First, save the results
+                        ((TextView)findViewById(R.id.flexResultsText2)).setText("      Completed Cycles: "+completedCycles);
+                        ((TextView)findViewById(R.id.flexResultsText3)).setText("      Incomplete Cycles: "+incompletedCycles);
+                        ((TextView)findViewById(R.id.flexResultsText4)).setText("      Time Taken: "+(totalTime/1000.0)+"s");
+
                         doneRightTest = true;
                         FragmentManager fragmentManager = getFragmentManager();
                         FlexInstructionFragment frag = new FlexInstructionFragment();
@@ -222,10 +231,23 @@ public class FlexActivity extends Activity {
                         frag.show(fragmentManager, null);
                     }
                     else {
+                        // First, save the results
+                        ((TextView)findViewById(R.id.flexResultsText6)).setText("      Completed Cycles: "+completedCycles);
+                        ((TextView)findViewById(R.id.flexResultsText7)).setText("      Incomplete Cycles: "+incompletedCycles);
+                        ((TextView)findViewById(R.id.flexResultsText8)).setText("      Time Taken: "+(totalTime/1000.0)+"s");
+
                         FragmentManager fragmentManager = getFragmentManager();
-                        CompletionFragment frag = new CompletionFragment();
+                        FlexInstructionFragment frag = new FlexInstructionFragment();
+
+                        Bundle bundle = new Bundle();
+                        bundle.putString(InstructionFragment.MESSAGE_KEY,"Test completed. Hit 'continue' to view scores.");
+                        frag.setArguments(bundle);
 
                         frag.show(fragmentManager, null);
+
+                        // Show the scores now.
+                        findViewById(R.id.flexScreen).setVisibility(View.GONE);
+                        findViewById(R.id.flexScores).setVisibility(View.VISIBLE);
                     }
                 }
                 break;
@@ -245,7 +267,8 @@ public class FlexActivity extends Activity {
                     "It measures how quickly you can extend and retract your arm.\n\n" +
                     "Retract then extend your arm 10 times.\n\n" +
                     "Try to keep your wrist fixed and make sure you touch your shoulder.\n\n" +
-                    "To begin the test, simply touch the screen then start retracting and extending.");
+                    "To begin the test, simply touch the screen with the in your arm fully extended, " +
+                    "then start retracting and extending.");
             shader.setVisibility(View.VISIBLE);
             tutorialButton.setColorFilter(0xFFF6FF00);
         }

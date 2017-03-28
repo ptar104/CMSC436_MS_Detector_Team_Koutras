@@ -31,11 +31,12 @@ public class FlexInstructionFragment extends DialogFragment {
                         //show the view
                     }
                 })
+                /*
                 .setNegativeButton(R.string.back_string, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         getActivity().finish();
                     }
-                });
+                })*/;
         // Create the AlertDialog object and return it
         return builder.create();
     }

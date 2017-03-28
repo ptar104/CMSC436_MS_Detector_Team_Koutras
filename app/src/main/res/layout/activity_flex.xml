@@ -59,7 +59,11 @@
         android:id="@+id/flexScreen"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:layout_below="@+id/flexShader"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -108,6 +112,94 @@
         </LinearLayout>
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/flexScores"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/flexResultsText1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight=".125"
+            android:textSize="30dp"
+            android:text="  Left Hand Results:"
+            android:gravity="center_vertical"/>
+
+        <TextView
+            android:id="@+id/flexResultsText2"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight=".125"
+            android:textSize="30dp"
+            android:text="Results text"
+            android:gravity="center_vertical"/>
+
+        <TextView
+            android:id="@+id/flexResultsText3"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight=".125"
+            android:textSize="30dp"
+            android:text="Results text"
+            android:gravity="center_vertical"/>
+
+        <TextView
+            android:id="@+id/flexResultsText4"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight=".125"
+            android:textSize="30dp"
+            android:text="Results text"
+            android:gravity="center_vertical"/>
+
+        <TextView
+            android:id="@+id/flexResultsText5"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight=".125"
+            android:textSize="30dp"
+            android:text="  Right Hand Results:"
+            android:gravity="center_vertical"/>
+
+        <TextView
+            android:id="@+id/flexResultsText6"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight=".125"
+            android:textSize="30dp"
+            android:text="Results text"
+            android:gravity="center_vertical"/>
+
+        <TextView
+            android:id="@+id/flexResultsText7"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight=".125"
+            android:textSize="30dp"
+            android:text="Results text"
+            android:gravity="center_vertical"/>
+
+        <TextView
+            android:id="@+id/flexResultsText8"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight=".125"
+            android:textSize="30dp"
+            android:text="Results text"
+            android:gravity="center_vertical"/>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight=".125"/>
+
+
+
+    </LinearLayout>
+
     <RelativeLayout
         android:id="@+id/flexShader"
         android:layout_width="match_parent"
@@ -138,6 +230,7 @@
             android:textSize="20sp"
             />
     </FrameLayout>
+
 
     <ImageView
         android:id="@+id/flexTutorialButton"
