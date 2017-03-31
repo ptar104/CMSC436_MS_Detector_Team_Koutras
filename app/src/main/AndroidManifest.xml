@@ -22,7 +22,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Sheets" />
+        <activity android:name=".SheetsLocal" />
         <activity android:name=".TappingActivity"
             android:screenOrientation="portrait"/>
         <activity
