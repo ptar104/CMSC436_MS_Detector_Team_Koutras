@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -45,6 +46,8 @@ public class SpiralView extends View {
     boolean firstTouchRecorded = false;
     long startTime;
     long endTime;
+    public static double testDuration;
+    public static String score;
 
     int numCycles;
     Point closestPoint;
@@ -54,10 +57,7 @@ public class SpiralView extends View {
     CountDownTimer countdown;
 
     boolean up = false;
-    //Variables for 5 sec timeout
-    long elapsed;
-    final static long INTERVAL=1000;
-    final static long TIMEOUT=5000;
+
 
     List<ArrayList<Point>> userTrace;
 
@@ -373,7 +373,8 @@ public class SpiralView extends View {
     public void saveTestToGallery(){
         countdown.cancel();
         // recording how much time the test took
-        long testDuration = endTime - startTime;
+        testDuration = endTime - startTime;
+        score = evaluateTrace();
         //Set up the report.
 
         //Dividing line
@@ -402,8 +403,8 @@ public class SpiralView extends View {
         paintText.setTextSize(30);
         SimpleDateFormat date = new SimpleDateFormat("MM/dd/yyyy hh:mm a");
         _reportCanvas.drawText("Time of test: "+date.format(new Date()), 20,_offScreenCanvas.getHeight()+200, paintText);
-        _reportCanvas.drawText("Duration of test: "+ testDuration/1000.0 + " seconds", 20,_offScreenCanvas.getHeight()+250, paintText);
-        _reportCanvas.drawText("Test grade: "+ evaluateTrace(), 20,_offScreenCanvas.getHeight()+300, paintText);
+        _reportCanvas.drawText("Duration of test: "+ testDuration + " seconds", 20,_offScreenCanvas.getHeight()+250, paintText);
+        _reportCanvas.drawText("Test grade: "+ score, 20,_offScreenCanvas.getHeight()+300, paintText);
 
         // Taken from code in Jon Froehlich's CMSC434 class.
         String fName = UUID.randomUUID().toString() + ".png";
