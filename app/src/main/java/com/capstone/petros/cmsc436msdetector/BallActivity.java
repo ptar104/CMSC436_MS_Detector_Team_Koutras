@@ -3,6 +3,7 @@ package com.capstone.petros.cmsc436msdetector;
 import android.app.FragmentManager;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -79,6 +80,10 @@ public class BallActivity extends Activity  implements TimedActivity {
                 Log.d("Mark","Test is done, and the score was "+ballView.totalScore);
                 Utils.appendResultsToInternalStorage(activity, BALL_TEST_DATA_FILENAME, ballView.totalScore);
 
+                // write the results to the google sheets
+                sendToSheets(ballView.leftHandScore, SheetsLocal.UpdateType.LH_LEVEL.ordinal());
+                sendToSheets(ballView.rightHandScore, SheetsLocal.UpdateType.RH_LEVEL.ordinal());
+
                 ((BallView)findViewById(R.id.ballView)).resetTest();
 
                 FragmentManager fragmentManager = getFragmentManager();
@@ -87,6 +92,16 @@ public class BallActivity extends Activity  implements TimedActivity {
             }
         }
     };
+
+    private void sendToSheets(double score, int sheet) {
+        Intent sheetsLocal = new Intent(this, SheetsLocal.class);
+
+        sheetsLocal.putExtra(SheetsLocal.EXTRA_TYPE, sheet);
+        sheetsLocal.putExtra(SheetsLocal.EXTRA_USER, getString(R.string.patientID));
+        sheetsLocal.putExtra(SheetsLocal.EXTRA_VALUE, score);
+
+        startActivity(sheetsLocal);
+    }
 
 
     @Override
