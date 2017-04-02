@@ -145,15 +145,15 @@ public class TappingActivity extends AppCompatActivity {
     }
 
     private void sendToSheets() {
-        Intent sheets = new Intent(this, SheetsLocal.class);
+        Intent sheetsLocal = new Intent(this, SheetsLocal.class);
         String myUserId = "t10p01";
         float avg_tapping_time = 72.4f;
 
-        sheets.putExtra(Sheets.EXTRA_TYPE, Sheets.UpdateType.LH_TAP.ordinal());
-        sheets.putExtra(Sheets.EXTRA_USER, myUserId);
-        sheets.putExtra(Sheets.EXTRA_VALUE, avg_tapping_time);
+        sheetsLocal.putExtra(SheetsLocal.EXTRA_TYPE, SheetsLocal.UpdateType.LH_TAP.ordinal());
+        sheetsLocal.putExtra(SheetsLocal.EXTRA_USER, myUserId);
+        sheetsLocal.putExtra(SheetsLocal.EXTRA_VALUE, avg_tapping_time);
 
-        startActivity(sheets);
+        startActivity(sheetsLocal);
     }
 
     @Override
