@@ -105,7 +105,6 @@ public class TappingActivity extends AppCompatActivity {
             }
             public void onFinish(){
                 tv.setTextSize(30);
-                sendToSheets();
 
                 String output = "You tapped " + previousTextNumberOfTaps + " times!\n";
 
@@ -120,8 +119,9 @@ public class TappingActivity extends AppCompatActivity {
                     }
 
                 } else if(tryNumber == 6) {
+                    sendToSheets(rightSum/6, SheetsLocal.UpdateType.RH_TAP.ordinal());
+                    sendToSheets(leftSum/6, SheetsLocal.UpdateType.LH_TAP.ordinal());
                     DecimalFormat df = new DecimalFormat("#.#");
-
                     output += "\nAll tests complete!\n\n" +
                             "Right average: "+ df.format(rightSum/3) + " taps.\n" +
                             "Left average: " + df.format(leftSum/3) +" taps.";
@@ -144,14 +144,12 @@ public class TappingActivity extends AppCompatActivity {
         };
     }
 
-    private void sendToSheets() {
+    private void sendToSheets(float numTaps, int sheet) {
         Intent sheetsLocal = new Intent(this, SheetsLocal.class);
-        String myUserId = "t10p01";
-        float avg_tapping_time = 72.4f;
 
-        sheetsLocal.putExtra(SheetsLocal.EXTRA_TYPE, SheetsLocal.UpdateType.LH_TAP.ordinal());
-        sheetsLocal.putExtra(SheetsLocal.EXTRA_USER, myUserId);
-        sheetsLocal.putExtra(SheetsLocal.EXTRA_VALUE, avg_tapping_time);
+        sheetsLocal.putExtra(SheetsLocal.EXTRA_TYPE, sheet);
+        sheetsLocal.putExtra(SheetsLocal.EXTRA_USER, getString(R.string.patientID));
+        sheetsLocal.putExtra(SheetsLocal.EXTRA_VALUE, numTaps);
 
         startActivity(sheetsLocal);
     }
