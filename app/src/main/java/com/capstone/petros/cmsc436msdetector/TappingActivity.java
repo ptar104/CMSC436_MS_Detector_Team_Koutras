@@ -1,5 +1,6 @@
 package com.capstone.petros.cmsc436msdetector;
 
+import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.os.CountDownTimer;
 import android.support.v7.app.ActionBar;
@@ -11,6 +12,7 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import com.example.sheets436.Sheets;
 
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -103,6 +105,8 @@ public class TappingActivity extends AppCompatActivity {
             }
             public void onFinish(){
                 tv.setTextSize(30);
+                sendToSheets();
+
                 String output = "You tapped " + previousTextNumberOfTaps + " times!\n";
 
                 if(tryNumber < 4){
@@ -138,6 +142,18 @@ public class TappingActivity extends AppCompatActivity {
                 findViewById(R.id.tutorial_button).setVisibility(View.VISIBLE);
             }
         };
+    }
+
+    private void sendToSheets() {
+        Intent sheets = new Intent(this, SheetsLocal.class);
+        String myUserId = "t10p01";
+        float avg_tapping_time = 72.4f;
+
+        sheets.putExtra(Sheets.EXTRA_TYPE, Sheets.UpdateType.LH_TAP.ordinal());
+        sheets.putExtra(Sheets.EXTRA_USER, myUserId);
+        sheets.putExtra(Sheets.EXTRA_VALUE, avg_tapping_time);
+
+        startActivity(sheets);
     }
 
     @Override

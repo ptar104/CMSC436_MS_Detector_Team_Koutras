@@ -1,11 +1,9 @@
-package com.capstone.petros.cmsc436msdetector;
+package  com.capstone.petros.cmsc436msdetector;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
-import com.google.api.client.googleapis.extensions.android.gms.auth.GooglePlayServicesAvailabilityIOException;
-import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException;
 
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.json.JsonFactory;
@@ -29,7 +27,6 @@ import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.text.TextUtils;
 import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 import android.view.ViewGroup;
@@ -61,17 +58,22 @@ public class SheetsLocal extends Activity
     private static final String PREF_ACCOUNT_NAME = "accountName";
     private static final String[] SCOPES = { SheetsScopes.SPREADSHEETS };
 
-    private List<Object> rowToAdd;
-    private String updateRange;
+    private float updateValue;
+    private String sheetID;
+    private String userID;
 
-    final public static int teamID = 6;
+    final public static String EXTRA_VALUE = "com.example.sheets436.VALUE";
+    final public static String EXTRA_USER = "com.example.sheets436.USER";
+    final public static String EXTRA_TYPE = "com.example.sheets436.TYPE";
+
     final private static String spreadsheetID = "12pDLK9pSmyDHskMV4meTR27WpVU517gwnSIHy3SSCTo";
-    enum UpdateType {
+
+    public enum UpdateType {
         LH_TAP, RH_TAP,
         LH_SPIRAL, RH_SPIRAL,
         LH_LEVEL, RH_LEVEL,
-        LH_POP, RH_POP, RH_CURL,
-        LH_CURL
+        LH_POP, RH_POP,
+        LH_CURL, RH_CURL
     }
 
     /**
@@ -120,13 +122,57 @@ public class SheetsLocal extends Activity
 
         setContentView(activityLayout);
 
+        // Retrieve information from calling activity
+        Intent intent = getIntent();
+        updateValue = intent.getFloatExtra(EXTRA_VALUE, 0);
+
+        userID = intent.getStringExtra(EXTRA_USER);
+        if (userID == null) {
+            finish();
+        }
+
+        sheetID = getSheetID(UpdateType.values()[intent.getIntExtra(EXTRA_TYPE, 0)]);
+        if (sheetID == null) {
+            finish();
+        }
+
         // Initialize credentials and service object.
         mCredential = GoogleAccountCredential.usingOAuth2(
                 getApplicationContext(), Arrays.asList(SCOPES))
                 .setBackOff(new ExponentialBackOff());
     }
 
-
+    /**
+     * Gets a ID for the sheet to be updated.
+     * @param type the enum representing which test type has results to write to sheets
+     * @return string representing the sheet in A1 format
+     */
+    private String getSheetID(UpdateType type) {
+        switch (type) {
+            case LH_TAP:
+                return "'Tapping Test (LH)'";
+            case RH_TAP:
+                return "'Tapping Test (RH)'";
+            case LH_SPIRAL:
+                return "'Spiral Test (LH)'";
+            case RH_SPIRAL:
+                return "'Spiral Test (RH)'";
+            case LH_LEVEL:
+                return "'Level Test (LH)'";
+            case RH_LEVEL:
+                return "'Level Test (RH)'";
+            case LH_POP:
+                return "'Balloon Test (LH)'";
+            case RH_POP:
+                return "'Balloon Test (RH)'";
+            case RH_CURL:
+                return "'Curling Test (RH)'";
+            case LH_CURL:
+                return "'Curling Test (LH)'";
+            default:
+                return null;
+        }
+    }
 
     /**
      * Attempt to call the API, after verifying that all the preconditions are
@@ -141,9 +187,10 @@ public class SheetsLocal extends Activity
         } else if (mCredential.getSelectedAccountName() == null) {
             chooseAccount();
         } else if (! isDeviceOnline()) {
-            mOutputText.setText("No network connection available.");
+            mOutputText.setText(R.string.no_net);
         } else {
             new MakeRequestTask(mCredential).execute();
+            finish();
         }
     }
 
@@ -199,9 +246,7 @@ public class SheetsLocal extends Activity
         switch(requestCode) {
             case REQUEST_GOOGLE_PLAY_SERVICES:
                 if (resultCode != RESULT_OK) {
-                    mOutputText.setText(
-                            "This app requires Google Play Services. Please install " +
-                                    "Google Play Services on your device and relaunch this app.");
+                    mOutputText.setText(R.string.no_goog);
                 } else {
                     getResultsFromApi();
                 }
@@ -332,7 +377,6 @@ public class SheetsLocal extends Activity
      */
     private class MakeRequestTask extends AsyncTask<Void, Void, List<String>> {
         private com.google.api.services.sheets.v4.Sheets mService = null;
-        private Exception mLastError = null;
 
         MakeRequestTask(GoogleAccountCredential credential) {
             HttpTransport transport = AndroidHttp.newCompatibleTransport();
@@ -350,73 +394,74 @@ public class SheetsLocal extends Activity
         @Override
         protected List<String> doInBackground(Void... params) {
             try {
-                return getDataFromApi();
+                writeToSheet();
+                return null;
             } catch (Exception e) {
-                mLastError = e;
                 cancel(true);
                 return null;
             }
         }
 
         /**
-         * Fetch a list of names and majors of students in a sample spreadsheet:
-         * https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/edit
-         * @return List of names and majors
-         * @throws IOException
+         * Writes new trial value to the userID and sheetID specified by an intent.
+         * The spreadsheet is located at
          */
-        private List<String> getDataFromApi() throws IOException {
+        private void writeToSheet() throws IOException {
+            ValueRange response = this.mService.spreadsheets().values()
+                    .get(spreadsheetID, sheetID + "!A2:A")
+                    .execute();
+            List<List<Object>> sheet = response.getValues();
+            int rowIdx = 2;
+            if (sheet != null) {
+                for (List row : sheet) {
+                    if (row.get(0).equals(userID)) {
+                        break;
+                    }
+                    rowIdx++;
+                }
+            }
+
+            response = this.mService.spreadsheets().values()
+                    .get(spreadsheetID, sheetID + "!" + rowIdx + ":" + rowIdx)
+                    .execute();
+            sheet = response.getValues();
+            String colIdx = "A";
+            if (sheet != null) {
+                colIdx = columnToLetter(sheet.get(0).size() + 1);
+            }
+
+            String updateCell = sheetID + "!" + colIdx + rowIdx;
             List<List<Object>> values = new ArrayList<>();
-            values.add(rowToAdd);
+            List<Object> row = new ArrayList<>();
+
+            if (colIdx.equals("A")) {
+                row.add(userID);
+                updateCell += ":B" + rowIdx;
+            }
+
+            row.add(updateValue);
+            values.add(row);
 
             ValueRange valueRange = new ValueRange();
             valueRange.setValues(values);
 
             // Call the API
             this.mService.spreadsheets().values()
-                    .append(spreadsheetID, updateRange, valueRange)
+                    .update(spreadsheetID, updateCell, valueRange)
                     .setValueInputOption("RAW")
                     .execute();
-            return null;
         }
+    }
 
-
-
-        @Override
-        protected void onPreExecute() {
-            mOutputText.setText("");
-            mProgress.show();
+    private String columnToLetter(int column) {
+        int temp;
+        String letter = "";
+        while (column > 0)
+        {
+            temp = (column - 1) % 26;
+            letter = ((char)(temp + 65)) + letter;
+            column = (column - temp - 1) / 26;
         }
-
-        @Override
-        protected void onPostExecute(List<String> output) {
-            mProgress.hide();
-            if (output == null || output.size() == 0) {
-                mOutputText.setText("No results returned.");
-            } else {
-                output.add(0, "Data retrieved using the Google Sheets API:");
-                mOutputText.setText(TextUtils.join("\n", output));
-            }
-        }
-
-        @Override
-        protected void onCancelled() {
-            mProgress.hide();
-            if (mLastError != null) {
-                if (mLastError instanceof GooglePlayServicesAvailabilityIOException) {
-                    showGooglePlayServicesAvailabilityErrorDialog(
-                            ((GooglePlayServicesAvailabilityIOException) mLastError)
-                                    .getConnectionStatusCode());
-                } else if (mLastError instanceof UserRecoverableAuthIOException) {
-                    startActivityForResult(
-                            ((UserRecoverableAuthIOException) mLastError).getIntent(),
-                            SheetsLocal.REQUEST_AUTHORIZATION);
-                } else {
-                    mOutputText.setText("The following error occurred:\n"
-                            + mLastError.getMessage());
-                }
-            } else {
-                mOutputText.setText("Request cancelled.");
-            }
-        }
+        return letter;
     }
 }
