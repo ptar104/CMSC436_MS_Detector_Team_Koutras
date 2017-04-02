@@ -1,6 +1,7 @@
 package com.capstone.petros.cmsc436msdetector;
 
 import android.content.ContentResolver;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MotionEvent;
@@ -10,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class SpiralActivity extends AppCompatActivity {
 
@@ -36,8 +38,24 @@ public class SpiralActivity extends AppCompatActivity {
         });
     }
 
+
+    private void sendToSheets() {
+        Intent sheetsLocal = new Intent(this, SheetsLocal.class);
+
+        sheetsLocal.putExtra(SheetsLocal.EXTRA_TYPE, SheetsLocal.UpdateType.LH_SPIRAL.ordinal());
+        sheetsLocal.putExtra(SheetsLocal.EXTRA_USER, getString(R.string.patientID));
+
+        //not sure if sending two metrics will work
+        sheetsLocal.putExtra(SheetsLocal.EXTRA_VALUE, SpiralView.score);
+        //sheetsLocal.putExtra(SheetsLocal.EXTRA_VALUE, SpiralView.testDuration);
+
+
+        startActivity(sheetsLocal);
+    }
+
     public void saveImage(View view){
         ((SpiralView)findViewById(R.id.SpiralView)).saveTestToGallery();
+        sendToSheets();
     }
 
     public void resetTest(View view){

@@ -151,6 +151,7 @@ public class TappingActivity extends AppCompatActivity {
         sheetsLocal.putExtra(SheetsLocal.EXTRA_USER, getString(R.string.patientID));
         sheetsLocal.putExtra(SheetsLocal.EXTRA_VALUE, numTaps);
 
+
         startActivity(sheetsLocal);
     }
 
