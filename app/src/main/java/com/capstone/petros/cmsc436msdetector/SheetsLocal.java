@@ -59,14 +59,16 @@ public class SheetsLocal extends Activity
     private static final String[] SCOPES = { SheetsScopes.SPREADSHEETS };
 
     private float updateValue;
+    private String updateGrade = "";
     private String sheetID;
     private String userID;
 
-    final public static String EXTRA_VALUE = "com.example.sheets436.VALUE";
-    final public static String EXTRA_USER = "com.example.sheets436.USER";
-    final public static String EXTRA_TYPE = "com.example.sheets436.TYPE";
+    final public static String EXTRA_VALUE = "com.capstone.petros.cmsc436msdetector.VALUE";
+    final public static String EXTRA_GRADE = "com.capstone.petros.cmsc436msdetector.GRADE";
+    final public static String EXTRA_USER = "com.capstone.petros.cmsc436msdetector.USER";
+    final public static String EXTRA_TYPE = "com.capstone.petros.cmsc436msdetector.TYPE";
 
-    final private static String spreadsheetID = "12pDLK9pSmyDHskMV4meTR27WpVU517gwnSIHy3SSCTo";
+    final private static String spreadsheetID = "16-GKcyq_X0bFV8ZwughOTK-ciZrhMiSqF5IbZZYZb_s";
 
     public enum UpdateType {
         LH_TAP, RH_TAP,
@@ -125,6 +127,7 @@ public class SheetsLocal extends Activity
         // Retrieve information from calling activity
         Intent intent = getIntent();
         updateValue = intent.getFloatExtra(EXTRA_VALUE, 0);
+        updateGrade = intent.getStringExtra(EXTRA_GRADE);
 
         userID = intent.getStringExtra(EXTRA_USER);
         if (userID == null) {
@@ -439,7 +442,11 @@ public class SheetsLocal extends Activity
                 updateCell += ":B" + rowIdx;
             }
 
-            row.add(updateValue);
+            if (!updateGrade.equals("")) {
+                row.add(updateGrade);
+            } else {
+                row.add(updateValue);
+            }
             values.add(row);
 
             ValueRange valueRange = new ValueRange();

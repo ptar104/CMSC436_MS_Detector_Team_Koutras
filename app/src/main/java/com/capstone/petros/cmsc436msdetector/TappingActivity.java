@@ -119,8 +119,8 @@ public class TappingActivity extends AppCompatActivity {
                     }
 
                 } else if(tryNumber == 6) {
-                    sendToSheets(rightSum/6, SheetsLocal.UpdateType.RH_TAP.ordinal());
-                    sendToSheets(leftSum/6, SheetsLocal.UpdateType.LH_TAP.ordinal());
+                    sendToSheets(rightSum/3, SheetsLocal.UpdateType.RH_TAP.ordinal());
+                    sendToSheets(leftSum/3, SheetsLocal.UpdateType.LH_TAP.ordinal());
                     DecimalFormat df = new DecimalFormat("#.#");
                     output += "\nAll tests complete!\n\n" +
                             "Right average: "+ df.format(rightSum/3) + " taps.\n" +
