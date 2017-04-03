@@ -58,7 +58,7 @@ public class SheetsLocal extends Activity
     private static final String PREF_ACCOUNT_NAME = "accountName";
     private static final String[] SCOPES = { SheetsScopes.SPREADSHEETS };
 
-    private float updateValue;
+    private float updateValue = -1;
     private String updateGrade = "";
     private String sheetID;
     private String userID;
@@ -126,7 +126,7 @@ public class SheetsLocal extends Activity
 
         // Retrieve information from calling activity
         Intent intent = getIntent();
-        updateValue = intent.getFloatExtra(EXTRA_VALUE, 0);
+        updateValue = intent.getFloatExtra(EXTRA_VALUE, -1);
         updateGrade = intent.getStringExtra(EXTRA_GRADE);
 
         userID = intent.getStringExtra(EXTRA_USER);
@@ -442,11 +442,12 @@ public class SheetsLocal extends Activity
                 updateCell += ":B" + rowIdx;
             }
 
-            if (!updateGrade.equals("")) {
-                row.add(updateGrade);
-            } else {
+            if (updateValue != -1) {
                 row.add(updateValue);
+            } else {
+                row.add(updateGrade);
             }
+
             values.add(row);
 
             ValueRange valueRange = new ValueRange();

@@ -1,5 +1,6 @@
 package com.capstone.petros.cmsc436msdetector;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -38,5 +39,23 @@ public class ReactionActivity extends AppCompatActivity {
             shader.setVisibility(View.GONE);
             tutorialButton.setColorFilter(0xFF000000);
         }
+    }
+
+    public void sendToSheetsLeft(View v) {
+        sendToSheets(SheetsLocal.UpdateType.LH_POP.ordinal());
+    }
+
+    public void sendToSheetsRight(View v) {
+        sendToSheets(SheetsLocal.UpdateType.RH_POP.ordinal());
+    }
+
+    private void sendToSheets(int sheet) {
+        Intent sheetsLocal = new Intent(this, SheetsLocal.class);
+        ReactionView reactionView = (ReactionView) findViewById(R.id.reactionView);
+        sheetsLocal.putExtra(SheetsLocal.EXTRA_TYPE, sheet);
+        sheetsLocal.putExtra(SheetsLocal.EXTRA_USER, getString(R.string.patientID));
+        sheetsLocal.putExtra(SheetsLocal.EXTRA_VALUE, (float) reactionView.average);
+
+        startActivity(sheetsLocal);
     }
 }
