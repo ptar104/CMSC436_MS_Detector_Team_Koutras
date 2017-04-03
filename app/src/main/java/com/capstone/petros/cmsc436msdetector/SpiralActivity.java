@@ -46,7 +46,7 @@ public class SpiralActivity extends AppCompatActivity {
         sheetsLocal.putExtra(SheetsLocal.EXTRA_USER, getString(R.string.patientID));
 
         //not sure if sending two metrics will work
-        sheetsLocal.putExtra(SheetsLocal.EXTRA_VALUE, SpiralView.score);
+        sheetsLocal.putExtra(SheetsLocal.EXTRA_GRADE, SpiralView.score);
         //sheetsLocal.putExtra(SheetsLocal.EXTRA_VALUE, SpiralView.testDuration);
 
 
