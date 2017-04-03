@@ -190,7 +190,7 @@ public class SheetsLocal extends Activity
         } else if (mCredential.getSelectedAccountName() == null) {
             chooseAccount();
         } else if (! isDeviceOnline()) {
-            mOutputText.setText(R.string.no_net);
+            mOutputText.setText("No network");
         } else {
             new MakeRequestTask(mCredential).execute();
             finish();
@@ -249,7 +249,7 @@ public class SheetsLocal extends Activity
         switch(requestCode) {
             case REQUEST_GOOGLE_PLAY_SERVICES:
                 if (resultCode != RESULT_OK) {
-                    mOutputText.setText(R.string.no_goog);
+                    mOutputText.setText("No Google Service.");
                 } else {
                     getResultsFromApi();
                 }

@@ -5,7 +5,7 @@ android {
     buildToolsVersion "25.0.1"
     defaultConfig {
         applicationId "com.capstone.petros.cmsc436msdetector"
-        minSdkVersion 25
+        minSdkVersion 16
         targetSdkVersion 25
         versionCode 1
         versionName "1.0"
@@ -30,5 +30,4 @@ dependencies {
     compile('com.google.apis:google-api-services-sheets:v4-rev466-1.22.0') {
         exclude group: 'org.apache.httpcomponents'
     }
-    compile project(':sheets436-v0.0.1-release')
 }

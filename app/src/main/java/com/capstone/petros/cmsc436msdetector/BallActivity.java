@@ -81,8 +81,8 @@ public class BallActivity extends Activity  implements TimedActivity {
                 Utils.appendResultsToInternalStorage(activity, BALL_TEST_DATA_FILENAME, ballView.totalScore);
 
                 // write the results to the google sheets
-                sendToSheets(ballView.grade, SheetsLocal.UpdateType.LH_LEVEL.ordinal());
-                sendToSheets(ballView.grade, SheetsLocal.UpdateType.RH_LEVEL.ordinal());
+                sendToSheets(ballView.fScore, SheetsLocal.UpdateType.LH_LEVEL.ordinal());
+                sendToSheets(ballView.fScore, SheetsLocal.UpdateType.RH_LEVEL.ordinal());
 
                 ((BallView)findViewById(R.id.ballView)).resetTest();
 
@@ -93,12 +93,12 @@ public class BallActivity extends Activity  implements TimedActivity {
         }
     };
 
-    private void sendToSheets(String grade, int sheet) {
+    private void sendToSheets(double score, int sheet) {
         Intent sheetsLocal = new Intent(this, SheetsLocal.class);
 
         sheetsLocal.putExtra(SheetsLocal.EXTRA_TYPE, sheet);
         sheetsLocal.putExtra(SheetsLocal.EXTRA_USER, getString(R.string.patientID));
-        sheetsLocal.putExtra(SheetsLocal.EXTRA_GRADE, grade);
+        sheetsLocal.putExtra(SheetsLocal.EXTRA_VALUE, (float) score);
 
         startActivity(sheetsLocal);
     }

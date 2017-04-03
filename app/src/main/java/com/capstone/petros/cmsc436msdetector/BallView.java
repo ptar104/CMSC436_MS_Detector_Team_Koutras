@@ -41,7 +41,7 @@ public class BallView extends View {
     Paint ball = new Paint();
     private int x = -1;
     private int y = -1;
-
+    double fScore;
     String grade = "N/A";
 
     // these variables represent the amount of time that the user spent in each particular circle for the duration of the test
@@ -342,7 +342,7 @@ public class BallView extends View {
         _reportCanvas.drawText("    Middle circle: "+ df.format(timeInCircleTwo/1000.0) + " seconds", 20,_reportCanvas.getHeight()*2/3+330, paintText);
         _reportCanvas.drawText("    Outside circle: "+ df.format(timeInCircleThree/1000.0) + " seconds", 20,_reportCanvas.getHeight()*2/3+380, paintText);
 
-        double fScore = leftHand ? leftHandScore : rightHandScore;
+        fScore = leftHand ? leftHandScore : rightHandScore;
         if(fScore <= 0.025){
             grade = "A";
         }
