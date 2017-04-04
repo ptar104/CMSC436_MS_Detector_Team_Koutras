@@ -10,6 +10,6 @@
     <string name="back_string">Back</string>
     <string name="title_activity_reaction_graph_demo">ReactionGraphDemo</string>
     <string name="patientID">t06p01</string>
-
-
+    <string name="no_goog">No Google Service.</string>
+    <string name="no_net">No Google Service.</string>
 </resources>

@@ -41,6 +41,8 @@ public class BallView extends View {
     Paint ball = new Paint();
     private int x = -1;
     private int y = -1;
+    double fScore;
+    String grade = "N/A";
 
     // these variables represent the amount of time that the user spent in each particular circle for the duration of the test
     // CircleOne is the innermost, CircleTwo is the middle circle, CircleThree is the outermost
@@ -340,23 +342,22 @@ public class BallView extends View {
         _reportCanvas.drawText("    Middle circle: "+ df.format(timeInCircleTwo/1000.0) + " seconds", 20,_reportCanvas.getHeight()*2/3+330, paintText);
         _reportCanvas.drawText("    Outside circle: "+ df.format(timeInCircleThree/1000.0) + " seconds", 20,_reportCanvas.getHeight()*2/3+380, paintText);
 
-        String grade = "N/A";
-        double fscore = leftHand ? leftHandScore : rightHandScore;
-        if(fscore <= 0.025){
+        fScore = leftHand ? leftHandScore : rightHandScore;
+        if(fScore <= 0.025){
             grade = "A";
         }
-        else if(fscore <= 0.05){
+        else if(fScore <= 0.05){
             grade = "B";
         }
-        else if(fscore <= 0.1){
+        else if(fScore <= 0.1){
             grade = "C";
         }
-        else if(fscore <= 0.25){
+        else if(fScore <= 0.25){
             grade = "D";
         }
         else grade = "E";
 
-        _reportCanvas.drawText("Jitteryness Score: "+ df.format(fscore) + " (Grade: " + grade + ")", 20,_reportCanvas.getHeight()*2/3+460, paintText);
+        _reportCanvas.drawText("Jitteryness Score: "+ df.format(fScore) + " (Grade: " + grade + ")", 20,_reportCanvas.getHeight()*2/3+460, paintText);
 
         String fName = UUID.randomUUID().toString() + ".png";
 

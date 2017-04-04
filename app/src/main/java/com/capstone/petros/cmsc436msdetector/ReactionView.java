@@ -29,6 +29,7 @@ public class ReactionView extends View {
     float y = -1;
     int adjustWidth;
     int adjustHeight;
+    double average;
 
     public ReactionView(Context context) {
         super(context);
@@ -105,15 +106,16 @@ public class ReactionView extends View {
         for (long i : reactTime) {
             sum += i;
         }
-        double average = (sum/reactTime.size()/1000.0);
+        average = (sum/reactTime.size()/1000.0);
         // Display the results on the screen.
-
         TextView topText = (TextView) ((ReactionActivity)getContext()).findViewById(R.id.reactionTopText);
         TextView bottomText = (TextView) ((ReactionActivity)getContext()).findViewById(R.id.reactionBottomText);
         DecimalFormat df = new DecimalFormat("#.###");
         topText.setText("TEST COMPLETE.\n\nYour average reaction time was: "+df.format(average));
         bottomText.setText("Click the red dot to exit the test.");
         ((ReactionActivity)getContext()).findViewById(R.id.reactionTextLayout).setVisibility(View.VISIBLE);
+        ((ReactionActivity)getContext()).findViewById(R.id.saveToSheetsLeftBtn).setVisibility(View.VISIBLE);
+        ((ReactionActivity)getContext()).findViewById(R.id.saveToSheetsRightBtn).setVisibility(View.VISIBLE);
 
         // Also, save the results.
         Utils.appendResultsToInternalStorage(getContext(), REACTION_TIME_FILE_NAME, average);

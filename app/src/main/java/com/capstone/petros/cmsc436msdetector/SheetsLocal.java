@@ -1,9 +1,11 @@
-package  com.capstone.petros.cmsc436msdetector;
+package com.capstone.petros.cmsc436msdetector;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
+import com.google.api.client.googleapis.extensions.android.gms.auth.GooglePlayServicesAvailabilityIOException;
+import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException;
 
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.json.JsonFactory;
@@ -27,6 +29,7 @@ import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.text.TextUtils;
 import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 import android.view.ViewGroup;
@@ -58,15 +61,17 @@ public class SheetsLocal extends Activity
     private static final String PREF_ACCOUNT_NAME = "accountName";
     private static final String[] SCOPES = { SheetsScopes.SPREADSHEETS };
 
-    private float updateValue;
+    private float updateValue = -1;
+    private String updateGrade = "";
     private String sheetID;
     private String userID;
 
-    final public static String EXTRA_VALUE = "com.example.sheets436.VALUE";
-    final public static String EXTRA_USER = "com.example.sheets436.USER";
-    final public static String EXTRA_TYPE = "com.example.sheets436.TYPE";
+    final public static String EXTRA_VALUE = "com.capstone.petros.cmsc436msdetector.VALUE";
+    final public static String EXTRA_GRADE = "com.capstone.petros.cmsc436msdetector.GRADE";
+    final public static String EXTRA_USER = "com.capstone.petros.cmsc436msdetector.USER";
+    final public static String EXTRA_TYPE = "com.capstone.petros.cmsc436msdetector.TYPE";
 
-    final private static String spreadsheetID = "12pDLK9pSmyDHskMV4meTR27WpVU517gwnSIHy3SSCTo";
+    final private static String spreadsheetID = "16-GKcyq_X0bFV8ZwughOTK-ciZrhMiSqF5IbZZYZb_s";
 
     public enum UpdateType {
         LH_TAP, RH_TAP,
@@ -124,7 +129,8 @@ public class SheetsLocal extends Activity
 
         // Retrieve information from calling activity
         Intent intent = getIntent();
-        updateValue = intent.getFloatExtra(EXTRA_VALUE, 0);
+        updateValue = intent.getFloatExtra(EXTRA_VALUE, -1);
+        updateGrade = intent.getStringExtra(EXTRA_GRADE);
 
         userID = intent.getStringExtra(EXTRA_USER);
         if (userID == null) {
@@ -190,7 +196,6 @@ public class SheetsLocal extends Activity
             mOutputText.setText(R.string.no_net);
         } else {
             new MakeRequestTask(mCredential).execute();
-            finish();
         }
     }
 
@@ -377,6 +382,7 @@ public class SheetsLocal extends Activity
      */
     private class MakeRequestTask extends AsyncTask<Void, Void, List<String>> {
         private com.google.api.services.sheets.v4.Sheets mService = null;
+        private Exception mLastError = null;
 
         MakeRequestTask(GoogleAccountCredential credential) {
             HttpTransport transport = AndroidHttp.newCompatibleTransport();
@@ -397,6 +403,7 @@ public class SheetsLocal extends Activity
                 writeToSheet();
                 return null;
             } catch (Exception e) {
+                mLastError = e;
                 cancel(true);
                 return null;
             }
@@ -439,7 +446,12 @@ public class SheetsLocal extends Activity
                 updateCell += ":B" + rowIdx;
             }
 
-            row.add(updateValue);
+            if (updateValue != -1) {
+                row.add(updateValue);
+            } else {
+                row.add(updateGrade);
+            }
+
             values.add(row);
 
             ValueRange valueRange = new ValueRange();
@@ -450,6 +462,44 @@ public class SheetsLocal extends Activity
                     .update(spreadsheetID, updateCell, valueRange)
                     .setValueInputOption("RAW")
                     .execute();
+        }
+
+        @Override
+        protected void onPreExecute() {
+            mOutputText.setText("");
+            mProgress.show();
+        }
+
+        @Override
+        protected void onPostExecute(List<String> output) {
+            mProgress.hide();
+            if (output == null || output.size() == 0) {
+                finish();
+            } else {
+                output.add(0, "Data retrieved using the Google Sheets API:");
+                mOutputText.setText(TextUtils.join("\n", output));
+            }
+        }
+
+        @Override
+        protected void onCancelled() {
+            mProgress.hide();
+            if (mLastError != null) {
+                if (mLastError instanceof GooglePlayServicesAvailabilityIOException) {
+                    showGooglePlayServicesAvailabilityErrorDialog(
+                            ((GooglePlayServicesAvailabilityIOException) mLastError)
+                                    .getConnectionStatusCode());
+                } else if (mLastError instanceof UserRecoverableAuthIOException) {
+                    startActivityForResult(
+                            ((UserRecoverableAuthIOException) mLastError).getIntent(),
+                            SheetsLocal.REQUEST_AUTHORIZATION);
+                } else {
+                    mOutputText.setText("The following error occurred:\n"
+                            + mLastError.getMessage());
+                }
+            } else {
+                mOutputText.setText("Request cancelled.");
+            }
         }
     }
 

@@ -12,7 +12,6 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-import com.example.sheets436.Sheets;
 
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -119,8 +118,8 @@ public class TappingActivity extends AppCompatActivity {
                     }
 
                 } else if(tryNumber == 6) {
-                    sendToSheets(rightSum/6, SheetsLocal.UpdateType.RH_TAP.ordinal());
-                    sendToSheets(leftSum/6, SheetsLocal.UpdateType.LH_TAP.ordinal());
+                    sendToSheets(rightSum/3, SheetsLocal.UpdateType.RH_TAP.ordinal());
+                    sendToSheets(leftSum/3, SheetsLocal.UpdateType.LH_TAP.ordinal());
                     DecimalFormat df = new DecimalFormat("#.#");
                     output += "\nAll tests complete!\n\n" +
                             "Right average: "+ df.format(rightSum/3) + " taps.\n" +
@@ -150,7 +149,6 @@ public class TappingActivity extends AppCompatActivity {
         sheetsLocal.putExtra(SheetsLocal.EXTRA_TYPE, sheet);
         sheetsLocal.putExtra(SheetsLocal.EXTRA_USER, getString(R.string.patientID));
         sheetsLocal.putExtra(SheetsLocal.EXTRA_VALUE, numTaps);
-
 
         startActivity(sheetsLocal);
     }

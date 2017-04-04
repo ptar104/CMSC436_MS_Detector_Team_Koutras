@@ -30,23 +30,27 @@
             android:layout_weight=".1">
 
             <Button
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight=".45"
                 android:text="Reset Test"
-                android:textSize="20sp"
-                android:onClick="resetTest" />
-            <Space
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_weight=".1"/>
+                android:textSize="15sp"
+                android:onClick="resetTest"/>
+
             <Button
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight=".45"
-                android:text="Save Test"
-                android:textSize="20sp"
-                android:onClick="saveImage" />
+                android:layout_weight="0.33"
+                android:onClick="saveImageLeft"
+                android:text="Save Test (L)"
+                android:textSize="15sp" />
+
+            <Button
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.33"
+                android:onClick="saveImageRight"
+                android:text="Save Test (R)"
+                android:textSize="15sp" />
         </LinearLayout>
 
         <com.capstone.petros.cmsc436msdetector.SpiralView

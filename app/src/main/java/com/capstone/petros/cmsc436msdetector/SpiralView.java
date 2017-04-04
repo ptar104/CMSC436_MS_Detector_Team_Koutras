@@ -448,6 +448,4 @@ public class SpiralView extends View {
         invalidate();
     }
 
-
-
 }

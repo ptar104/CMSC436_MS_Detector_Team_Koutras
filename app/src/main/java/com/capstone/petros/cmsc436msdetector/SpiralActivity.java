@@ -39,23 +39,24 @@ public class SpiralActivity extends AppCompatActivity {
     }
 
 
-    private void sendToSheets() {
+    private void sendToSheets(int sheet) {
         Intent sheetsLocal = new Intent(this, SheetsLocal.class);
 
-        sheetsLocal.putExtra(SheetsLocal.EXTRA_TYPE, SheetsLocal.UpdateType.LH_SPIRAL.ordinal());
+        sheetsLocal.putExtra(SheetsLocal.EXTRA_TYPE, sheet);
         sheetsLocal.putExtra(SheetsLocal.EXTRA_USER, getString(R.string.patientID));
-
-        //not sure if sending two metrics will work
-        sheetsLocal.putExtra(SheetsLocal.EXTRA_VALUE, SpiralView.score);
-        //sheetsLocal.putExtra(SheetsLocal.EXTRA_VALUE, SpiralView.testDuration);
-
+        sheetsLocal.putExtra(SheetsLocal.EXTRA_GRADE, SpiralView.score);
 
         startActivity(sheetsLocal);
     }
 
-    public void saveImage(View view){
+    public void saveImageLeft(View view){
         ((SpiralView)findViewById(R.id.SpiralView)).saveTestToGallery();
-        sendToSheets();
+        sendToSheets(SheetsLocal.UpdateType.LH_SPIRAL.ordinal());
+    }
+
+    public void saveImageRight(View view){
+        ((SpiralView)findViewById(R.id.SpiralView)).saveTestToGallery();
+        sendToSheets(SheetsLocal.UpdateType.RH_SPIRAL.ordinal());
     }
 
     public void resetTest(View view){
