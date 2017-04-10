@@ -42,10 +42,11 @@
             android:text="Start"
             android:id="@+id/startTestBtn"
             android:textSize="40sp"
-            android:onClick="startTest"/>
+            android:onClick="startTest"
+            android:visibility="visible"/>
 
         <TextView
-            android:id="@+id/reactionBottomText"
+            android:id="@+id/swayBottomText"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight=".3"
@@ -53,29 +54,29 @@
             android:textSize="30sp"
             android:textAlignment="center"/>
 
-        <!--<LinearLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:weightSum="1">
             <Button
-                android:id="@+id/saveToSheetsLeftBtn"
+                android:id="@+id/saveButton"
                 android:layout_width="148dp"
                 android:layout_height="wrap_content"
-                android:onClick="sendToSheetsLeft"
-                android:text="Save to sheets (Left Hand)"
+                android:onClick="saveBtn"
+                android:text="Save"
                 android:visibility="gone"
                 android:layout_weight="0.43" />
 
             <Button
-                android:id="@+id/saveToSheetsRightBtn"
+                android:id="@+id/cancelButton"
                 android:layout_width="138dp"
                 android:layout_height="wrap_content"
-                android:onClick="sendToSheetsRight"
-                android:text="Save to sheets (Right Hand)"
+                android:onClick="cancelBtn"
+                android:text="Cancel"
                 android:visibility="gone"
                 android:layout_weight="0.53" />
-        </LinearLayout>-->
+        </LinearLayout>
 
         <Space
             android:layout_width="match_parent"

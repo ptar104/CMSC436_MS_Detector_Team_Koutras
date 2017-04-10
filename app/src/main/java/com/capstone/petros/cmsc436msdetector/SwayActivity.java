@@ -5,6 +5,7 @@ import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.view.View;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -34,6 +35,26 @@ public class SwayActivity extends Activity {
     }
 
     public void startTest(View v) {
+        //UI Change
+        Button btn = (Button)findViewById(R.id.startTestBtn);
+        TextView bottomText = (TextView)findViewById(R.id.swayBottomText);
+        TextView topText = (TextView)findViewById(R.id.swayTopText);
+        btn.setVisibility(View.GONE);
+        bottomText.setVisibility(View.GONE);
+
+        //Countdown and play sound
+
+
+        //At the end
+        topText.setText("Results:");
+
+        Button saveBtn = (Button)findViewById(R.id.saveButton);
+        saveBtn.setVisibility(View.VISIBLE);
+        Button cancelBtn = (Button)findViewById(R.id.cancelButton);
+        cancelBtn.setVisibility(View.VISIBLE);
+        // UI change
+
+
         // Play the instructions
         if(mediaPlayer != null) {
             mediaPlayer.release();
@@ -138,6 +159,14 @@ public class SwayActivity extends Activity {
             });
         }
         mediaPlayer.start();
+    }
+
+    public void saveBtn(View v) {
+
+    }
+
+    public void cancelBtn(View v) {
+
     }
 
     public void showTutorial(View v) {
