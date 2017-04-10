@@ -144,7 +144,6 @@ public class SwayActivity extends Activity {
 
     }
 
-
     @Override
     protected void onStop(){
         super.onStop();
@@ -191,16 +190,42 @@ public class SwayActivity extends Activity {
             mediaPlayer.release();
             mediaPlayer = null;
         }
-        mediaPlayer = MediaPlayer.create(this, R.raw.sway_prep);
+        mediaPlayer = MediaPlayer.create(this, R.raw.sway_pre_prepare);
         mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mediaPlayer) {
                 // Start a timer until you say the first trial
+                CountDownTimer timer = new CountDownTimer(8000,1000) {
+                    @Override
+                    public void onTick(long l) {
+
+                    }
+                    @Override
+                    public void onFinish() {
+                        sayInitialInstructions();
+                    }
+                };
+                timer.start();
+            }
+        });
+        mediaPlayer.start();
+    }
+
+    public void sayInitialInstructions() {
+        if(mediaPlayer != null) {
+            mediaPlayer.release();
+            mediaPlayer = null;
+        }
+        mediaPlayer = MediaPlayer.create(this, R.raw.sway_prep);
+        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mediaPlayer) {
                 CountDownTimer timer = new CountDownTimer(2000,1000) {
                     @Override
                     public void onTick(long l) {
 
                     }
+
                     @Override
                     public void onFinish() {
                         trialNum = 1;
