@@ -63,4 +63,9 @@ public class MainActivity extends Activity {
         Intent intent = new Intent(this, FlexActivity.class);
         startActivity(intent);
     }
+
+    public void startSwayTest(View view) {
+        Intent intent = new Intent(this, SwayActivity.class);
+        startActivity(intent);
+    }
 }
