@@ -12,12 +12,13 @@
     tools:context="com.capstone.petros.cmsc436msdetector.SwayActivity">
 
     <LinearLayout
-        android:id="@+id/reactionTextLayout"
+        android:id="@+id/swayTextLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:visibility="visible">
 
         <Space
             android:layout_width="match_parent"
@@ -54,18 +55,47 @@
             android:textSize="30sp"
             android:textAlignment="center"/>
 
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight=".1"/>
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/swayResultsLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <ImageView
+            android:id="@+id/swayImageView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight=".6"/>
+
+        <TextView
+            android:id="@+id/swayResultsText"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight=".25"
+            android:text="Results:"
+            android:textSize="25sp"/>
+
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:orientation="horizontal"
-            android:weightSum="1">
+            android:layout_weight=".15">
             <Button
                 android:id="@+id/saveButton"
                 android:layout_width="148dp"
                 android:layout_height="wrap_content"
                 android:onClick="saveBtn"
                 android:text="Save"
-                android:visibility="gone"
+                android:visibility="visible"
                 android:layout_weight="0.43" />
 
             <Button
@@ -74,15 +104,9 @@
                 android:layout_height="wrap_content"
                 android:onClick="cancelBtn"
                 android:text="Cancel"
-                android:visibility="gone"
+                android:visibility="visible"
                 android:layout_weight="0.53" />
         </LinearLayout>
-
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight=".1"/>
-
 
     </LinearLayout>
 

@@ -1,6 +1,12 @@
 package com.capstone.petros.cmsc436msdetector;
 
 import android.app.Activity;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Path;
 import android.media.MediaPlayer;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -9,13 +15,24 @@ import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import java.text.DecimalFormat;
+
 public class SwayActivity extends Activity {
+
+    private Canvas _reportCanvas = null;
+    private Bitmap _reportBitmap = null;
+    private Paint paint = new Paint();
+    private Path path = new Path();
+    private float currX = -1, currY = -1;
+
+
     MediaPlayer mediaPlayer;
     int trialNum;
 
@@ -39,6 +56,9 @@ public class SwayActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sway);
+
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
         trialNum = 1;
         sensorManager = (SensorManager) this.getSystemService(this.SENSOR_SERVICE);
         accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
@@ -117,16 +137,25 @@ public class SwayActivity extends Activity {
 
                     if (prevAccX != Integer.MAX_VALUE) {
 
-                        double deltaX = Math.abs(prevAccX - x);
-                        double deltaY = Math.abs(prevAccY - y);
-                        double deltaZ = Math.abs(prevAccZ - z);
+                        double deltaX = x - prevAccX;
+                        double deltaY = y - prevAccY;
+                        double deltaZ = z - prevAccZ;
 
                         double deltaTime = currTime - prevOriTime;
 
                         if(collectData){
-                            xScore += deltaX * deltaTime;
-                            yScore += deltaY * deltaTime;
-                            zScore += deltaZ * deltaTime;
+                            xScore += Math.abs(deltaX) * deltaTime;
+                            yScore += Math.abs(deltaY) * deltaTime;
+                            zScore += Math.abs(deltaZ) * deltaTime;
+
+                            //Only collect for the first test for now...
+                            if(trialNum==1){
+                                System.out.println("(x,y,z): ("+x+","+y+","+z+")");
+                                System.out.println("(currX, currY): ("+currX+","+currY+")");
+                                currX += (deltaX*25); // Depends on how they put it, but w/e
+                                currY -= (deltaY*25);
+                                path.lineTo(currX, currY);
+                            }
                         }
                     }
                     prevOriTime = currTime;
@@ -142,6 +171,20 @@ public class SwayActivity extends Activity {
             public void onAccuracyChanged(Sensor sensor, int accuracy) {/*cough*/}
         };
 
+        Bitmap image = BitmapFactory.decodeResource(getResources(), R.drawable.head_outline);
+        _reportBitmap = Bitmap.createBitmap(image.getWidth(), image.getHeight(), Bitmap.Config.ARGB_8888);
+        _reportCanvas = new Canvas(_reportBitmap);
+        _reportCanvas.drawBitmap(image,0,0,new Paint());
+        Paint dotPaint = new Paint();
+        paint.setColor(Color.RED);
+        paint.setStrokeWidth(5);
+        paint.setAntiAlias(true);
+        paint.setStyle(Paint.Style.STROKE);
+        currX = _reportBitmap.getWidth()/2.0f;
+        currY = _reportBitmap.getHeight()/2.0f;
+        path.moveTo(currX, currY);
+        dotPaint.setColor(Color.RED);
+        _reportCanvas.drawCircle(currX, currY, 8, dotPaint);
     }
 
     @Override
@@ -156,8 +199,10 @@ public class SwayActivity extends Activity {
     }
 
     private void finishAllTests(){
-        TextView topText = (TextView)findViewById(R.id.swayTopText);
-        TextView bottomText = (TextView)findViewById(R.id.swayBottomText);
+
+        _reportCanvas.drawPath(path, paint);
+
+        TextView topText = (TextView)findViewById(R.id.swayResultsText);
         //At the end, UI change
 
         double averageAngle = (testData[0][0] + testData[1][0] + testData[2][0]) / 3.0;
@@ -165,13 +210,13 @@ public class SwayActivity extends Activity {
                 testData[0][2] + testData[1][2] + testData[2][2] +
                 testData[0][3] + testData[1][3] + testData[2][3])/9.0;
 
-        topText.setText("Results:\n  Angle Score: "+averageAngle + "\n  Movement Score: "+averageAcceleration);
+        DecimalFormat df = new DecimalFormat("#.000");
+        topText.setText("Results:\n  Angle Score: "+df.format(averageAngle) + "\n  Movement Score: "+df.format(averageAcceleration));
 
+        ((ImageView)findViewById(R.id.swayImageView)).setImageBitmap(_reportBitmap);
 
-        Button saveBtn = (Button)findViewById(R.id.saveButton);
-        saveBtn.setVisibility(View.VISIBLE);
-        Button cancelBtn = (Button)findViewById(R.id.cancelButton);
-        cancelBtn.setVisibility(View.VISIBLE);
+        findViewById(R.id.swayTextLayout).setVisibility(View.GONE);
+        findViewById(R.id.swayResultsLayout).setVisibility(View.VISIBLE);
     }
 
     public void startTest(View v) {
@@ -305,7 +350,7 @@ public class SwayActivity extends Activity {
                 public void onCompletion(MediaPlayer mediaPlayer) {
                     // Start a timer until the next trial starts
                     // Put to 6000 at the end
-                    CountDownTimer timer = new CountDownTimer(600, 1000) {
+                    CountDownTimer timer = new CountDownTimer(6000, 1000) {
                         @Override
                         public void onTick(long l) {
 
