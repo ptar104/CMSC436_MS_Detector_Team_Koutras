@@ -43,8 +43,8 @@ public class SpiralActivity extends AppCompatActivity {
         Intent sheetsLocal = new Intent(this, SheetsLocal.class);
 
         sheetsLocal.putExtra(SheetsLocal.EXTRA_TYPE, sheet);
-        sheetsLocal.putExtra(SheetsLocal.EXTRA_USER,getString(R.string.patientID));
-        sheetsLocal.putExtra(SheetsLocal.EXTRA_GRADE, SpiralView.score);
+        sheetsLocal.putExtra(SheetsLocal.EXTRA_USER, getString(R.string.patientID));
+        sheetsLocal.putExtra(SheetsLocal.EXTRA_VALUE, (float)SpiralView.score);
 
         startActivity(sheetsLocal);
     }

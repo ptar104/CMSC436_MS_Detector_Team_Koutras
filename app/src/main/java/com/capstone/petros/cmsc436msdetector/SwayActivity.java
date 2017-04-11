@@ -1,6 +1,7 @@
 package com.capstone.petros.cmsc436msdetector;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -31,7 +32,8 @@ public class SwayActivity extends Activity {
     private Paint paint = new Paint();
     private Path path = new Path();
     private float currX = -1, currY = -1;
-
+    public double averageAngle;
+    public double averageAcceleration;
 
     MediaPlayer mediaPlayer;
     int trialNum;
@@ -205,8 +207,8 @@ public class SwayActivity extends Activity {
         TextView topText = (TextView)findViewById(R.id.swayResultsText);
         //At the end, UI change
 
-        double averageAngle = (testData[0][0] + testData[1][0] + testData[2][0]) / 3.0;
-        double averageAcceleration = (testData[0][1] + testData[1][1] + testData[2][1] +
+        averageAngle = (testData[0][0] + testData[1][0] + testData[2][0]) / 3.0;
+        averageAcceleration = (testData[0][1] + testData[1][1] + testData[2][1] +
                 testData[0][2] + testData[1][2] + testData[2][2] +
                 testData[0][3] + testData[1][3] + testData[2][3])/9.0;
 
@@ -370,11 +372,22 @@ public class SwayActivity extends Activity {
     }
 
     public void saveBtn(View v) {
-
+        sendToSheets(SheetsLocal.UpdateType.SWAY_ANGEL.ordinal(), averageAngle);
+        sendToSheets(SheetsLocal.UpdateType.SWAY_MOVEMENT.ordinal(), averageAcceleration);
     }
 
     public void cancelBtn(View v) {
+        finish();
+    }
 
+    private void sendToSheets(int sheet, double score) {
+        Intent sheetsLocal = new Intent(this, SheetsLocal.class);
+
+        sheetsLocal.putExtra(SheetsLocal.EXTRA_TYPE, sheet);
+        sheetsLocal.putExtra(SheetsLocal.EXTRA_USER, getString(R.string.patientID));
+        sheetsLocal.putExtra(SheetsLocal.EXTRA_VALUE, (float) score);
+
+        startActivity(sheetsLocal);
     }
 
     public void showTutorial(View v) {

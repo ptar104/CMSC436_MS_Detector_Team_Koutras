@@ -47,7 +47,8 @@ public class SpiralView extends View {
     long startTime;
     long endTime;
     public static double testDuration;
-    public static String score;
+    public static String grade;
+    public static double score;
 
     int numCycles;
     Point closestPoint;
@@ -292,7 +293,7 @@ public class SpiralView extends View {
 
         Log.d("Mark","Number of points: "+numSamples);
         Log.d("Mark","Average radial slope difference: "+average);
-
+        score = average;
         if(average < 100) {
             return "A";
         }
@@ -374,7 +375,7 @@ public class SpiralView extends View {
         countdown.cancel();
         // recording how much time the test took
         testDuration = endTime - startTime;
-        score = evaluateTrace();
+        grade = evaluateTrace();
         //Set up the report.
 
         //Dividing line
@@ -397,14 +398,14 @@ public class SpiralView extends View {
         Paint paintText = new Paint();
         paintText.setTextSize(40);
 
-        // Here is where we would add the stats, such as score or lifts, to the report bitmap.
+        // Here is where we would add the stats, such as grade or lifts, to the report bitmap.
         // Just add _offScreenCanvas.getHeight() to every y value.
         _reportCanvas.drawText("Test report:", 10,_offScreenCanvas.getHeight()+100, paintText);
         paintText.setTextSize(30);
         SimpleDateFormat date = new SimpleDateFormat("MM/dd/yyyy hh:mm a");
         _reportCanvas.drawText("Time of test: "+date.format(new Date()), 20,_offScreenCanvas.getHeight()+200, paintText);
         _reportCanvas.drawText("Duration of test: "+ testDuration + " seconds", 20,_offScreenCanvas.getHeight()+250, paintText);
-        _reportCanvas.drawText("Test grade: "+ score, 20,_offScreenCanvas.getHeight()+300, paintText);
+        _reportCanvas.drawText("Test grade: "+ grade, 20,_offScreenCanvas.getHeight()+300, paintText);
 
         // Taken from code in Jon Froehlich's CMSC434 class.
         String fName = UUID.randomUUID().toString() + ".png";
