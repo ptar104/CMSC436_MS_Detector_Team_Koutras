@@ -286,7 +286,12 @@ public class StepActivity extends AppCompatActivity {
         // See that array for what's inside it.
         // You probably don't have to display each trial (unless you want to)
         // The average will prob be fine.
+        TextView tv = (TextView)findViewById(R.id.stepDebugTextView);
         System.out.println("Last data: m/s: " +data[2][0] + " time taken: "+data[2][1]);
+
+        tv.setText("Trial 1: m/s: " + data[0][0] + " time taken: "+data[0][1] + "\n" +
+                "Trial 2: m/s: " + data[1][0] + " time taken: "+data[1][1] + "\n" +
+                "Trial 3: m/s: " + data[2][0] + " time taken: "+data[2][1]);
 
     }
 

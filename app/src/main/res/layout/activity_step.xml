@@ -12,4 +12,10 @@
         android:layout_height="wrap_content"
         android:text="Start the test"
         android:onClick="startTest"/>
+
+    <TextView
+        android:id="@+id/stepDebugTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="This should have data when the tests are done..."/>
 </LinearLayout>
