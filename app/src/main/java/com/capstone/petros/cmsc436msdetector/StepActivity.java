@@ -232,7 +232,7 @@ public class StepActivity extends AppCompatActivity {
     public void endTrial() {
         stopCollectingData();
         long timeTaken = System.currentTimeMillis() - testStartTime;
-        data[trialNum-1][0] = Math.abs(averageVelocity/(totalMeasurementTime*1.0));
+        data[trialNum-1][0] = Math.abs(averageVelocity/(totalMeasurementTime*1000.0));
         data[trialNum-1][1] = timeTaken;
 
         // Just finished the trialNum'th trial
