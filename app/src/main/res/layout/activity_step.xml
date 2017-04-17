@@ -12,9 +12,4 @@
         android:layout_height="wrap_content"
         android:text="Start the test"
         android:onClick="startTest"/>
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Simulate Walking"
-        android:onClick="lastRecorded"/>
 </LinearLayout>
