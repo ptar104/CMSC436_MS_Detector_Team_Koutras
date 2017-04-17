@@ -44,7 +44,12 @@
         <activity
             android:name=".FlexActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".SwayActivity"></activity>
+        <activity
+            android:name=".SwayActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".StepActivity"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

@@ -190,7 +190,7 @@ public class SwayActivity extends Activity {
     }
 
     @Override
-    protected void onStop(){
+    protected void onStop() {
         super.onStop();
         sensorManager.unregisterListener(orientationSel);
         sensorManager.unregisterListener(accelerationSel);
@@ -200,8 +200,7 @@ public class SwayActivity extends Activity {
         }
     }
 
-    private void finishAllTests(){
-
+    private void finishAllTests() {
         _reportCanvas.drawPath(path, paint);
 
         TextView topText = (TextView)findViewById(R.id.swayResultsText);
@@ -416,7 +415,7 @@ public class SwayActivity extends Activity {
     }
 
     // Starts collecting data for the tests
-    private void startCollectingData(){
+    private void startCollectingData() {
         angleScore = 0;
         xScore = 0;
         yScore = 0;
@@ -425,7 +424,7 @@ public class SwayActivity extends Activity {
     }
 
     // Finished collecting data for the tests
-    private void finishCollectingData(int testNum){
+    private void finishCollectingData(int testNum) {
         collectData = false;
         testData[testNum][0] = angleScore;
         testData[testNum][1] = xScore;
@@ -434,7 +433,7 @@ public class SwayActivity extends Activity {
     }
 
     @Override
-    protected void onResume(){
+    protected void onResume() {
         super.onResume();
         sensorManager.registerListener(orientationSel, accelerometer, SensorManager.SENSOR_DELAY_GAME);
         sensorManager.registerListener(orientationSel, magnetometer, SensorManager.SENSOR_DELAY_GAME);

@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/CMSC436MSDetector.iml" filepath="$PROJECT_DIR$/CMSC436MSDetector.iml" />
       <module fileurl="file://$PROJECT_DIR$/CMSC436_MS_Detector_Team_Koutras.iml" filepath="$PROJECT_DIR$/CMSC436_MS_Detector_Team_Koutras.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/sheets436-v0.0.1-release/sheets436-v0.0.1-release.iml" filepath="$PROJECT_DIR$/sheets436-v0.0.1-release/sheets436-v0.0.1-release.iml" />

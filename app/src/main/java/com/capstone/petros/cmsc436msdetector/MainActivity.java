@@ -68,4 +68,9 @@ public class MainActivity extends Activity {
         Intent intent = new Intent(this, SwayActivity.class);
         startActivity(intent);
     }
+
+    public void startStepTest(View view) {
+        Intent intent = new Intent(this, StepActivity.class);
+        startActivity(intent);
+    }
 }

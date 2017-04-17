@@ -211,8 +211,6 @@ public class FlexActivity extends Activity {
                     mediaPlayer = MediaPlayer.create(this, R.raw.completion);
                     mediaPlayer.start();
 
-
-
                     // If right's not done, start that
                     if(!doneRightTest) {
                         // First, save the results
