@@ -59,7 +59,6 @@ public class SpiralActivity extends AppCompatActivity implements Sheets.Host{
     }
 
     private void sendToSheets(Sheets.TestType sheetType) {
-        Sheets sheet = new Sheets(this, this, getString(R.string.app_name));
         sheet.writeData(sheetType, getString(R.string.patientID), (float)SpiralView.score);
         sheet.writeTrials(sheetType, getString(R.string.patientID), (float)SpiralView.score);
     }

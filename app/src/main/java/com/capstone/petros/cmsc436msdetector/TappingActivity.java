@@ -3,6 +3,7 @@ package com.capstone.petros.cmsc436msdetector;
 import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.os.CountDownTimer;
+import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -16,10 +17,18 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.capstone.petros.cmsc436msdetector.Sheets.Sheets;
+
 import java.text.DecimalFormat;
 
-public class TappingActivity extends AppCompatActivity {
+public class TappingActivity extends AppCompatActivity implements Sheets.Host {
 
+    private Sheets sheet;
+    public static final int LIB_ACCOUNT_NAME_REQUEST_CODE = 1001;
+    public static final int LIB_AUTHORIZATION_REQUEST_CODE = 1002;
+    public static final int LIB_PERMISSION_REQUEST_CODE = 1003;
+    public static final int LIB_PLAY_SERVICES_REQUEST_CODE = 1004;
+    public static final int LIB_CONNECTION_REQUEST_CODE = 1005;
     boolean testInProgress = false;
     boolean firstTest = true;
     int numberOfTaps, previousTextNumberOfTaps, tryNumber = 1;
@@ -33,7 +42,7 @@ public class TappingActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tapping);
         tv = (TextView) findViewById(R.id.start_text);
-
+        sheet = new Sheets(this, this, getString(R.string.app_name));
         numberOfTaps = 0;
         previousTextNumberOfTaps = 0;
 
@@ -118,8 +127,8 @@ public class TappingActivity extends AppCompatActivity {
                     }
 
                 } else if(tryNumber == 6) {
-                    sendToSheets(rightSum/3, SheetsLocal.UpdateType.RH_TAP.ordinal());
-                    sendToSheets(leftSum/3, SheetsLocal.UpdateType.LH_TAP.ordinal());
+                    sendToSheets(rightSum/3, Sheets.TestType.RH_TAP);
+                    sendToSheets(leftSum/3, Sheets.TestType.LH_TAP);
                     DecimalFormat df = new DecimalFormat("#.#");
                     output += "\nAll tests complete!\n\n" +
                             "Right average: "+ df.format(rightSum/3) + " taps.\n" +
@@ -143,14 +152,20 @@ public class TappingActivity extends AppCompatActivity {
         };
     }
 
-    private void sendToSheets(float numTaps, int sheet) {
-        Intent sheetsLocal = new Intent(this, SheetsLocal.class);
+    @Override
+    public void onRequestPermissionsResult (int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
+        this.sheet.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
 
-        sheetsLocal.putExtra(SheetsLocal.EXTRA_TYPE, sheet);
-        sheetsLocal.putExtra(SheetsLocal.EXTRA_USER, getString(R.string.patientID));
-        sheetsLocal.putExtra(SheetsLocal.EXTRA_VALUE, numTaps);
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        this.sheet.onActivityResult(requestCode, resultCode, data);
+    }
 
-        startActivity(sheetsLocal);
+    private void sendToSheets(float numTaps, Sheets.TestType sheetType) {
+        sheet.writeData(sheetType, getString(R.string.patientID), numTaps);
+        sheet.writeTrials(sheetType, getString(R.string.patientID), numTaps);
     }
 
     @Override
@@ -249,4 +264,26 @@ public class TappingActivity extends AppCompatActivity {
     }
 
 
+    @Override
+    public int getRequestCode(Sheets.Action action) {
+        switch (action) {
+            case REQUEST_ACCOUNT_NAME:
+                return LIB_ACCOUNT_NAME_REQUEST_CODE;
+            case REQUEST_AUTHORIZATION:
+                return LIB_AUTHORIZATION_REQUEST_CODE;
+            case REQUEST_PERMISSIONS:
+                return LIB_PERMISSION_REQUEST_CODE;
+            case REQUEST_PLAY_SERVICES:
+                return LIB_PLAY_SERVICES_REQUEST_CODE;
+            case REQUEST_CONNECTION_RESOLUTION:
+                return LIB_CONNECTION_REQUEST_CODE;
+            default:
+                return -1;
+        }
+    }
+
+    @Override
+    public void notifyFinished(Exception e) {
+
+    }
 }
