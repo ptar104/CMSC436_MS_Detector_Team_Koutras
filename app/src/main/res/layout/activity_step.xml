@@ -94,7 +94,7 @@
                 android:id="@+id/saveButton"
                 android:layout_width="148dp"
                 android:layout_height="wrap_content"
-                android:onClick="saveBtn"
+                android:onClick="saveBtnWalkingIndoor"
                 android:text="Save"
                 android:visibility="visible"
                 android:layout_weight="0.43" />

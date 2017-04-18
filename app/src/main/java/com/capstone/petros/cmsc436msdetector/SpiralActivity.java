@@ -16,7 +16,7 @@ import android.widget.Toast;
 
 import com.capstone.petros.cmsc436msdetector.Sheets.Sheets;
 
-public class SpiralActivity extends AppCompatActivity implements Sheets.Host{
+public class SpiralActivity extends AppCompatActivity implements Sheets.Host {
 
     private Sheets sheet;
     public static final int LIB_ACCOUNT_NAME_REQUEST_CODE = 1001;

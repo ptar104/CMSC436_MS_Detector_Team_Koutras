@@ -15,6 +15,7 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.support.annotation.NonNull;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -23,10 +24,17 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.capstone.petros.cmsc436msdetector.Sheets.Sheets;
+
 import java.text.DecimalFormat;
 
-public class SwayActivity extends Activity {
-
+public class SwayActivity extends Activity implements Sheets.Host {
+    private Sheets sheet;
+    public static final int LIB_ACCOUNT_NAME_REQUEST_CODE = 1001;
+    public static final int LIB_AUTHORIZATION_REQUEST_CODE = 1002;
+    public static final int LIB_PERMISSION_REQUEST_CODE = 1003;
+    public static final int LIB_PLAY_SERVICES_REQUEST_CODE = 1004;
+    public static final int LIB_CONNECTION_REQUEST_CODE = 1005;
     private Canvas _reportCanvas = null;
     private Bitmap _reportBitmap = null;
     private Paint paint = new Paint();
@@ -60,7 +68,7 @@ public class SwayActivity extends Activity {
         setContentView(R.layout.activity_sway);
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-
+        sheet = new Sheets(this, this, getString(R.string.app_name));
         trialNum = 1;
         sensorManager = (SensorManager) this.getSystemService(this.SENSOR_SERVICE);
         accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
@@ -187,6 +195,17 @@ public class SwayActivity extends Activity {
         path.moveTo(currX, currY);
         dotPaint.setColor(Color.RED);
         _reportCanvas.drawCircle(currX, currY, 8, dotPaint);
+    }
+
+    @Override
+    public void onRequestPermissionsResult (int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
+        this.sheet.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        this.sheet.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
@@ -371,22 +390,17 @@ public class SwayActivity extends Activity {
     }
 
     public void saveBtn(View v) {
-        sendToSheets(SheetsLocal.UpdateType.SWAY_ANGEL.ordinal(), averageAngle);
-        sendToSheets(SheetsLocal.UpdateType.SWAY_MOVEMENT.ordinal(), averageAcceleration);
+        sendToSheets(averageAngle, averageAcceleration);
     }
 
     public void cancelBtn(View v) {
         finish();
     }
 
-    private void sendToSheets(int sheet, double score) {
-        Intent sheetsLocal = new Intent(this, SheetsLocal.class);
-
-        sheetsLocal.putExtra(SheetsLocal.EXTRA_TYPE, sheet);
-        sheetsLocal.putExtra(SheetsLocal.EXTRA_USER, getString(R.string.patientID));
-        sheetsLocal.putExtra(SheetsLocal.EXTRA_VALUE, (float) score);
-
-        startActivity(sheetsLocal);
+    private void sendToSheets(double averageAngle, double averageAcceleration) {
+        sheet.writeData(Sheets.TestType.HEAD_SWAY, getString(R.string.patientID), (float)averageAcceleration);
+        sheet.writeTrials(Sheets.TestType.SWAY_ANGEL, getString(R.string.patientID), (float) averageAngle);
+        sheet.writeTrials(Sheets.TestType.SWAY_MOVEMENT, getString(R.string.patientID), (float) averageAcceleration);
     }
 
     public void showTutorial(View v) {
@@ -440,4 +454,26 @@ public class SwayActivity extends Activity {
         sensorManager.registerListener(accelerationSel, accelerometer, SensorManager.SENSOR_DELAY_GAME);
     }
 
+    @Override
+    public int getRequestCode(Sheets.Action action) {
+        switch (action) {
+            case REQUEST_ACCOUNT_NAME:
+                return LIB_ACCOUNT_NAME_REQUEST_CODE;
+            case REQUEST_AUTHORIZATION:
+                return LIB_AUTHORIZATION_REQUEST_CODE;
+            case REQUEST_PERMISSIONS:
+                return LIB_PERMISSION_REQUEST_CODE;
+            case REQUEST_PLAY_SERVICES:
+                return LIB_PLAY_SERVICES_REQUEST_CODE;
+            case REQUEST_CONNECTION_RESOLUTION:
+                return LIB_CONNECTION_REQUEST_CODE;
+            default:
+                return -1;
+        }
+    }
+
+    @Override
+    public void notifyFinished(Exception e) {
+
+    }
 }

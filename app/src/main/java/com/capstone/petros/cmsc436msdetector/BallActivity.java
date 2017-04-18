@@ -10,8 +10,11 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.widget.TextView;
+
+import com.capstone.petros.cmsc436msdetector.Sheets.Sheets;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -24,7 +27,13 @@ import java.io.ObjectOutputStream;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-public class BallActivity extends Activity  implements TimedActivity {
+public class BallActivity extends Activity implements TimedActivity, Sheets.Host {
+    private Sheets sheet;
+    public static final int LIB_ACCOUNT_NAME_REQUEST_CODE = 1001;
+    public static final int LIB_AUTHORIZATION_REQUEST_CODE = 1002;
+    public static final int LIB_PERMISSION_REQUEST_CODE = 1003;
+    public static final int LIB_PLAY_SERVICES_REQUEST_CODE = 1004;
+    public static final int LIB_CONNECTION_REQUEST_CODE = 1005;
     SensorEventListener sel;
     SensorManager sensorManager;
     Sensor accelerometer, magnetometer;
@@ -67,6 +76,7 @@ public class BallActivity extends Activity  implements TimedActivity {
                 ((BallView)findViewById(R.id.ballView)).resetTest();
                 FragmentManager fragmentManager = getFragmentManager();
                 InstructionFragment frag = new InstructionFragment();
+                sendToSheets(ballView.fScore, Sheets.TestType.LH_LEVEL);
                 Bundle bundle = new Bundle();
                 bundle.putString(InstructionFragment.MESSAGE_KEY, "Use your right hand to keep the ball in the center of the screen");
                 frag.setArguments(bundle);
@@ -81,8 +91,7 @@ public class BallActivity extends Activity  implements TimedActivity {
                 Utils.appendResultsToInternalStorage(activity, BALL_TEST_DATA_FILENAME, ballView.totalScore);
 
                 // write the results to the google sheets
-                sendToSheets(ballView.fScore, SheetsLocal.UpdateType.LH_LEVEL.ordinal());
-                sendToSheets(ballView.fScore, SheetsLocal.UpdateType.RH_LEVEL.ordinal());
+                sendToSheets(ballView.fScore, Sheets.TestType.RH_LEVEL);
 
                 ((BallView)findViewById(R.id.ballView)).resetTest();
 
@@ -93,22 +102,27 @@ public class BallActivity extends Activity  implements TimedActivity {
         }
     };
 
-    private void sendToSheets(double score, int sheet) {
-        Intent sheetsLocal = new Intent(this, SheetsLocal.class);
-
-        sheetsLocal.putExtra(SheetsLocal.EXTRA_TYPE, sheet);
-        sheetsLocal.putExtra(SheetsLocal.EXTRA_USER, getString(R.string.patientID));
-        sheetsLocal.putExtra(SheetsLocal.EXTRA_VALUE, (float) score);
-
-        startActivity(sheetsLocal);
+    private void sendToSheets(double score, Sheets.TestType sheetType) {
+        sheet.writeData(sheetType, getString(R.string.patientID), (float)score);
+        sheet.writeTrials(sheetType, getString(R.string.patientID), (float)score);
     }
 
+    @Override
+    public void onRequestPermissionsResult (int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
+        this.sheet.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        this.sheet.onActivityResult(requestCode, resultCode, data);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ball);
-
+        sheet = new Sheets(this, this, getString(R.string.app_name));
         ballView = (BallView) findViewById(R.id.ballView);
         threeSecondCountdownText = (TextView)findViewById(R.id.start_text);
 
@@ -183,4 +197,26 @@ public class BallActivity extends Activity  implements TimedActivity {
         prepTimer.start();
     }
 
+    @Override
+    public int getRequestCode(Sheets.Action action) {
+        switch (action) {
+            case REQUEST_ACCOUNT_NAME:
+                return LIB_ACCOUNT_NAME_REQUEST_CODE;
+            case REQUEST_AUTHORIZATION:
+                return LIB_AUTHORIZATION_REQUEST_CODE;
+            case REQUEST_PERMISSIONS:
+                return LIB_PERMISSION_REQUEST_CODE;
+            case REQUEST_PLAY_SERVICES:
+                return LIB_PLAY_SERVICES_REQUEST_CODE;
+            case REQUEST_CONNECTION_RESOLUTION:
+                return LIB_CONNECTION_REQUEST_CODE;
+            default:
+                return -1;
+        }
+    }
+
+    @Override
+    public void notifyFinished(Exception e) {
+
+    }
 }

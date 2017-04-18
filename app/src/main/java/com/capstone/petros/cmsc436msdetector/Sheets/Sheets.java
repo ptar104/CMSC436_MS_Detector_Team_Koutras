@@ -265,7 +265,9 @@ public class Sheets implements GoogleApiClient.ConnectionCallbacks, GoogleApiCli
         LH_CURL("'Curling Test (LH)'"),
         RH_CURL("'Curling Test (RH)'"),
         HEAD_SWAY("'Swaying Test'"),
-        INDOOR_WALKING("'Indoor Walking Test");
+        SWAY_ANGEL("'Sway Test (Angel)'"),
+        SWAY_MOVEMENT("'Sway Test (Movement)'"),
+        INDOOR_WALKING("'Walking Test (IN)'");
 
         private final String id;
 

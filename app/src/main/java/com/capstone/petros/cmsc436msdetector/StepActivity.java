@@ -1,12 +1,14 @@
 package com.capstone.petros.cmsc436msdetector;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.media.MediaPlayer;
 import android.os.CountDownTimer;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -17,12 +19,20 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-public class StepActivity extends Activity {
+import com.capstone.petros.cmsc436msdetector.Sheets.Sheets;
+
+public class StepActivity extends Activity implements Sheets.Host {
     MediaPlayer mediaPlayer;
     int trialNum = 1;
 
     TextView tutorialView;
 
+    private Sheets sheet;
+    public static final int LIB_ACCOUNT_NAME_REQUEST_CODE = 1001;
+    public static final int LIB_AUTHORIZATION_REQUEST_CODE = 1002;
+    public static final int LIB_PERMISSION_REQUEST_CODE = 1003;
+    public static final int LIB_PLAY_SERVICES_REQUEST_CODE = 1004;
+    public static final int LIB_CONNECTION_REQUEST_CODE = 1005;
 
     SensorEventListener stepSel, accSel;
     SensorManager sensorManager;
@@ -44,7 +54,7 @@ public class StepActivity extends Activity {
     // Ex: the time taken on the third trial = data[2][1]
     // average speed (m/s) on first trial = data[0][0]
     private double[][] data = new double[3][2];
-
+    private double averageSpeed = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +63,7 @@ public class StepActivity extends Activity {
 
         // Keep the screen on...
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-
+        sheet = new Sheets(this, this, getString(R.string.app_name));
         sensorManager = (SensorManager) this.getSystemService(this.SENSOR_SERVICE);
         linAccelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
         if(linAccelerometer == null){
@@ -121,6 +131,17 @@ public class StepActivity extends Activity {
             @Override
             public void onAccuracyChanged(Sensor sensor, int accuracy) {/*cough*/}
         };
+    }
+
+    @Override
+    public void onRequestPermissionsResult (int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
+        this.sheet.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        this.sheet.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
@@ -303,10 +324,11 @@ public class StepActivity extends Activity {
         TextView tv = (TextView)findViewById(R.id.stepDebugTextView);
         System.out.println("Last data: m/s: " +data[2][0] + " time taken: "+data[2][1]);
 
-                tv.setText("Trial 1: m/s: " + data[0][0] + ", time elapsed: "+data[0][1] + "\n" +
-                "Trial 2: m/s: " + data[1][0] + ", time elapsed: "+data[1][1] + "\n" +
-                "Trial 3: m/s: " + data[2][0] + ", time elapse: "+data[2][1]);
+                tv.setText("Trial 1:\nm/s: " + data[0][0] + ", time elapsed: "+data[0][1] + "\n" +
+                "Trial 2:\nm/s: " + data[1][0] + ", time elapsed: "+data[1][1] + "\n" +
+                "Trial 3:\nm/s: " + data[2][0] + ", time elapsed: "+data[2][1]);
 
+        averageSpeed = (data[0][0] + data[1][0] + data[2][0])/3;
         findViewById(R.id.stepResultsLayout).setVisibility(View.VISIBLE);
         findViewById(R.id.stepTextLayout).setVisibility(View.GONE);
 
@@ -347,13 +369,40 @@ public class StepActivity extends Activity {
         }
     }
 
-    public void saveBtn(View v) {
-        //sendToSheets(SheetsLocal.UpdateType.SWAY_ANGEL.ordinal(), averageAngle);
-        //sendToSheets(SheetsLocal.UpdateType.SWAY_MOVEMENT.ordinal(), averageAcceleration);
+    public void saveBtnWalkingIndoor(View v) {
+        sendToSheets(Sheets.TestType.INDOOR_WALKING);
+    }
+
+    private void sendToSheets(Sheets.TestType sheetType) {
+        sheet.writeData(sheetType, getString(R.string.patientID), (float)averageSpeed);
+        sheet.writeTrials(sheetType, getString(R.string.patientID), (float)averageSpeed);
     }
 
     public void cancelBtn(View v) {
         finish();
+    }
+
+    @Override
+    public int getRequestCode(Sheets.Action action) {
+        switch (action) {
+            case REQUEST_ACCOUNT_NAME:
+                return LIB_ACCOUNT_NAME_REQUEST_CODE;
+            case REQUEST_AUTHORIZATION:
+                return LIB_AUTHORIZATION_REQUEST_CODE;
+            case REQUEST_PERMISSIONS:
+                return LIB_PERMISSION_REQUEST_CODE;
+            case REQUEST_PLAY_SERVICES:
+                return LIB_PLAY_SERVICES_REQUEST_CODE;
+            case REQUEST_CONNECTION_RESOLUTION:
+                return LIB_CONNECTION_REQUEST_CODE;
+            default:
+                return -1;
+        }
+    }
+
+    @Override
+    public void notifyFinished(Exception e) {
+
     }
 }
 
