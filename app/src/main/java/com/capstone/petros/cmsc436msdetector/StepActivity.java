@@ -1,5 +1,6 @@
 package com.capstone.petros.cmsc436msdetector;
 
+import android.app.Activity;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -16,7 +17,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-public class StepActivity extends AppCompatActivity {
+public class StepActivity extends Activity {
     MediaPlayer mediaPlayer;
     int trialNum = 1;
 
@@ -234,8 +235,9 @@ public class StepActivity extends AppCompatActivity {
 
     //25 steps
 
-    public void simulateSteps(){
-        stepCount = 25;
+    public void simulateSteps(View view){
+        finishAllTests();
+        //stepCount = 25;
     }
 
     /*
@@ -301,9 +303,12 @@ public class StepActivity extends AppCompatActivity {
         TextView tv = (TextView)findViewById(R.id.stepDebugTextView);
         System.out.println("Last data: m/s: " +data[2][0] + " time taken: "+data[2][1]);
 
-        tv.setText("Trial 1: m/s: " + data[0][0] + " time taken: "+data[0][1] + "\n" +
-                "Trial 2: m/s: " + data[1][0] + " time taken: "+data[1][1] + "\n" +
-                "Trial 3: m/s: " + data[2][0] + " time taken: "+data[2][1]);
+                tv.setText("Trial 1: m/s: " + data[0][0] + ", time elapsed: "+data[0][1] + "\n" +
+                "Trial 2: m/s: " + data[1][0] + ", time elapsed: "+data[1][1] + "\n" +
+                "Trial 3: m/s: " + data[2][0] + ", time elapse: "+data[2][1]);
+
+        findViewById(R.id.stepResultsLayout).setVisibility(View.VISIBLE);
+        findViewById(R.id.stepTextLayout).setVisibility(View.GONE);
 
     }
 
@@ -340,6 +345,15 @@ public class StepActivity extends AppCompatActivity {
             shader.setVisibility(View.GONE);
             tutorialButton.setColorFilter(0xFF000000);
         }
+    }
+
+    public void saveBtn(View v) {
+        //sendToSheets(SheetsLocal.UpdateType.SWAY_ANGEL.ordinal(), averageAngle);
+        //sendToSheets(SheetsLocal.UpdateType.SWAY_MOVEMENT.ordinal(), averageAcceleration);
+    }
+
+    public void cancelBtn(View v) {
+        finish();
     }
 }
 
