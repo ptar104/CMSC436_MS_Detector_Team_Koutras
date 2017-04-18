@@ -15,7 +15,7 @@
     <Space
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight=".1"/>
+        android:layout_weight=".05"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -25,63 +25,101 @@
         android:textSize="36sp"
         android:fontFamily="sans-serif"
         android:textStyle="normal|bold"
-        android:layout_weight=".15"/>
+        android:layout_weight=".1"/>
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight=".15">
+        android:layout_weight=".15"
+        android:paddingBottom="10dp"
+        >
 
         <Button
-            android:text="Tap Test"
+            android:text="Tap \nTest"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:layout_weight=".1"
+            android:layout_height="75dp"
+            android:id="@+id/TapButton"
+            android:onClick="startTapTest"
+            android:layout_marginLeft="35dp"
+            android:layout_marginRight="35dp"
+            android:layout_alignParentLeft="true"
+
             android:scaleX="1.5"
             android:scaleY="1.5"
-            android:id="@+id/TapButton"
-            android:onClick="startTapTest"/>
+            />
+
+
+        <Button
+            android:text="Spiral \nTest"
+            android:layout_width="wrap_content"
+            android:layout_height="75dp"
+            android:layout_alignParentRight="true"
+            android:id="@+id/SpiralButton"
+            android:onClick="startSpiralTest"
+            android:layout_marginLeft="35dp"
+            android:layout_marginRight="35dp"
+            android:scaleX="1.5"
+            android:scaleY="1.5"
+            />
 
     </RelativeLayout>
 
-    <RelativeLayout
+   <!-- <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight=".15">
+        android:layout_weight=".15"
+        android:id="@+id/spiral_test"
+        android:align>
 
         <Button
             android:text="Spiral Test"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:layout_weight=".1"
             android:scaleX="1.5"
             android:scaleY="1.5"
             android:id="@+id/SpiralButton"
             android:onClick="startSpiralTest"/>
 
-    </RelativeLayout>
+    </RelativeLayout>-->
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight=".15">
+        android:layout_weight=".15"
+        android:paddingBottom="10dp"
+        >
 
         <Button
-            android:text="Ball Test"
+            android:text="Ball \nTest"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:layout_weight=".1"
+            android:layout_height="75dp"
+            android:layout_marginLeft="35dp"
+            android:layout_marginRight="35dp"
             android:scaleX="1.5"
             android:scaleY="1.5"
             android:id="@+id/BallButton"
-            android:onClick="startBallTest"/>
+            android:onClick="startBallTest"
+            android:layout_alignParentLeft="true"
+            />
+
+
+        <Button
+            android:text="Reaction \nTest"
+            android:layout_width="wrap_content"
+            android:layout_height="75dp"
+            android:layout_marginLeft="35dp"
+            android:layout_marginRight="35dp"
+            android:scaleX="1.5"
+            android:scaleY="1.5"
+            android:id="@+id/ReactionButton"
+            android:onClick="startReactionTest"
+            android:layout_alignParentRight="true"
+            />
 
     </RelativeLayout>
 
-    <RelativeLayout
+ <!--   <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight=".15">
@@ -97,28 +135,44 @@
             android:id="@+id/ReactionButton"
             android:onClick="startReactionTest"/>
 
-    </RelativeLayout>
+    </RelativeLayout>-->
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight=".15">
+        android:layout_weight=".15"
+        android:paddingBottom="10dp">
 
         <Button
-            android:text="Graph Demo"
+            android:text="Graph \nDemo"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:layout_weight=".1"
+            android:layout_height="75dp"
+            android:layout_marginLeft="35dp"
+            android:layout_marginRight="35dp"
+            android:layout_alignParentLeft="true"
+
             android:scaleX="1.5"
             android:scaleY="1.5"
             android:id="@+id/ReactionGraphButton"
             android:onClick="startReactionGraphDemo"/>
 
+        <Button
+            android:text="Flex \nDemo"
+            android:layout_width="wrap_content"
+            android:layout_height="75dp"
+            android:layout_marginLeft="35dp"
+            android:layout_marginRight="35dp"
+            android:layout_alignParentRight="true"
+
+            android:scaleX="1.5"
+            android:scaleY="1.5"
+            android:id="@+id/FlexButton"
+            android:onClick="startFlexDemo"/>
+
 
     </RelativeLayout>
 
-    <RelativeLayout
+    <!--<RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight=".15">
@@ -135,38 +189,33 @@
             android:onClick="startFlexDemo"/>
 
 
-    </RelativeLayout>
+    </RelativeLayout>-->
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight=".15">
+        android:layout_weight=".15"
+        android:paddingBottom="10dp">
 
         <Button
-            android:text="Sway Test"
+            android:text="Sway \nTest"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:layout_weight=".1"
+            android:layout_height="75dp"
+            android:layout_marginLeft="35dp"
+            android:layout_marginRight="35dp"
+            android:layout_alignParentLeft="true"
             android:scaleX="1.5"
             android:scaleY="1.5"
             android:id="@+id/SwayButton"
             android:onClick="startSwayTest"/>
 
-
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight=".15">
-
         <Button
-            android:text="Step Test"
+            android:text="Step \nTest"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:layout_weight=".1"
+            android:layout_height="75dp"
+            android:layout_marginLeft="35dp"
+            android:layout_marginRight="35dp"
+            android:layout_alignParentRight="true"
             android:scaleX="1.5"
             android:scaleY="1.5"
             android:id="@+id/StepButton"
@@ -174,6 +223,26 @@
 
 
     </RelativeLayout>
+
+   <!-- <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight=".15">
+
+        <Button
+            android:text="Step Test"
+            android:layout_width="wrap_content"
+            android:layout_height="75dp"
+            android:layout_marginLeft="35dp"
+            android:layout_marginRight="35dp"
+            android:layout_alignParentRight="true"
+            android:scaleX="1.5"
+            android:scaleY="1.5"
+            android:id="@+id/StepButton"
+            android:onClick="startStepTest"/>
+
+
+    </RelativeLayout>-->
 
     <!--
 

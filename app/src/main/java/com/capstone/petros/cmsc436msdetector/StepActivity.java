@@ -11,11 +11,17 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 public class StepActivity extends AppCompatActivity {
     MediaPlayer mediaPlayer;
     int trialNum = 1;
+
+    TextView tutorialView;
+
 
     SensorEventListener stepSel, accSel;
     SensorManager sensorManager;
@@ -57,11 +63,11 @@ public class StepActivity extends AppCompatActivity {
             usedAccelerometer = linAccelerometer;
         }
         stepDetector = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR);
-        if(stepDetector == null){
+       /* if(stepDetector == null){
             // Can replace with accelerometer, but for now, I quit.
             System.out.println("Tsk tsk... no step detector.");
             finish();
-        }
+        }*/
 
         // Accelerometer listener
         accSel = new SensorEventListener() {
@@ -226,6 +232,12 @@ public class StepActivity extends AppCompatActivity {
         mediaPlayer.start();
     }
 
+    //25 steps
+
+    public void simulateSteps(){
+        stepCount = 25;
+    }
+
     /*
      * Call this function when the 25 steps are recorded
      */
@@ -304,4 +316,30 @@ public class StepActivity extends AppCompatActivity {
     private void stopCollectingData() {
         collectData = false;
     }
+
+    public void showTutorial(View v) {
+        FrameLayout frame = (FrameLayout)findViewById(R.id.swayFrame);
+        tutorialView = (TextView) findViewById(R.id.swayInstructions);
+        RelativeLayout shader = (RelativeLayout)findViewById(R.id.swayShader);
+        ImageView tutorialButton = (ImageView)findViewById(R.id.swayTutorialButton);
+
+        if (frame.getVisibility() == View.GONE) {
+            frame.setVisibility(View.VISIBLE);
+            tutorialView.setText("INSTRUCTIONS:\n\n" +
+                    "This is the Step test.\n\n" +
+                    "It measures your average indoor walking speed.\n\n" +
+                    "You need a headband to perform this test. You also need the audio on your phone to be on.\n\n" +
+                    "To take this test, put the phone in your headband behind your head.\n\n" +
+                    "When prompted, begin walking forward, turning to avoid walls or obstructions.\n\n" +
+                    "After 25 steps, the test will be complete.");
+            shader.setVisibility(View.VISIBLE);
+            tutorialButton.setColorFilter(0xFFF6FF00);
+        }
+        else {
+            frame.setVisibility(View.GONE);
+            shader.setVisibility(View.GONE);
+            tutorialButton.setColorFilter(0xFF000000);
+        }
+    }
 }
+
