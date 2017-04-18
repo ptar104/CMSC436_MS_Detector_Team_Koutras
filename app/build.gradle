@@ -22,12 +22,19 @@ android {
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.android.support:appcompat-v7:25.0.1'
-    compile 'com.google.android.gms:play-services-auth:10.2.0'
+    compile 'com.google.android.gms:play-services-drive:10.2.1'
+    compile 'com.google.android.gms:play-services-auth:10.2.1'
     compile 'pub.devrel:easypermissions:0.2.1'
     compile('com.google.api-client:google-api-client-android:1.22.0') {
         exclude group: 'org.apache.httpcomponents'
+        exclude group: 'com.google.code.findbugs'
     }
     compile('com.google.apis:google-api-services-sheets:v4-rev466-1.22.0') {
         exclude group: 'org.apache.httpcomponents'
+        exclude group: 'com.google.code.findbugs'
+    }
+    compile('com.google.apis:google-api-services-drive:v3-rev69-1.22.0') {
+        exclude group: 'org.apache.httpcomponents'
+        exclude group: 'com.google.code.findbugs'
     }
 }

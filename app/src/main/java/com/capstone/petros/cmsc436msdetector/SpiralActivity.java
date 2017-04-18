@@ -2,6 +2,7 @@ package com.capstone.petros.cmsc436msdetector;
 
 import android.content.ContentResolver;
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MotionEvent;
@@ -13,13 +14,21 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class SpiralActivity extends AppCompatActivity {
+import com.capstone.petros.cmsc436msdetector.Sheets.Sheets;
 
+public class SpiralActivity extends AppCompatActivity implements Sheets.Host{
+
+    private Sheets sheet;
+    public static final int LIB_ACCOUNT_NAME_REQUEST_CODE = 1001;
+    public static final int LIB_AUTHORIZATION_REQUEST_CODE = 1002;
+    public static final int LIB_PERMISSION_REQUEST_CODE = 1003;
+    public static final int LIB_PLAY_SERVICES_REQUEST_CODE = 1004;
+    public static final int LIB_CONNECTION_REQUEST_CODE = 1005;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_spiral);
-
+        sheet = new Sheets(this, this, getString(R.string.app_name));
         final TextView instruction = (TextView) findViewById(R.id.Instructions);
         SpiralView spiralView = (SpiralView)findViewById(R.id.SpiralView);
         spiralView.setOnTouchListener(new View.OnTouchListener() {
@@ -38,25 +47,31 @@ public class SpiralActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    public void onRequestPermissionsResult (int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
+        this.sheet.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
 
-    private void sendToSheets(int sheet) {
-        Intent sheetsLocal = new Intent(this, SheetsLocal.class);
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        this.sheet.onActivityResult(requestCode, resultCode, data);
+    }
 
-        sheetsLocal.putExtra(SheetsLocal.EXTRA_TYPE, sheet);
-        sheetsLocal.putExtra(SheetsLocal.EXTRA_USER, getString(R.string.patientID));
-        sheetsLocal.putExtra(SheetsLocal.EXTRA_VALUE, (float)SpiralView.score);
-
-        startActivity(sheetsLocal);
+    private void sendToSheets(Sheets.TestType sheetType) {
+        Sheets sheet = new Sheets(this, this, getString(R.string.app_name));
+        sheet.writeData(sheetType, getString(R.string.patientID), (float)SpiralView.score);
+        sheet.writeTrials(sheetType, getString(R.string.patientID), (float)SpiralView.score);
     }
 
     public void saveImageLeft(View view){
         ((SpiralView)findViewById(R.id.SpiralView)).saveTestToGallery();
-        sendToSheets(SheetsLocal.UpdateType.LH_SPIRAL.ordinal());
+        sendToSheets(Sheets.TestType.LH_SPIRAL);
     }
 
     public void saveImageRight(View view){
         ((SpiralView)findViewById(R.id.SpiralView)).saveTestToGallery();
-        sendToSheets(SheetsLocal.UpdateType.RH_SPIRAL.ordinal());
+        sendToSheets(Sheets.TestType.RH_SPIRAL);
     }
 
     public void resetTest(View view){
@@ -89,5 +104,28 @@ public class SpiralActivity extends AppCompatActivity {
             shader.setVisibility(View.GONE);
             tutorialButton.setColorFilter(0xFF000000);
         }
+    }
+
+    @Override
+    public int getRequestCode(Sheets.Action action) {
+        switch (action) {
+            case REQUEST_ACCOUNT_NAME:
+                return LIB_ACCOUNT_NAME_REQUEST_CODE;
+            case REQUEST_AUTHORIZATION:
+                return LIB_AUTHORIZATION_REQUEST_CODE;
+            case REQUEST_PERMISSIONS:
+                return LIB_PERMISSION_REQUEST_CODE;
+            case REQUEST_PLAY_SERVICES:
+                return LIB_PLAY_SERVICES_REQUEST_CODE;
+            case REQUEST_CONNECTION_RESOLUTION:
+                return LIB_CONNECTION_REQUEST_CODE;
+            default:
+                return -1;
+        }
+    }
+
+    @Override
+    public void notifyFinished(Exception e) {
+
     }
 }
