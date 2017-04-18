@@ -1,21 +1,154 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_step"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:background="#FF88AAE0"
     tools:context="com.capstone.petros.cmsc436msdetector.StepActivity">
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Start the test"
-        android:onClick="startTest"/>
+    <LinearLayout
+        android:id="@+id/stepTextLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:orientation="vertical"
+        android:visibility="visible">
 
-    <TextView
-        android:id="@+id/stepDebugTextView"
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight=".1"/>
+
+        <TextView
+            android:id="@+id/stepTopText"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight=".3"
+            android:text="STEP TEST:\n\nPress the button to start."
+            android:textSize="30sp"
+            android:textAlignment="center"/>
+
+        <Button
+            android:id="@+id/startTestBtn"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight=".2"
+            android:scaleX="0.5"
+            android:scaleY="0.5"
+            android:textSize="40sp"
+            android:text="Start"
+            android:onClick="startTest"/>
+
+        <TextView
+            android:id="@+id/stepBottomText"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight=".3"
+            android:text="\nPlace the phone in the headband."
+            android:textSize="30sp"
+            android:textAlignment="center"/>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight=".1"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/stepResultsLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <ImageView
+            android:id="@+id/stepImageView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight=".6"/>
+
+        <TextView
+            android:id="@+id/stepDebugTextView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight=".25"
+            android:text="Results:"
+            android:textSize="25sp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:orientation="horizontal"
+            android:layout_weight=".15">
+            <Button
+                android:id="@+id/saveButton"
+                android:layout_width="148dp"
+                android:layout_height="wrap_content"
+                android:onClick="saveBtn"
+                android:text="Save"
+                android:visibility="visible"
+                android:layout_weight="0.43" />
+
+            <Button
+                android:id="@+id/cancelButton"
+                android:layout_width="138dp"
+                android:layout_height="wrap_content"
+                android:onClick="cancelBtn"
+                android:text="Cancel"
+                android:visibility="visible"
+                android:layout_weight="0.53" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/stepShader"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#CC000000"
+        android:visibility="gone"
+        android:clickable="true"
+        android:onClick="showTutorial"/>
+
+    <FrameLayout
+        android:id="@+id/stepFrame"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="This should have data when the tests are done..."/>
-</LinearLayout>
+        android:background="#FFF6FF00"
+        android:layout_centerInParent="true"
+        android:layout_margin="15dp"
+        android:padding="2dp"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/stepInstructions"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="15dp"
+            android:background="#FF0b1b33"
+            android:text=""
+            android:textAlignment="center"
+            android:textSize="20sp"
+            />
+
+    </FrameLayout>
+
+    <ImageView
+        android:id="@+id/stepTutorialButton"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/ic_help_outline_black_24dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:clickable="true"
+        android:onClick="showTutorial"/>
+
+</RelativeLayout>
