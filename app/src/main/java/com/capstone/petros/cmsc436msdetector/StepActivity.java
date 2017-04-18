@@ -323,10 +323,10 @@ public class StepActivity extends Activity {
     }
 
     public void showTutorial(View v) {
-        FrameLayout frame = (FrameLayout)findViewById(R.id.swayFrame);
-        tutorialView = (TextView) findViewById(R.id.swayInstructions);
-        RelativeLayout shader = (RelativeLayout)findViewById(R.id.swayShader);
-        ImageView tutorialButton = (ImageView)findViewById(R.id.swayTutorialButton);
+        FrameLayout frame = (FrameLayout)findViewById(R.id.stepFrame);
+        tutorialView = (TextView) findViewById(R.id.stepInstructions);
+        RelativeLayout shader = (RelativeLayout)findViewById(R.id.stepShader);
+        ImageView tutorialButton = (ImageView)findViewById(R.id.stepTutorialButton);
 
         if (frame.getVisibility() == View.GONE) {
             frame.setVisibility(View.VISIBLE);
