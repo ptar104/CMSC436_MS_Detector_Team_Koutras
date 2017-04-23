@@ -3,6 +3,7 @@ package com.capstone.petros.cmsc436msdetector;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -18,14 +19,20 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 public class WalkingActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
     private UiSettings uiSettings;
+    private ArrayList<LatLng> pointList;
+    private Polyline line;
 
     private boolean locationDenied = true;
 
@@ -39,6 +46,13 @@ public class WalkingActivity extends FragmentActivity implements OnMapReadyCallb
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        pointList = new ArrayList<>();
+        //test points
+        pointList.add(new LatLng(-34, 151));
+        pointList.add(new LatLng(-33, 151));
+        pointList.add(new LatLng(-30, 154));
+        pointList.add(new LatLng(-28, 160));
 
 
     }
@@ -60,17 +74,16 @@ public class WalkingActivity extends FragmentActivity implements OnMapReadyCallb
         uiSettings = mMap.getUiSettings();
         uiSettings.setZoomGesturesEnabled(false);
 
-        if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
             mMap.setMyLocationEnabled(true);
             uiSettings.setMyLocationButtonEnabled(true);
         } else {
-            if(locationDenied) {
+            if (locationDenied) {
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}
                         , MY_LOCATION_REQUEST_CODE);
             }
         }
-
 
 
         // Add a marker in Sydney and move the camera
@@ -81,11 +94,10 @@ public class WalkingActivity extends FragmentActivity implements OnMapReadyCallb
     }
 
 
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if(requestCode == MY_LOCATION_REQUEST_CODE){
-            if (grantResults.length == 0 || grantResults[0] != PackageManager.PERMISSION_GRANTED){
+        if (requestCode == MY_LOCATION_REQUEST_CODE) {
+            if (grantResults.length == 0 || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
                 locationDenied = true;
             }
         }
@@ -111,4 +123,16 @@ public class WalkingActivity extends FragmentActivity implements OnMapReadyCallb
 
         mMap.snapshot(callback);
     }
+
+    public void drawPoints(View v) {
+        PolylineOptions options = new PolylineOptions().width(5).color(Color.BLUE).geodesic(true);
+        for(int i = 0; i < pointList.size(); i++){
+            LatLng point = pointList.get(i);
+            options.add(point);
+        }
+        line = mMap.addPolyline(options);
+        }
+
+
+
 }
