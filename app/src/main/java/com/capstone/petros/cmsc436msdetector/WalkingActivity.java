@@ -1,7 +1,10 @@
 package com.capstone.petros.cmsc436msdetector;
 
+import android.graphics.Bitmap;
+import android.os.Environment;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.view.View;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -9,6 +12,9 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+
+import java.io.File;
+import java.io.FileOutputStream;
 
 public class WalkingActivity extends FragmentActivity implements OnMapReadyCallback {
 
@@ -42,5 +48,25 @@ public class WalkingActivity extends FragmentActivity implements OnMapReadyCallb
         LatLng sydney = new LatLng(-34, 151);
         mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+    }
+
+    public void saveMap(View v) {
+        GoogleMap.SnapshotReadyCallback callback = new GoogleMap.SnapshotReadyCallback() {
+            Bitmap bitmap;
+
+            @Override
+            public void onSnapshotReady(Bitmap snapshot) {
+                bitmap = snapshot;
+                try {
+                    // Need to be at a new folder
+                    FileOutputStream out = new FileOutputStream("/mnt/sdcard/Download/TeleSensors.png");
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 90, out);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        mMap.snapshot(callback);
     }
 }
