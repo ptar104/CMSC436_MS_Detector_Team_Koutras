@@ -73,4 +73,9 @@ public class MainActivity extends Activity {
         Intent intent = new Intent(this, StepActivity.class);
         startActivity(intent);
     }
+
+    public void startWalkingTest(View view) {
+        Intent intent = new Intent(this, WalkingActivity.class);
+        startActivity(intent);
+    }
 }

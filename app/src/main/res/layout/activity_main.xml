@@ -119,23 +119,6 @@
 
     </RelativeLayout>
 
- <!--   <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight=".15">
-
-        <Button
-            android:text="Reaction Test"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:layout_weight=".1"
-            android:scaleX="1.5"
-            android:scaleY="1.5"
-            android:id="@+id/ReactionButton"
-            android:onClick="startReactionTest"/>
-
-    </RelativeLayout>-->
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -172,24 +155,6 @@
 
     </RelativeLayout>
 
-    <!--<RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight=".15">
-
-        <Button
-            android:text="Flex Demo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:layout_weight=".1"
-            android:scaleX="1.5"
-            android:scaleY="1.5"
-            android:id="@+id/FlexButton"
-            android:onClick="startFlexDemo"/>
-
-
-    </RelativeLayout>-->
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -224,13 +189,26 @@
 
     </RelativeLayout>
 
-   <!-- <RelativeLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight=".15">
+        android:layout_weight=".15"
+        android:paddingBottom="10dp">
 
         <Button
-            android:text="Step Test"
+            android:text="Walking \nTest"
+            android:layout_width="wrap_content"
+            android:layout_height="75dp"
+            android:layout_marginLeft="35dp"
+            android:layout_marginRight="35dp"
+            android:layout_alignParentLeft="true"
+            android:scaleX="1.5"
+            android:scaleY="1.5"
+            android:id="@+id/WalkingButton"
+            android:onClick="startWalkingTest"/>
+
+        <Button
+            android:text="Placeholder"
             android:layout_width="wrap_content"
             android:layout_height="75dp"
             android:layout_marginLeft="35dp"
@@ -238,22 +216,11 @@
             android:layout_alignParentRight="true"
             android:scaleX="1.5"
             android:scaleY="1.5"
-            android:id="@+id/StepButton"
-            android:onClick="startStepTest"/>
+            android:id="@+id/Button"
+            android:onClick=""/>
 
 
-    </RelativeLayout>-->
+    </RelativeLayout>
 
-    <!--
-
-    <fragment
-        android:name="com.capstone.petros.cmsc436msdetector.GraphFragment"
-        android:id="@+i/graph"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        />
-
-     -->
 
 </LinearLayout>
