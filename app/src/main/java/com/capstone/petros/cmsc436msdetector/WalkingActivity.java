@@ -16,11 +16,13 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.io.FileOutputStream;
@@ -301,11 +303,18 @@ public class WalkingActivity extends FragmentActivity implements OnMapReadyCallb
 
     public void drawPoints(View v) {
         PolylineOptions options = new PolylineOptions().width(5).color(Color.BLUE).geodesic(true);
+        LatLngBounds.Builder builder = new LatLngBounds.Builder();
+
         for(int i = 0; i < pointList.size(); i++){
             LatLng point = pointList.get(i);
             options.add(point);
+            builder.include(point);
         }
+
         mMap.addPolyline(options);
+
+        LatLngBounds bounds = builder.build();
+        mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 20));
     }
 
 
