@@ -80,6 +80,7 @@ public class StepActivity extends Activity implements Sheets.Host {
             finish();
         }*/
 
+
         // Accelerometer listener
         accSel = new SensorEventListener() {
 
@@ -163,6 +164,7 @@ public class StepActivity extends Activity implements Sheets.Host {
     }
 
     public void startTest(View v) {
+
 
         // Play the instructions
         if(mediaPlayer != null) {
@@ -272,6 +274,7 @@ public class StepActivity extends Activity implements Sheets.Host {
 
         // Just finished the trialNum'th trial
         //finishCollectingData(trialNum-1);
+        System.out.println("Trial num: " + trialNum);
         if(trialNum == 3){
             finishAllTests();
         }
