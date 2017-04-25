@@ -1,59 +1,79 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     tools:context="com.capstone.petros.cmsc436msdetector.WalkingActivity">
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="draw line test"
-        android:onClick="drawPoints"/>
-
-        <Button
-            android:layout_width="wrap_content"
+        android:orientation="vertical">
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="save image"
-            android:onClick="saveMap"/>
+            android:orientation="horizontal">
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Start"
+                android:onClick="startTest"
+                android:id="@+id/startTestBtn"/>
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="End"
+                android:enabled="false"
+                android:onClick="endTest"
+                android:id="@+id/endTestBtn"/>
+            <ImageView
+                android:id="@+id/walkingTutorialButton"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_help_outline_black_24dp"
+                android:clickable="true"
+                android:onClick="showTutorial"/>
+        </LinearLayout>
 
-
+        <fragment
+            android:id="@+id/map"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/walking_lat"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Getting lat..."
-        android:textSize="30sp"/>
-
-    <TextView
-        android:id="@+id/walking_long"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Getting long..."
-        android:textSize="30sp"/>
-
-    <TextView
-        android:id="@+id/walking_vel"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Calculating vel..."
-        android:textSize="30sp"/>
-
-    <fragment
-        android:id="@+id/map"
-        android:name="com.google.android.gms.maps.SupportMapFragment"
+    <RelativeLayout
+        android:id="@+id/walkingShader"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-       />
+        android:background="#CC000000"
+        android:visibility="gone"
+        android:clickable="true"
+        android:onClick="showTutorial"/>
 
-</LinearLayout>
+    <FrameLayout
+        android:id="@+id/walkingFrame"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="#FFF6FF00"
+        android:layout_centerInParent="true"
+        android:layout_margin="15dp"
+        android:padding="2dp"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/walkingInstructions"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="15dp"
+            android:background="#FF0b1b33"
+            android:text=""
+            android:textAlignment="center"
+            android:textSize="20sp"
+            />
+
+    </FrameLayout>
+
+</RelativeLayout>
 
 

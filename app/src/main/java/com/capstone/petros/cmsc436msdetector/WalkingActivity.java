@@ -14,6 +14,10 @@ import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -32,10 +36,10 @@ public class WalkingActivity extends FragmentActivity implements OnMapReadyCallb
 
     private GoogleMap mMap;
     private UiSettings uiSettings;
-    private ArrayList<LatLng> pointList;
+    //private ArrayList<LatLng> pointList;
 
     private boolean locationDenied = false;
-    private boolean testOngoing = true;
+    private boolean testOngoing = false;
     private boolean foundLocation = false;
 
     private static final int MY_LOCATION_REQUEST_CODE = 1;
@@ -46,7 +50,8 @@ public class WalkingActivity extends FragmentActivity implements OnMapReadyCallb
     private LatLng prevLatLngLine;
     private double prevLatVel = 0, prevLongVel = 0;
     private float totalSpeed = 0;
-    private long totalTimeRecored = 0;
+    private float averageSpeed = 0;
+    private long totalTimeRecorded = 0;
     private boolean lostSig = false;
 
     @Override
@@ -60,13 +65,12 @@ public class WalkingActivity extends FragmentActivity implements OnMapReadyCallb
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        pointList = new ArrayList<>();
-        //test points
-        pointList.add(new LatLng(-34, 151));
-        pointList.add(new LatLng(-33, 151));
-        pointList.add(new LatLng(-30, 154));
-        pointList.add(new LatLng(-28, 160));
-
+//        pointList = new ArrayList<>();
+//        //test points
+//        pointList.add(new LatLng(-34, 151));
+//        pointList.add(new LatLng(-33, 151));
+//        pointList.add(new LatLng(-30, 154));
+//        pointList.add(new LatLng(-28, 160));
 
         locationListener = new LocationListener() {
             public void onLocationChanged(Location location) {
@@ -86,17 +90,10 @@ public class WalkingActivity extends FragmentActivity implements OnMapReadyCallb
     private void handleLocationUpdates(Location location){
         long currTime = System.currentTimeMillis();
         long deltaTime = currTime - prevTime;
-        TextView lat = (TextView)findViewById(R.id.walking_lat);
-        TextView longi = (TextView)findViewById(R.id.walking_long);
-        TextView vel = (TextView)findViewById(R.id.walking_vel);
-        if(totalTimeRecored != 0){
-            vel.setText("Vel: " + (totalSpeed/totalTimeRecored));
-        }
+
         if(location == null) {
             // Can't find location!
             System.out.println("No location yet...");
-            lat.setText("Geting lat still...");
-            longi.setText("Geting long still...");
             if(testOngoing && prevTime != -1){
                 if(!lostSig) {
                     lostSig = true;
@@ -106,14 +103,12 @@ public class WalkingActivity extends FragmentActivity implements OnMapReadyCallb
                     timeSinceSigLost += deltaTime;
                 }
                 if(timeSinceSigLost > 10000){ // 10 seconds w/o signal
-                    // TODO(MARK): ABORT TEST
+                    testOngoing = false;// TODO(MARK): ABORT TEST
                 }
             }
         }
         else {
             System.out.println("Lat: " + location.getLatitude() + " Long: "+location.getLongitude());
-            lat.setText("Lat: " + location.getLatitude());
-            longi.setText(" Long: "+location.getLongitude());
 
             if(!foundLocation){
                 foundLocation = true;
@@ -124,7 +119,7 @@ public class WalkingActivity extends FragmentActivity implements OnMapReadyCallb
                     // Just got signal back. Don't count this towards speed.
                     timeSinceSigLost += deltaTime;
                     if(timeSinceSigLost > 10000) { // 10 seconds w/o signal
-                        // TODO(MARK): ABORT TEST
+                        testOngoing = false;// TODO(MARK): ABORT TEST
                     }
                     else {
                         addPolyLine(prevLatLngLine, new LatLng(location.getLatitude(),location.getLongitude()), true);
@@ -150,8 +145,8 @@ public class WalkingActivity extends FragmentActivity implements OnMapReadyCallb
                         Location.distanceBetween(prevLatVel, prevLongVel,
                                 location.getLatitude(), location.getLongitude(), results);
                         totalSpeed += results[0];
-                        totalTimeRecored += deltaTime;
-                        // TODO(Mark): Average speed = totalSpeed / totalTimeRecorded.
+                        totalTimeRecorded += deltaTime;
+                        averageSpeed = totalSpeed / totalTimeRecorded;                          // TODO(Mark): Average speed = totalSpeed / totalTimeRecorded.
                         prevLatVel = location.getLatitude();
                         prevLongVel = location.getLongitude();
                         timeSinceLastUpdateVel = 0;
@@ -167,7 +162,6 @@ public class WalkingActivity extends FragmentActivity implements OnMapReadyCallb
         }
         prevTime = currTime;
     }
-
 
     /**
      * Manipulates the map once available.
@@ -228,7 +222,6 @@ public class WalkingActivity extends FragmentActivity implements OnMapReadyCallb
         */
     }
 
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode == MY_LOCATION_REQUEST_CODE) {
@@ -241,7 +234,8 @@ public class WalkingActivity extends FragmentActivity implements OnMapReadyCallb
 
     }
 
-    public void saveMap(View v) {
+    // TODO: does this work?
+    public void saveMap() {
         GoogleMap.SnapshotReadyCallback callback = new GoogleMap.SnapshotReadyCallback() {
             Bitmap bitmap;
 
@@ -259,8 +253,8 @@ public class WalkingActivity extends FragmentActivity implements OnMapReadyCallb
         };
 
         mMap.snapshot(callback);
-
     }
+
     @Override
     protected void onResume(){
         super.onResume();
@@ -268,7 +262,7 @@ public class WalkingActivity extends FragmentActivity implements OnMapReadyCallb
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);   // With permission, start listening
         }  else {
             if (!locationDenied) {
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}
@@ -277,13 +271,15 @@ public class WalkingActivity extends FragmentActivity implements OnMapReadyCallb
             else {
                 // End the test
                 System.out.println("Location seems to be denied...");
+                // Quit the activity?
             }
         }
     }
 
     @Override
-    protected void onStop(){
+    protected void onStop() {
         super.onStop();
+        testOngoing = false;
         locationManager.removeUpdates(locationListener);
         locationManager = null;
     }
@@ -301,6 +297,7 @@ public class WalkingActivity extends FragmentActivity implements OnMapReadyCallb
         mMap.addPolyline(options);
     }
 
+    /*
     public void drawPoints(View v) {
         PolylineOptions options = new PolylineOptions().width(5).color(Color.BLUE).geodesic(true);
         LatLngBounds.Builder builder = new LatLngBounds.Builder();
@@ -315,8 +312,66 @@ public class WalkingActivity extends FragmentActivity implements OnMapReadyCallb
 
         LatLngBounds bounds = builder.build();
         mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 20));
+    }*/
+
+    public void startTest(View v) {
+        averageSpeed = 0;
+        prevLatVel = 0;
+        prevLongVel = 0;
+        totalTimeRecorded = 0;
+        prevTime = -1;
+        timeSinceLastUpdateVel = 0;
+        timeSinceLastUpdateLine = 0;
+        timeSinceSigLost = 0;
+
+        testOngoing = true;
+        Button startButton = (Button) findViewById(R.id.startTestBtn);
+        Button endButton = (Button) findViewById(R.id.endTestBtn);
+
+        startButton.setEnabled(false);
+        endButton.setEnabled(true);
     }
 
+    /*
+     *  Called when the test ends
+     */
+    public void endTest(View v) {
+        testOngoing = false;
+        Button startButton = (Button) findViewById(R.id.startTestBtn);
+        Button endButton = (Button) findViewById(R.id.endTestBtn);
 
+        startButton.setEnabled(true);
+        endButton.setEnabled(false);
+        saveMap();
+    }
+//
+//    /*
+//     *  Called when the test should be interrupted
+//     */
+//    public void abortTest() {
+//        testOngoing = false;
+//    }
 
+    public void showTutorial(View v) {
+        FrameLayout frame = (FrameLayout)findViewById(R.id.walkingFrame);
+        TextView tutorialView = (TextView) findViewById(R.id.walkingInstructions);
+        RelativeLayout shader = (RelativeLayout)findViewById(R.id.walkingShader);
+        ImageView tutorialButton = (ImageView)findViewById(R.id.walkingTutorialButton);
+
+        if (frame.getVisibility() == View.GONE) {
+            frame.setVisibility(View.VISIBLE);
+            tutorialView.setText("INSTRUCTIONS:\n\n" +
+                    "This is the walking test.\n\n" +
+                    "It measures your average speed while you walk.\n\n" +
+                    "Ensure that you are outside and have a GPS signal when performing this test.\n\n" +
+                    "Press \"Start\" and start walking to begin.");
+            shader.setVisibility(View.VISIBLE);
+            tutorialButton.setColorFilter(0xFFF6FF00);
+        }
+        else {
+            frame.setVisibility(View.GONE);
+            shader.setVisibility(View.GONE);
+            tutorialButton.setColorFilter(0xFF000000);
+        }
+    }
 }
