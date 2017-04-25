@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -28,6 +29,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.capstone.petros.cmsc436msdetector.Sheets.Sheets;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -42,10 +44,16 @@ import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.UUID;
 
-public class WalkingActivity extends FragmentActivity implements OnMapReadyCallback {
+public class WalkingActivity extends FragmentActivity implements OnMapReadyCallback, Sheets.Host {
 
     private GoogleMap mMap;
     private UiSettings uiSettings;
+    private Sheets sheet;
+    public static final int LIB_ACCOUNT_NAME_REQUEST_CODE = 1001;
+    public static final int LIB_AUTHORIZATION_REQUEST_CODE = 1002;
+    public static final int LIB_PERMISSION_REQUEST_CODE = 1003;
+    public static final int LIB_PLAY_SERVICES_REQUEST_CODE = 1004;
+    public static final int LIB_CONNECTION_REQUEST_CODE = 1005;
 
     private boolean locationDenied = false;
     private boolean testOngoing = false;
@@ -73,6 +81,7 @@ public class WalkingActivity extends FragmentActivity implements OnMapReadyCallb
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_walking);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        sheet = new Sheets(this, this, getString(R.string.app_name));
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -112,6 +121,12 @@ public class WalkingActivity extends FragmentActivity implements OnMapReadyCallb
 
             public void onProviderDisabled(String provider) {}
         };
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        this.sheet.onActivityResult(requestCode, resultCode, data);
     }
 
     private void handleLocationUpdates(Location location) {
@@ -256,6 +271,7 @@ public class WalkingActivity extends FragmentActivity implements OnMapReadyCallb
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        this.sheet.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == MY_LOCATION_REQUEST_CODE) {
             if (grantResults.length == 0 || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
                 locationDenied = true;
@@ -444,6 +460,7 @@ public class WalkingActivity extends FragmentActivity implements OnMapReadyCallb
         builder.setButton(AlertDialog.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 saveMap();
+                sendToSheets(Sheets.TestType.OUTDOOR_WALKING);
             }
         });
 
@@ -478,5 +495,33 @@ public class WalkingActivity extends FragmentActivity implements OnMapReadyCallb
             shader.setVisibility(View.GONE);
             tutorialButton.setColorFilter(0xFF000000);
         }
+    }
+
+    private void sendToSheets(Sheets.TestType sheetType) {
+        sheet.writeData(sheetType, getString(R.string.patientID), (float)averageSpeed);
+        sheet.writeTrials(sheetType, getString(R.string.patientID), (float)averageSpeed);
+    }
+
+    @Override
+    public int getRequestCode(Sheets.Action action) {
+        switch (action) {
+            case REQUEST_ACCOUNT_NAME:
+                return LIB_ACCOUNT_NAME_REQUEST_CODE;
+            case REQUEST_AUTHORIZATION:
+                return LIB_AUTHORIZATION_REQUEST_CODE;
+            case REQUEST_PERMISSIONS:
+                return LIB_PERMISSION_REQUEST_CODE;
+            case REQUEST_PLAY_SERVICES:
+                return LIB_PLAY_SERVICES_REQUEST_CODE;
+            case REQUEST_CONNECTION_RESOLUTION:
+                return LIB_CONNECTION_REQUEST_CODE;
+            default:
+                return -1;
+        }
+    }
+
+    @Override
+    public void notifyFinished(Exception e) {
+
     }
 }
