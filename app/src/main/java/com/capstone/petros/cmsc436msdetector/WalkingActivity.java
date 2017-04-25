@@ -1,9 +1,15 @@
 package com.capstone.petros.cmsc436msdetector;
 
 import android.Manifest;
+import android.app.AlertDialog;
+import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.os.CountDownTimer;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.location.Location;
@@ -12,6 +18,7 @@ import android.location.LocationManager;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -19,6 +26,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -29,14 +37,15 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.PolylineOptions;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
+import java.util.UUID;
 
 public class WalkingActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
     private UiSettings uiSettings;
-    //private ArrayList<LatLng> pointList;
 
     private boolean locationDenied = false;
     private boolean testOngoing = false;
@@ -54,6 +63,11 @@ public class WalkingActivity extends FragmentActivity implements OnMapReadyCallb
     private long totalTimeRecorded = 0;
     private boolean lostSig = false;
 
+    /***DEBUG***/
+    private ArrayList<LatLng> pointList;
+    CountDownTimer fakePointsTimer;
+    /***********/
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,15 +79,28 @@ public class WalkingActivity extends FragmentActivity implements OnMapReadyCallb
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-//        pointList = new ArrayList<>();
-//        //test points
+        pointList = new ArrayList<>();
+        //test points (Sydney)
 //        pointList.add(new LatLng(-34, 151));
 //        pointList.add(new LatLng(-33, 151));
 //        pointList.add(new LatLng(-30, 154));
 //        pointList.add(new LatLng(-28, 160));
 
+        //test points (View to AV Williams)
+        pointList.add(new LatLng(38.992646, -76.935111));
+        pointList.add(new LatLng(38.992849, -76.935565));
+        pointList.add(new LatLng(38.992670, -76.935814));
+        pointList.add(new LatLng(38.991975, -76.935788));
+        pointList.add(new LatLng(38.991263, -76.935747));
+        pointList.add(new LatLng(38.990754, -76.936133));
+
+        // REMOVE (Mark's phone cannot get a location update for some reason)
+        Button startButton = (Button) findViewById(R.id.startTestBtn);
+        startButton.setEnabled(true);
+
         locationListener = new LocationListener() {
             public void onLocationChanged(Location location) {
+                Toast.makeText(getApplicationContext(),"Got a location update",Toast.LENGTH_LONG).show();
                 handleLocationUpdates(location);
             }
 
@@ -87,10 +114,9 @@ public class WalkingActivity extends FragmentActivity implements OnMapReadyCallb
         };
     }
 
-    private void handleLocationUpdates(Location location){
+    private void handleLocationUpdates(Location location) {
         long currTime = System.currentTimeMillis();
         long deltaTime = currTime - prevTime;
-
         if(location == null) {
             // Can't find location!
             System.out.println("No location yet...");
@@ -104,6 +130,8 @@ public class WalkingActivity extends FragmentActivity implements OnMapReadyCallb
                 }
                 if(timeSinceSigLost > 10000){ // 10 seconds w/o signal
                     testOngoing = false;// TODO(MARK): ABORT TEST
+                    Toast.makeText(this,"This test requires GPS",Toast.LENGTH_LONG).show();
+                    finish();
                 }
             }
         }
@@ -112,7 +140,10 @@ public class WalkingActivity extends FragmentActivity implements OnMapReadyCallb
 
             if(!foundLocation){
                 foundLocation = true;
+
                 // TODO(MARK): Enable test to begin.
+                Button startButton = (Button) findViewById(R.id.startTestBtn);
+                startButton.setEnabled(true);
             }
             if(testOngoing && prevTime != -1){
                 if(lostSig){
@@ -120,6 +151,8 @@ public class WalkingActivity extends FragmentActivity implements OnMapReadyCallb
                     timeSinceSigLost += deltaTime;
                     if(timeSinceSigLost > 10000) { // 10 seconds w/o signal
                         testOngoing = false;// TODO(MARK): ABORT TEST
+                        Toast.makeText(this,"This test requires GPS",Toast.LENGTH_LONG).show();
+                        finish();
                     }
                     else {
                         addPolyLine(prevLatLngLine, new LatLng(location.getLatitude(),location.getLongitude()), true);
@@ -190,7 +223,6 @@ public class WalkingActivity extends FragmentActivity implements OnMapReadyCallb
             }
         }
 
-
         // Add a marker in Sydney and move the camera
         //LatLng sydney = new LatLng(-34, 151);
         //mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
@@ -228,13 +260,12 @@ public class WalkingActivity extends FragmentActivity implements OnMapReadyCallb
             if (grantResults.length == 0 || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
                 locationDenied = true;
                 // End the test
+                Toast.makeText(this,"This test requires GPS",Toast.LENGTH_LONG).show(); // TODO MARK Abort
                 System.out.println("Location seems to be denied...");
             }
         }
-
     }
 
-    // TODO: does this work?
     public void saveMap() {
         GoogleMap.SnapshotReadyCallback callback = new GoogleMap.SnapshotReadyCallback() {
             Bitmap bitmap;
@@ -244,8 +275,29 @@ public class WalkingActivity extends FragmentActivity implements OnMapReadyCallb
                 bitmap = snapshot;
                 try {
                     // Need to be at a new folder
-                    FileOutputStream out = new FileOutputStream("/mnt/sdcard/Download/TeleSensors.png");
+                    String fName = UUID.randomUUID().toString() + ".png";
+                    File folder = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "/Walking Test Results");
+                    if(!folder.exists()){
+                        if(!folder.mkdirs()){
+                            System.out.println("Folder creation failed...");
+                        }
+                    }
+                    File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "/Walking Test Results/"+fName);
+
+                    FileOutputStream out = new FileOutputStream(file);
                     bitmap.compress(Bitmap.CompressFormat.PNG, 90, out);
+                    ContentValues values = new ContentValues();
+
+                    values.put(MediaStore.Images.Media.DATE_TAKEN, System.currentTimeMillis());
+                    values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg");
+                    values.put(MediaStore.MediaColumns.DATA, file.getAbsolutePath());
+
+                    getApplicationContext().getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+
+                    // Clean up the map and execute post-end-of-test protocol
+                    mMap.clear();
+                    Button startButton = (Button) findViewById(R.id.startTestBtn);
+                    startButton.setEnabled(true);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -262,6 +314,7 @@ public class WalkingActivity extends FragmentActivity implements OnMapReadyCallb
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
+            Log.d("MARK","Registering Location Updates");
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);   // With permission, start listening
         }  else {
             if (!locationDenied) {
@@ -270,8 +323,8 @@ public class WalkingActivity extends FragmentActivity implements OnMapReadyCallb
             }
             else {
                 // End the test
+                Toast.makeText(this,"This test requires GPS",Toast.LENGTH_LONG).show(); // TODO MARK Abort
                 System.out.println("Location seems to be denied...");
-                // Quit the activity?
             }
         }
     }
@@ -282,6 +335,8 @@ public class WalkingActivity extends FragmentActivity implements OnMapReadyCallb
         testOngoing = false;
         locationManager.removeUpdates(locationListener);
         locationManager = null;
+
+        fakePointsTimer.cancel();
     }
 
     public void addPolyLine(LatLng point1, LatLng point2, boolean signalLost){
@@ -297,8 +352,7 @@ public class WalkingActivity extends FragmentActivity implements OnMapReadyCallb
         mMap.addPolyline(options);
     }
 
-    /*
-    public void drawPoints(View v) {
+    public void oldDrawPoints() {
         PolylineOptions options = new PolylineOptions().width(5).color(Color.BLUE).geodesic(true);
         LatLngBounds.Builder builder = new LatLngBounds.Builder();
 
@@ -312,7 +366,41 @@ public class WalkingActivity extends FragmentActivity implements OnMapReadyCallb
 
         LatLngBounds bounds = builder.build();
         mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 20));
-    }*/
+    }
+
+    public void drawPoints() {
+        // MARK CODE: Generate the fake points around your last known location
+        int timerInterval = 4000;
+        fakePointsTimer = new CountDownTimer(timerInterval*pointList.size(),timerInterval) {
+            int c = 0;
+
+            @Override
+            public void onTick(long l) {
+                PolylineOptions options = new PolylineOptions().width(5).color(Color.BLUE).geodesic(true);
+                LatLngBounds.Builder builder = new LatLngBounds.Builder();
+
+                for(int i = 0; i < 2+c; i++){
+                    LatLng point = pointList.get(i);
+                    options.add(point);
+                    builder.include(point);
+                }
+
+                mMap.addPolyline(options);
+
+                LatLngBounds bounds = builder.build();
+                mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 20));
+
+                c++;
+            }
+
+            @Override
+            public void onFinish() {
+                // After the fake data is done, finish the test
+                endTest(null);
+            }
+        };
+        fakePointsTimer.start();
+    }
 
     public void startTest(View v) {
         averageSpeed = 0;
@@ -325,6 +413,12 @@ public class WalkingActivity extends FragmentActivity implements OnMapReadyCallb
         timeSinceSigLost = 0;
 
         testOngoing = true;
+
+        /********DEBUG***********/
+        drawPoints();
+        averageSpeed = 2.0f;
+        /***********************/
+
         Button startButton = (Button) findViewById(R.id.startTestBtn);
         Button endButton = (Button) findViewById(R.id.endTestBtn);
 
@@ -337,12 +431,23 @@ public class WalkingActivity extends FragmentActivity implements OnMapReadyCallb
      */
     public void endTest(View v) {
         testOngoing = false;
-        Button startButton = (Button) findViewById(R.id.startTestBtn);
+
         Button endButton = (Button) findViewById(R.id.endTestBtn);
 
-        startButton.setEnabled(true);
         endButton.setEnabled(false);
-        saveMap();
+
+        // Display results
+        AlertDialog builder;
+        builder = new AlertDialog.Builder(this).create();
+        builder.setTitle("Test Ended");
+        builder.setMessage("Test complete. Your average speed was "+averageSpeed+" m/s.");
+        builder.setButton(AlertDialog.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                saveMap();
+            }
+        });
+
+        builder.show();
     }
 //
 //    /*
