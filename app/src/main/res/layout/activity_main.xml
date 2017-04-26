@@ -208,7 +208,7 @@
             android:onClick="startWalkingTest"/>
 
         <Button
-            android:text="Placeholder"
+            android:text="Symbol Test"
             android:layout_width="wrap_content"
             android:layout_height="75dp"
             android:layout_marginLeft="35dp"
@@ -216,8 +216,8 @@
             android:layout_alignParentRight="true"
             android:scaleX="1.5"
             android:scaleY="1.5"
-            android:id="@+id/Button"
-            android:onClick=""/>
+            android:id="@+id/SymbolButton"
+            android:onClick="startSymbolTest"/>
 
 
     </RelativeLayout>

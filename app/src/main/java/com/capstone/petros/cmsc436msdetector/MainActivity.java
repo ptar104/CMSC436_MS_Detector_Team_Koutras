@@ -78,4 +78,9 @@ public class MainActivity extends Activity {
         Intent intent = new Intent(this, WalkingActivity.class);
         startActivity(intent);
     }
+
+    public void startSymbolTest(View view) {
+        Intent intent = new Intent(this, SymbolActivity.class);
+        startActivity(intent);
+    }
 }
