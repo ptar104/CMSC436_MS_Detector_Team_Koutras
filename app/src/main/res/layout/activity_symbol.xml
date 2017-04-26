@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.capstone.petros.cmsc436msdetector.SymbolActivity">
+    <!--not sure how to put gridlines-->
+    <LinearLayout
+        android:id="@+id/symbols_key_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_alignParentTop="true"
+        android:layout_centerInParent="true"
+        android:background="@android:color/white"
+        android:paddingTop="10dp">
+            <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:textAlignment="center"
+                android:textColor="@android:color/black"
+                android:textSize="24dp" />
+            <ImageView android:id="@+id/img0"
+                android:layout_width="@string/img_size"
+                android:layout_height="@string/img_size"
+                android:src="@drawable/symbol0"
+                android:scaleType="fitCenter" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="1"
+                android:textAlignment="center"
+                android:textColor="@android:color/black"
+                android:textSize="24dp" />
+            <ImageView android:id="@+id/img1"
+                android:layout_width="@string/img_size"
+                android:layout_height="@string/img_size"
+                android:src="@drawable/symbol1"
+                android:scaleType="fitCenter" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="2"
+                android:textAlignment="center"
+                android:textColor="@android:color/black"
+                android:textSize="24dp" />
+            <ImageView android:id="@+id/img2"
+                android:layout_width="@string/img_size"
+                android:layout_height="@string/img_size"
+                android:src="@drawable/symbol2"
+                android:scaleType="fitCenter"
+                />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="3"
+                android:textAlignment="center"
+                android:textColor="@android:color/black"
+                android:textSize="24dp" />
+            <ImageView android:id="@+id/img3"
+                android:layout_width="@string/img_size"
+                android:layout_height="@string/img_size"
+                android:src="@drawable/symbol3"
+                android:scaleType="fitCenter" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="4"
+                android:textAlignment="center"
+                android:textColor="@android:color/black"
+                android:textSize="24dp" />
+            <ImageView android:id="@+id/img4"
+                android:layout_width="@string/img_size"
+                android:layout_height="@string/img_size"
+                android:src="@drawable/symbol4"
+                android:scaleType="fitCenter" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="5"
+                android:textAlignment="center"
+                android:textColor="@android:color/black"
+                android:textSize="24dp" />
+            <ImageView android:id="@+id/img5"
+                android:layout_width="@string/img_size"
+                android:layout_height="@string/img_size"
+                android:src="@drawable/symbol5"
+                android:scaleType="fitCenter" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="6"
+                android:textAlignment="center"
+                android:textColor="@android:color/black"
+                android:textSize="24dp" />
+            <ImageView android:id="@+id/img6"
+                android:layout_width="@string/img_size"
+                android:layout_height="@string/img_size"
+                android:src="@drawable/symbol6"
+                android:scaleType="fitCenter" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="7"
+                android:textAlignment="center"
+                android:textColor="@android:color/black"
+                android:textSize="24dp" />
+            <ImageView android:id="@+id/img7"
+                android:layout_width="@string/img_size"
+                android:layout_height="@string/img_size"
+                android:src="@drawable/symbol7"
+                android:scaleType="fitCenter" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="8"
+                android:textAlignment="center"
+                android:textColor="@android:color/black"
+                android:textSize="24dp" />
+            <ImageView android:id="@+id/img8"
+                android:layout_width="@string/img_size"
+                android:layout_height="@string/img_size"
+                android:src="@drawable/symbol8"
+                android:scaleType="fitCenter" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/symbols_key_layout"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight=".5"
+            android:textSize="30dp"
+            android:text="Current \nSymbol \nHere"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight=".5"
+            android:textSize="30dp"
+            android:text="Numpad \n Here"/>
+
+    </LinearLayout>
+</RelativeLayout>

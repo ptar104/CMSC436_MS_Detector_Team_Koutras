@@ -13,4 +13,5 @@
     <string name="no_goog">No Google Service.</string>
     <string name="no_net">No Google Service.</string>
     <string name="title_activity_walking">Map</string>
+    <string name="img_size">65px</string>
 </resources>
