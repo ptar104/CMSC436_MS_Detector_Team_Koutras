@@ -173,8 +173,9 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/curr_symbol_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/symbols_key_layout"
         android:orientation="horizontal">
         <TextView
@@ -190,6 +191,23 @@
             android:layout_weight=".5"
             android:textSize="30dp"
             android:text="Numpad \n Here"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/start_button_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_below="@+id/curr_symbol_layout"
+        android:gravity="center">
+
+        <Button
+            android:id="@+id/startTestButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Start Test"
+            android:onClick="startSymbolTest"/>
 
     </LinearLayout>
 </RelativeLayout>
