@@ -9,16 +9,23 @@ import android.speech.RecognitionListener;
 import android.speech.SpeechRecognizer;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 public class SymbolActivity extends Activity {
 
     private Activity act = this;
     private CountDownTimer testTimer;
     SpeechRecognizer sr;
+    List<Integer> imgList = Arrays.asList(R.drawable.symbol1, R.drawable.symbol2, R.drawable.symbol3, R.drawable.symbol4,
+            R.drawable.symbol5, R.drawable.symbol6, R.drawable.symbol7, R.drawable.symbol8, R.drawable.symbol9);
+    List<ImageView> symbolList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +51,10 @@ public class SymbolActivity extends Activity {
             }
         };
 
+        symbolList = Arrays.asList((ImageView) findViewById(R.id.img1), (ImageView) findViewById(R.id.img2), (ImageView) findViewById(R.id.img3)
+                , (ImageView) findViewById(R.id.img4), (ImageView) findViewById(R.id.img5), (ImageView) findViewById(R.id.img6), (ImageView) findViewById(R.id.img7)
+                , (ImageView) findViewById(R.id.img8), (ImageView) findViewById(R.id.img9));
+        reorderSymbols();
         if(SpeechRecognizer.isRecognitionAvailable(this)) {
             sr = SpeechRecognizer.createSpeechRecognizer(this);
             RecognitionListener rl = new RecognitionListener() {
@@ -126,4 +137,10 @@ public class SymbolActivity extends Activity {
         sr.stopListening();
     }
 
+    public void reorderSymbols() {
+        Collections.shuffle(imgList);
+        for (int i = 0; i < 9; i++) {
+            symbolList.get(i).setImageResource(imgList.get(i));
+        }
+    }
 }
