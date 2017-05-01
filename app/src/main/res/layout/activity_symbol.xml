@@ -263,5 +263,17 @@
             android:text="Start Test"
             android:onClick="startSymbolTest"/>
 
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:scaleY="5"
+            android:scaleX="-1"
+            android:max="90000"
+            android:progress="90000" />
     </LinearLayout>
+
 </RelativeLayout>

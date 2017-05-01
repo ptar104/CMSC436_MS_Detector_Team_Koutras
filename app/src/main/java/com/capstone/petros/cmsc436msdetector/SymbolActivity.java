@@ -1,11 +1,14 @@
 package com.capstone.petros.cmsc436msdetector;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.speech.RecognitionListener;
 import android.speech.SpeechRecognizer;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -14,12 +17,32 @@ import java.util.ArrayList;
 public class SymbolActivity extends Activity {
 
     private Activity act = this;
+    private CountDownTimer testTimer;
     SpeechRecognizer sr;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_symbol);
+
+        // each test lasts 90 seconds
+        testTimer = new CountDownTimer(90000, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                ProgressBar bar = (ProgressBar) findViewById(R.id.progress_bar);
+                bar.setProgress((int) millisUntilFinished);
+            }
+
+            @Override
+            public void onFinish() {
+                Toast toast = Toast.makeText(getApplicationContext(), "Test done!", Toast.LENGTH_SHORT);
+                toast.show();
+
+                // set progress bar to zero
+                ProgressBar bar = (ProgressBar) findViewById(R.id.progress_bar);
+                bar.setProgress(0);
+            }
+        };
 
         if(SpeechRecognizer.isRecognitionAvailable(this)) {
             sr = SpeechRecognizer.createSpeechRecognizer(this);
@@ -93,6 +116,9 @@ public class SymbolActivity extends Activity {
     public void startSymbolTest(View view) {
         Intent i = new Intent();
         sr.startListening(i);
+
+        // start the timer
+        testTimer.start();
     }
 
     protected void onStop(){
