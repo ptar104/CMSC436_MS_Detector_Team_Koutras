@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="horizontal"
+    android:background="#FF88AAE0"
     tools:context="com.capstone.petros.cmsc436msdetector.SymbolActivity">
     <!--not sure how to put gridlines-->
     <LinearLayout
@@ -181,6 +182,7 @@
         android:orientation="horizontal"
         android:layout_marginTop="20dp">
         <TextView
+            android:id="@+id/symbolTextView"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight=".5"
@@ -243,7 +245,6 @@
                 android:text="9" />
 
         </GridLayout>
-
     </LinearLayout>
 
     <LinearLayout
