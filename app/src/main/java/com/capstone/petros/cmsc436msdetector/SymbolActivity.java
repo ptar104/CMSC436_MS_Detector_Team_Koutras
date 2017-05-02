@@ -3,18 +3,19 @@ package com.capstone.petros.cmsc436msdetector;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.speech.RecognitionListener;
 import android.speech.SpeechRecognizer;
 import android.view.View;
-import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 import android.widget.ImageView;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Arrays;
@@ -24,8 +25,7 @@ import java.util.Random;
 
 public class SymbolActivity extends Activity {
     private Activity act = this;
-    private CountDownTimer testTimer;
-    SpeechRecognizer sr;
+    private CountDownTimer testTimer, secondDelayRight, secondDelayWrong;
     List<Integer> imgList = Arrays.asList(R.drawable.symbol1, R.drawable.symbol2, R.drawable.symbol3, R.drawable.symbol4,
             R.drawable.symbol5, R.drawable.symbol6, R.drawable.symbol7, R.drawable.symbol8, R.drawable.symbol9);
     List<ImageView> symbolList;
@@ -37,36 +37,76 @@ public class SymbolActivity extends Activity {
     // Keeps track of the response time for each symbol
     private HashMap<Integer,ArrayList<Double>> symbolTimes;
     private int imageHeight;
+    private TextView voicePrompts;
+    private SpeechRecognizer sr;
+    private String startPrompt = "Say the number now.";
+    private boolean firstVoice = true, testDone = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_symbol);
+
+        // Set bar red
+        ProgressBar bar = (ProgressBar) findViewById(R.id.symbolProgressBar);
+        bar.getIndeterminateDrawable().setColorFilter(0xFFDD2400, android.graphics.PorterDuff.Mode.SRC_IN);
+        bar.getProgressDrawable().setColorFilter(0xFFDD2400, PorterDuff.Mode.SRC_IN);
+
+        // Delay for 1 second...
+        secondDelayRight = new CountDownTimer(1000, 1001) {
+            @Override
+            public void onTick(long millisUntilFinished) {}
+
+            @Override
+            public void onFinish() {
+                changeCurrentSymbol();
+                recognizeSpeech("Say the number now.");
+            }
+        };
+
+        secondDelayWrong = new CountDownTimer(1000, 1001) {
+            @Override
+            public void onTick(long millisUntilFinished) {}
+
+            @Override
+            public void onFinish() {
+                recognizeSpeech("Try again.\nSay the number now.");
+            }
+        };
+
         // each test lasts 90 seconds
-        testTimer = new CountDownTimer(90000, 1000) {
+        testTimer = new CountDownTimer(90000, 100) {
             @Override
             public void onTick(long millisUntilFinished) {
-                ProgressBar bar = (ProgressBar) findViewById(R.id.progress_bar);
+                ProgressBar bar = (ProgressBar) findViewById(R.id.symbolProgressBar);
                 bar.setProgress((int) millisUntilFinished);
             }
 
             @Override
             public void onFinish() {
-                Toast.makeText(getApplicationContext(), "Test done!", Toast.LENGTH_SHORT).show();
-
-                showResults();
+                //Toast.makeText(getApplicationContext(), "Test done!", Toast.LENGTH_SHORT).show();
+                testDone = true;
+                sr.stopListening();
+                String results = getResults();
 
                 // set progress bar to zero
-                ProgressBar bar = (ProgressBar) findViewById(R.id.progress_bar);
+                ProgressBar bar = (ProgressBar) findViewById(R.id.symbolProgressBar);
                 bar.setProgress(0);
 
+                findViewById(R.id.symbolNumpadGrid).setVisibility(View.GONE);
+                findViewById(R.id.symbolVoicePrompts).setVisibility(View.VISIBLE);
+                voicePrompts.setText(results);
+
+                /*
                 numSymbolsCorrect = 0;
                 numGuesses = 0;
                 symbolTimes.clear();
 
-                Button startButton = (Button)findViewById(R.id.startTestButton);
+                Button startButton = (Button)findViewById(R.id.symbolStartNumpadButton);
                 startButton.setEnabled(true);
+                findViewById(R.id.symbolStartNumpadButton).setEnabled(true);
                 enableNumpad(false);
+                */
             }
         };
 
@@ -74,13 +114,23 @@ public class SymbolActivity extends Activity {
                 , (ImageView) findViewById(R.id.img4), (ImageView) findViewById(R.id.img5), (ImageView) findViewById(R.id.img6), (ImageView) findViewById(R.id.img7)
                 , (ImageView) findViewById(R.id.img8), (ImageView) findViewById(R.id.img9));
         reorderSymbols();
+        voicePrompts = (TextView)findViewById(R.id.symbolVoicePrompts);
         if(SpeechRecognizer.isRecognitionAvailable(this)) {
             sr = SpeechRecognizer.createSpeechRecognizer(this);
             RecognitionListener rl = new RecognitionListener() {
                 @Override
                 public void onReadyForSpeech(Bundle bundle) {
+                    if(testDone){
+                        return;
+                    }
                     // Show speech is ready...
-                    //((TextView)findViewById(R.id.symbolTextView)).setText("Listening...");
+                    voicePrompts.setText(startPrompt);
+                    if(firstVoice){
+                        // start the timer
+                        testTimer.start();
+                        changeCurrentSymbol();  // Puts the first current symbol up
+                        firstVoice = false;
+                    }
                 }
 
                 @Override
@@ -100,12 +150,19 @@ public class SymbolActivity extends Activity {
 
                 @Override
                 public void onEndOfSpeech() {
+                    if(testDone){
+                        return;
+                    }
                     // Want to wait for results.
                     // Perhaps show that we're getting the results...
+                    voicePrompts.setText("Decoding...");
                 }
 
                 @Override
                 public void onError(int i) {
+                    if(testDone){
+                        return;
+                    }
                     if(i == SpeechRecognizer.ERROR_INSUFFICIENT_PERMISSIONS){
                         Toast.makeText(act, "Insufficient permissions to use speech recognizer",
                                 Toast.LENGTH_LONG);
@@ -113,18 +170,112 @@ public class SymbolActivity extends Activity {
                     else if (i == SpeechRecognizer.ERROR_NO_MATCH ||
                             i == SpeechRecognizer.ERROR_SPEECH_TIMEOUT){
                         // Prompt the patient to try again
+                        recognizeSpeech("No voice detected. Please try again.");
                     }
                     else {
                         // Some other error has happened
-                        Toast.makeText(act, "Speech recognition error", Toast.LENGTH_LONG);
+                        recognizeSpeech("An error has occured.");
                     }
+                }
+
+                private int detectNumber(ArrayList<String> results){
+                    int detectedNumber = -1;
+                    for(String result : results) {
+                        if (result.contains("1") || result.contains("one")) {
+                            if (detectedNumber == -1 || detectedNumber == 1) {
+                                detectedNumber = 1;
+                            }
+                            else {
+                                detectedNumber = -2;
+                            }
+                        }
+                        if (result.contains("2") || result.contains("two")) {
+                            if (detectedNumber == -1 || detectedNumber == 2) {
+                                detectedNumber = 2;
+                            } else {
+                                detectedNumber = -2;
+                            }
+                        }
+                        if (result.contains("3") || result.contains("three")) {
+                            if (detectedNumber == -1 || detectedNumber == 3) {
+                                detectedNumber = 3;
+                            } else {
+                                detectedNumber = -2;
+                            }
+                        }
+                        if (result.contains("4") || result.contains("four")) {
+                            if (detectedNumber == -1 || detectedNumber == 4) {
+                                detectedNumber = 4;
+                            } else {
+                                detectedNumber = -2;
+                            }
+                        }
+                        if (result.contains("5") || result.contains("five")) {
+                            if (detectedNumber == -1 || detectedNumber == 5) {
+                                detectedNumber = 5;
+                            } else {
+                                detectedNumber = -2;
+                            }
+                        }
+                        if (results.contains("6") || results.contains("six")) {
+                            if (detectedNumber == -1 || detectedNumber == 6) {
+                                detectedNumber = 6;
+                            } else {
+                                detectedNumber = -2;
+                            }
+                        }
+                        if (result.contains("7") || result.contains("seven")) {
+                            if (detectedNumber == -1 || detectedNumber == 7) {
+                                detectedNumber = 7;
+                            } else {
+                                detectedNumber = -2;
+                            }
+                        }
+                        if (result.contains("8") || result.contains("eight")) {
+                            if (detectedNumber == -1 || detectedNumber == 8) {
+                                detectedNumber = 8;
+                            } else {
+                                detectedNumber = -2;
+                            }
+                        }
+                        if (result.contains("9") || result.contains("nine")) {
+                            if (detectedNumber == -1 || detectedNumber == 9) {
+                                detectedNumber = 9;
+                            } else {
+                                detectedNumber = -2;
+                            }
+                        }
+                    }
+                    return detectedNumber;
                 }
 
                 @Override
                 public void onResults(Bundle bundle) {
+                    if(testDone){
+                        return;
+                    }
                     System.out.println("Results recieved!");
                     ArrayList<String> results = bundle.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
                     System.out.println("They are:\n"+results.toString());
+                    int detectedNumber = detectNumber(results);
+                    // Note: -1 = no number detected, -2 = multiple numbers detected.
+                    if(detectedNumber == -1){
+                        recognizeSpeech("No number detected. Please try again.");
+                    }
+                    else if (detectedNumber == -2){
+                        recognizeSpeech("Multiple numbers detected. Please try again.");
+                    }
+                    else {
+                        if(checkAnswer(detectedNumber)) {
+                            // Show a new symbol
+                            voicePrompts.setText("Detected Number:\n" + detectedNumber + "\nCorrect!");
+                            secondDelayRight.start();
+                        }
+                        else {
+                            voicePrompts.setText("Detected Number:\n" + detectedNumber + "\nIncorrect.");
+                            secondDelayWrong.start();
+                        }
+                    }
                 }
 
                 @Override
@@ -151,19 +302,10 @@ public class SymbolActivity extends Activity {
         enableNumpad(false);
     }
 
-    public void startSymbolTest(View view) {
+    public void recognizeSpeech(String startMessage){
         Intent i = new Intent();
+        startPrompt = startMessage;
         sr.startListening(i);
-
-        enableNumpad(true);
-
-        // Disable the start test button
-        Button startButton = (Button)findViewById(R.id.startTestButton);
-        startButton.setEnabled(false);
-
-        // start the timer
-        testTimer.start();
-        changeCurrentSymbol();  // Puts the first current symbol up
     }
 
     public void changeCurrentSymbol() {
@@ -183,6 +325,19 @@ public class SymbolActivity extends Activity {
 
         curSymbolImageView.getLayoutParams().height = imageHeight;
         curSymbolImageView.requestLayout();
+    }
+
+    private boolean checkAnswer(int guessNum){
+        numGuesses++;
+        if(guessNum == curSymbolAnswer) {   // They got correct symbol number!
+            numSymbolsCorrect++;
+
+            // Record the new response time entry for the symbol
+            symbolTimes.get(curSymbolAnswer).add(System.currentTimeMillis()-curSymbolAppearanceTime);
+
+            return true;
+        }
+        return false;
     }
 
     public void onButtonPress(View view) {
@@ -218,17 +373,10 @@ public class SymbolActivity extends Activity {
             default:    // Shouldn't happen
                 return;
         }
-
-        if(guessNum == curSymbolAnswer) {   // They got correct symbol number!
-            numSymbolsCorrect++;
-
-            // Record the new response time entry for the symbol
-            symbolTimes.get(curSymbolAnswer).add(System.currentTimeMillis()-curSymbolAppearanceTime);
+        if(checkAnswer(guessNum)) {
+            // Show a new symbol
+            changeCurrentSymbol();
         }
-        numGuesses++;
-
-        // Show a new symbol
-        changeCurrentSymbol();
     }
 
     public void enableNumpad(boolean doEnable) {
@@ -242,11 +390,6 @@ public class SymbolActivity extends Activity {
         findViewById(R.id.button8).setEnabled(doEnable);
         findViewById(R.id.button9).setEnabled(doEnable);
     }
-    @Override
-    protected void onStop(){
-        super.onStop();
-        sr.stopListening();
-    }
 
     public void reorderSymbols() {
         Collections.shuffle(imgList);
@@ -256,7 +399,7 @@ public class SymbolActivity extends Activity {
         }
     }
 
-    public void showResults() {
+    public String getResults() {
         double average = 0;
 
         int numDecreasingSymbolAverages = 0;
@@ -288,11 +431,57 @@ public class SymbolActivity extends Activity {
         average /= numSymbolsCorrect;
         boolean timesDecrease = numDecreasingSymbolAverages > 9 / 2;
 
+        DecimalFormat df = new DecimalFormat("#.000");
         if(timesDecrease) {
-            Toast.makeText(this, "Num symbols gotten: " + numSymbolsCorrect + ". Average time: " + (average / 1000) + ". The reactions are faster", Toast.LENGTH_LONG).show();
+            return "Num symbols gotten: " + numSymbolsCorrect + ". Average time: " + df.format(average / 1000) + "s. The reactions are faster.";
         }
         else {
-            Toast.makeText(this, "Num symbols gotten: " + numSymbolsCorrect + ". Average time: " + (average / 1000) + ". The reactions are slower", Toast.LENGTH_LONG).show();
+            return "Num symbols gotten: " + numSymbolsCorrect + ". Average time: " + df.format(average / 1000) + "s. The reactions are slower.";
         }
+    }
+
+    public void startNumpadTest(View view) {
+        Intent i = new Intent();
+
+        enableNumpad(true);
+
+        // Disable the start test button
+        Button startButton = (Button)findViewById(R.id.symbolStartNumpadButton);
+        startButton.setEnabled(false);
+        findViewById(R.id.symbolStartVoiceButton).setEnabled(false);
+
+
+        // start the timer
+        testTimer.start();
+        changeCurrentSymbol();  // Puts the first current symbol up
+    }
+
+    public void startVoiceTest(View view) {
+        Intent i = new Intent();
+        sr.startListening(i);
+
+        findViewById(R.id.symbolNumpadGrid).setVisibility(View.GONE);
+        findViewById(R.id.symbolVoicePrompts).setVisibility(View.VISIBLE);
+
+        // Disable the start test button
+        Button startButton = (Button)findViewById(R.id.symbolStartNumpadButton);
+        startButton.setEnabled(false);
+        findViewById(R.id.symbolStartVoiceButton).setEnabled(false);
+    }
+
+
+    protected void onPause(){
+        super.onPause();
+        sr.stopListening();
+        testTimer.cancel();
+        secondDelayRight.cancel();
+        secondDelayWrong.cancel();
+        // Finishing is dangerous, but if a test stops...
+        finish();
+    }
+
+    protected void onDestroy(){
+        super.onDestroy();
+        sr.destroy();
     }
 }

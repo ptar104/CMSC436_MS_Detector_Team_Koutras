@@ -46,6 +46,7 @@ public class TappingActivity extends AppCompatActivity implements Sheets.Host {
         numberOfTaps = 0;
         previousTextNumberOfTaps = 0;
 
+        // Set bar red
         ProgressBar bar = (ProgressBar) findViewById(R.id.progress_bar);
         bar.getIndeterminateDrawable().setColorFilter(0xFFDD2400, android.graphics.PorterDuff.Mode.SRC_IN);
         bar.getProgressDrawable().setColorFilter(0xFFDD2400, PorterDuff.Mode.SRC_IN);
