@@ -268,7 +268,8 @@ public class Sheets implements GoogleApiClient.ConnectionCallbacks, GoogleApiCli
         SWAY_ANGEL("'Sway Test (Angel)'"),
         SWAY_MOVEMENT("'Sway Test (Movement)'"),
         INDOOR_WALKING("'Walking Test (IN)'"),
-        OUTDOOR_WALKING("'Walking Test (OUT)'");
+        OUTDOOR_WALKING("'Walking Test (OUT)'"),
+        SYMBOL("'Symbol Test'");
 
         private final String id;
 

@@ -8,12 +8,15 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.speech.RecognitionListener;
 import android.speech.SpeechRecognizer;
+import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.ImageView;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.capstone.petros.cmsc436msdetector.Sheets.Sheets;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -23,8 +26,14 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
-public class SymbolActivity extends Activity {
+public class SymbolActivity extends Activity implements Sheets.Host {
     private Activity act = this;
+    private Sheets sheet;
+    public static final int LIB_ACCOUNT_NAME_REQUEST_CODE = 1001;
+    public static final int LIB_AUTHORIZATION_REQUEST_CODE = 1002;
+    public static final int LIB_PERMISSION_REQUEST_CODE = 1003;
+    public static final int LIB_PLAY_SERVICES_REQUEST_CODE = 1004;
+    public static final int LIB_CONNECTION_REQUEST_CODE = 1005;
     private CountDownTimer testTimer, secondDelayRight, secondDelayWrong;
     List<Integer> imgList = Arrays.asList(R.drawable.symbol1, R.drawable.symbol2, R.drawable.symbol3, R.drawable.symbol4,
             R.drawable.symbol5, R.drawable.symbol6, R.drawable.symbol7, R.drawable.symbol8, R.drawable.symbol9);
@@ -47,6 +56,7 @@ public class SymbolActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_symbol);
 
+        sheet = new Sheets(this, this, getString(R.string.app_name));
         // Set bar red
         ProgressBar bar = (ProgressBar) findViewById(R.id.symbolProgressBar);
         bar.getIndeterminateDrawable().setColorFilter(0xFFDD2400, android.graphics.PorterDuff.Mode.SRC_IN);
@@ -302,6 +312,17 @@ public class SymbolActivity extends Activity {
         enableNumpad(false);
     }
 
+    @Override
+    public void onRequestPermissionsResult (int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
+        this.sheet.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        this.sheet.onActivityResult(requestCode, resultCode, data);
+    }
+
     public void recognizeSpeech(String startMessage){
         Intent i = new Intent();
         startPrompt = startMessage;
@@ -391,6 +412,11 @@ public class SymbolActivity extends Activity {
         findViewById(R.id.button9).setEnabled(doEnable);
     }
 
+    private void sendToSheets(Sheets.TestType sheetType, double result) {
+        //sheet.writeData(sheetType, getString(R.string.patientID), (float)result);
+        sheet.writeTrials(sheetType, getString(R.string.patientID), (float)result);
+    }
+
     public void reorderSymbols() {
         Collections.shuffle(imgList);
 
@@ -430,7 +456,7 @@ public class SymbolActivity extends Activity {
 
         average /= numSymbolsCorrect;
         boolean timesDecrease = numDecreasingSymbolAverages > 9 / 2;
-
+        sendToSheets(Sheets.TestType.SYMBOL, average/1000);
         DecimalFormat df = new DecimalFormat("#.000");
         if(timesDecrease) {
             return "Num symbols gotten: " + numSymbolsCorrect + ". Average time: " + df.format(average / 1000) + "s. The reactions are faster.";
@@ -483,5 +509,28 @@ public class SymbolActivity extends Activity {
     protected void onDestroy(){
         super.onDestroy();
         sr.destroy();
+    }
+
+    @Override
+    public int getRequestCode(Sheets.Action action) {
+        switch (action) {
+            case REQUEST_ACCOUNT_NAME:
+                return LIB_ACCOUNT_NAME_REQUEST_CODE;
+            case REQUEST_AUTHORIZATION:
+                return LIB_AUTHORIZATION_REQUEST_CODE;
+            case REQUEST_PERMISSIONS:
+                return LIB_PERMISSION_REQUEST_CODE;
+            case REQUEST_PLAY_SERVICES:
+                return LIB_PLAY_SERVICES_REQUEST_CODE;
+            case REQUEST_CONNECTION_RESOLUTION:
+                return LIB_CONNECTION_REQUEST_CODE;
+            default:
+                return -1;
+        }
+    }
+
+    @Override
+    public void notifyFinished(Exception e) {
+
     }
 }
