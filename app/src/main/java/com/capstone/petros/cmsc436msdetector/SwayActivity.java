@@ -22,6 +22,7 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.capstone.petros.cmsc436msdetector.Sheets.Sheets;
@@ -404,7 +405,7 @@ public class SwayActivity extends Activity implements Sheets.Host {
     }
 
     public void showTutorial(View v) {
-        FrameLayout frame = (FrameLayout)findViewById(R.id.swayFrame);
+        ScrollView frame = (ScrollView)findViewById(R.id.swayFrame);
         tutorialView = (TextView) findViewById(R.id.swayInstructions);
         RelativeLayout shader = (RelativeLayout)findViewById(R.id.swayShader);
         ImageView tutorialButton = (ImageView)findViewById(R.id.swayTutorialButton);
