@@ -20,6 +20,61 @@ public class VibrationActivity extends Activity {
     private int vibrationTime = 1000;
     private boolean blueBackground = false;
 
+
+    private CountDownTimer returnVibrationTimer1() {
+        return new CountDownTimer((1000+(1000-vibrationTime)/2), 5000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+
+            }
+
+            @Override
+            public void onFinish() {
+                //Vibrate for vibrationTime here:
+                vibrator.vibrate(vibrationTime);
+                vibrationTimer2 = returnVibrationTimer2();
+                vibrationTimer2.start();
+            }
+        };
+    }
+
+    private CountDownTimer returnVibrationTimer2() {
+        return new CountDownTimer(vibrationTime, 5000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+
+            }
+
+            @Override
+            public void onFinish() {
+                vibrationTimer3 = returnVibrationTimer3();
+                vibrationTimer3.start();
+            }
+        };
+    }
+
+    private CountDownTimer returnVibrationTimer3() {
+        return new CountDownTimer(3000-vibrationTime-(1000+((1000-vibrationTime)/2)), 5000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+            }
+
+            @Override
+            public void onFinish() {
+                vibrationTime = (3*vibrationTime)/4;
+                if(vibrationTime > 10) {
+                    vibrationTimer1 = returnVibrationTimer1();
+                    vibrationTimer1.start();
+                }
+                else {
+                    endTest(null);
+                }
+            }
+        };
+    }
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,7 +96,7 @@ public class VibrationActivity extends Activity {
             }
         };
 
-        testTimer2 = new CountDownTimer(1000, 2000) {
+        testTimer2 = new CountDownTimer(1000, 5000) {
             @Override
             public void onTick(long millisUntilFinished) {
             }
@@ -64,46 +119,11 @@ public class VibrationActivity extends Activity {
             }
         };
 
-        vibrationTimer1 = new CountDownTimer((1000+(1000-vibrationTime)/2), 5000) {
-            @Override
-            public void onTick(long millisUntilFinished) {
+        vibrationTimer1 = returnVibrationTimer1();
 
-            }
+        vibrationTimer2 = returnVibrationTimer2();
 
-            @Override
-            public void onFinish() {
-                //Vibrate for vibrationTime here:
-
-                vibrator.vibrate(vibrationTime);
-
-                vibrationTimer2.start();
-            }
-        };
-
-        vibrationTimer2 = new CountDownTimer(vibrationTime, 5000) {
-            @Override
-            public void onTick(long millisUntilFinished) {
-
-            }
-
-            @Override
-            public void onFinish() {
-                vibrationTimer3.start();
-            }
-        };
-
-        vibrationTimer3 = new CountDownTimer(3000-vibrationTime-(1000+((1000-vibrationTime)/2)), 5000) {
-            @Override
-            public void onTick(long millisUntilFinished) {
-
-            }
-
-            @Override
-            public void onFinish() {
-                vibrationTime = vibrationTime/2;
-                vibrationTimer1.start();
-            }
-        };
+        vibrationTimer3 = returnVibrationTimer3();
     }
 
     public void startTest(View view) {
@@ -130,6 +150,16 @@ public class VibrationActivity extends Activity {
     }
 
     public void endTest(View view) {
+        testTimer1.cancel();
+        testTimer2.cancel();
+        testTimer3.cancel();
+        delay5.cancel();
+        vibrationTimer1.cancel();
+        vibrationTimer2.cancel();
+        vibrationTimer3.cancel();
+
+        System.out.println(vibrationTime);
+        // The score is vibrationTime - The lower, the better.
     }
 
     public void showTutorial(View view) {
@@ -164,6 +194,9 @@ public class VibrationActivity extends Activity {
         testTimer2.cancel();
         testTimer3.cancel();
         delay5.cancel();
+        vibrationTimer1.cancel();
+        vibrationTimer2.cancel();
+        vibrationTimer3.cancel();
         finish();
     }
 }
