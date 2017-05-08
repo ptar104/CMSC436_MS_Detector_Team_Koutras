@@ -51,6 +51,7 @@ public class SymbolActivity extends Activity implements Sheets.Host {
     private String startPrompt = "Say the number now.";
     private boolean firstVoice = true, testDone = false;
 
+    private static final int TEST_DURATION = 15000;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -85,7 +86,7 @@ public class SymbolActivity extends Activity implements Sheets.Host {
         };
 
         // each test lasts 90 seconds
-        testTimer = new CountDownTimer(90000, 100) {
+        testTimer = new CountDownTimer(TEST_DURATION, 100) {
             @Override
             public void onTick(long millisUntilFinished) {
                 ProgressBar bar = (ProgressBar) findViewById(R.id.symbolProgressBar);

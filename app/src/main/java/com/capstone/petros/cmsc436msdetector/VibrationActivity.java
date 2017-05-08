@@ -3,6 +3,7 @@ package com.capstone.petros.cmsc436msdetector;
 import android.app.Activity;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Vibrator;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -15,6 +16,7 @@ public class VibrationActivity extends Activity {
 
     CountDownTimer testTimer1, testTimer2, testTimer3, delay5;
     CountDownTimer vibrationTimer1, vibrationTimer2, vibrationTimer3;
+    Vibrator vibrator;
     private int vibrationTime = 1000;
     private boolean blueBackground = false;
 
@@ -22,6 +24,8 @@ public class VibrationActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_vibration);
+
+        vibrator = (Vibrator)getSystemService(VIBRATOR_SERVICE);
 
         // The first one is the length, the second is the tick.
         testTimer1 = new CountDownTimer(1000, 2000) {
@@ -69,7 +73,9 @@ public class VibrationActivity extends Activity {
             @Override
             public void onFinish() {
                 //Vibrate for vibrationTime here:
-                
+
+                vibrator.vibrate(vibrationTime);
+
                 vibrationTimer2.start();
             }
         };
