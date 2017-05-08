@@ -449,4 +449,10 @@ public class SpiralView extends View {
         invalidate();
     }
 
+    public void stopTimer() {
+        if(countdown != null) {
+            countdown.cancel();
+            countdown = null;
+        }
+    }
 }

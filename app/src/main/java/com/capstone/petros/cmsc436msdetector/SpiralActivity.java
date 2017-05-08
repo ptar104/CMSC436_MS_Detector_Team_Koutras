@@ -18,6 +18,7 @@ import com.capstone.petros.cmsc436msdetector.Sheets.Sheets;
 
 public class SpiralActivity extends AppCompatActivity implements Sheets.Host {
 
+    private SpiralView spiralView;
     private Sheets sheet;
     public static final int LIB_ACCOUNT_NAME_REQUEST_CODE = 1001;
     public static final int LIB_AUTHORIZATION_REQUEST_CODE = 1002;
@@ -45,6 +46,8 @@ public class SpiralActivity extends AppCompatActivity implements Sheets.Host {
                 return false;
             }
         });
+
+        spiralView = (SpiralView)findViewById(R.id.SpiralView);
     }
 
     @Override
@@ -102,6 +105,14 @@ public class SpiralActivity extends AppCompatActivity implements Sheets.Host {
             frame.setVisibility(View.GONE);
             shader.setVisibility(View.GONE);
             tutorialButton.setColorFilter(0xFF000000);
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if(spiralView != null) {
+            spiralView.stopTimer();
         }
     }
 

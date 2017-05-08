@@ -45,6 +45,7 @@ public class SwayActivity extends Activity implements Sheets.Host {
     public double averageAcceleration;
 
     MediaPlayer mediaPlayer;
+    CountDownTimer timer;
     int trialNum;
 
     TextView tutorialView;
@@ -218,6 +219,10 @@ public class SwayActivity extends Activity implements Sheets.Host {
             mediaPlayer.release();
             mediaPlayer = null;
         }
+        if(timer != null) {
+            timer.cancel();
+            timer = null;
+        }
     }
 
     private void finishAllTests() {
@@ -261,7 +266,7 @@ public class SwayActivity extends Activity implements Sheets.Host {
             @Override
             public void onCompletion(MediaPlayer mediaPlayer) {
                 // Start a timer until you say the first trial
-                CountDownTimer timer = new CountDownTimer(8000,1000) {
+                timer = new CountDownTimer(8000,1000) {
                     @Override
                     public void onTick(long l) {
 
@@ -286,7 +291,7 @@ public class SwayActivity extends Activity implements Sheets.Host {
         mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mediaPlayer) {
-                CountDownTimer timer = new CountDownTimer(2000,1000) {
+                timer = new CountDownTimer(2000,1000) {
                     @Override
                     public void onTick(long l) {
 
@@ -329,7 +334,7 @@ public class SwayActivity extends Activity implements Sheets.Host {
             public void onCompletion(MediaPlayer mediaPlayer) {
                 // Start a timer until the trial ends
                 startCollectingData();
-                CountDownTimer timer = new CountDownTimer(10000,1000) {
+                timer = new CountDownTimer(10000,1000) {
                     @Override
                     public void onTick(long l) {
 
@@ -371,7 +376,7 @@ public class SwayActivity extends Activity implements Sheets.Host {
                 public void onCompletion(MediaPlayer mediaPlayer) {
                     // Start a timer until the next trial starts
                     // Put to 6000 at the end
-                    CountDownTimer timer = new CountDownTimer(6000, 1000) {
+                    timer = new CountDownTimer(6000, 1000) {
                         @Override
                         public void onTick(long l) {
 
@@ -454,6 +459,7 @@ public class SwayActivity extends Activity implements Sheets.Host {
         sensorManager.registerListener(orientationSel, magnetometer, SensorManager.SENSOR_DELAY_GAME);
         sensorManager.registerListener(accelerationSel, accelerometer, SensorManager.SENSOR_DELAY_GAME);
     }
+
 
     @Override
     public int getRequestCode(Sheets.Action action) {

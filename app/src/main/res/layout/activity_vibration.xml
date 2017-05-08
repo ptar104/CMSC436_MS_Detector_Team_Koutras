@@ -48,17 +48,15 @@
             android:textAlignment="center"/>
 
         <Button
+            android:id="@+id/endTestBtn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:onClick="endTest"
             android:scaleX="0.5"
             android:scaleY="0.5"
             android:text="End Test"
-            android:id="@+id/endTestBtn"
             android:textSize="40sp"
-            android:onClick="endTest"
-            android:visibility="visible"/>
-
-
+            android:visibility="gone" />
     </LinearLayout>
 
     <RelativeLayout

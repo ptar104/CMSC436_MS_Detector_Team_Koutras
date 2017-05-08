@@ -20,7 +20,6 @@ public class VibrationActivity extends Activity {
     private int vibrationTime = 1000;
     private boolean blueBackground = false;
 
-
     private CountDownTimer returnVibrationTimer1() {
         return new CountDownTimer((1000+(1000-vibrationTime)/2), 5000) {
             @Override
@@ -72,8 +71,6 @@ public class VibrationActivity extends Activity {
             }
         };
     }
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -128,11 +125,13 @@ public class VibrationActivity extends Activity {
 
     public void startTest(View view) {
         //UI Change
-        Button btn = (Button)findViewById(R.id.startTestBtn);
+        Button startBtn = (Button)findViewById(R.id.startTestBtn);
+        Button endBtn = (Button)findViewById(R.id.endTestBtn);
         TextView bottomText = (TextView)findViewById(R.id.vibrationBottomText);
         TextView topText = (TextView)findViewById(R.id.vibrationTopText);
-        btn.setVisibility(View.GONE);
+        startBtn.setVisibility(View.GONE);
         bottomText.setVisibility(View.GONE);
+        endBtn.setVisibility(View.VISIBLE);
 
         topText.setText("Place your knuckles on the screen.");
 
@@ -157,6 +156,10 @@ public class VibrationActivity extends Activity {
         vibrationTimer1.cancel();
         vibrationTimer2.cancel();
         vibrationTimer3.cancel();
+
+        //TODO: Provide feedback that the test is over?
+        TextView tv = (TextView) findViewById(R.id.vibrationTopText);
+        tv.setText("The test is complete.");
 
         System.out.println(vibrationTime);
         // The score is vibrationTime - The lower, the better.
