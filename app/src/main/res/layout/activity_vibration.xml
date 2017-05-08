@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_vibration"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.capstone.petros.cmsc436msdetector.VibrationActivity">
+
+    <LinearLayout
+        android:id="@+id/vibrationTextLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:orientation="vertical"
+        android:visibility="visible">
+
+        <TextView
+            android:id="@+id/vibrationTopText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Vibration TEST:\n\nPress the button to start."
+            android:textSize="20sp"
+            android:textAlignment="center"/>
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scaleX="0.5"
+            android:scaleY="0.5"
+            android:text="Start Test"
+            android:id="@+id/startTestBtn"
+            android:textSize="40sp"
+            android:onClick="startTest"
+            android:visibility="visible"/>
+
+        <TextView
+            android:id="@+id/vibrationBottomText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="\nPress the End Test button when you can no longer feel the vibrations."
+            android:textSize="20sp"
+            android:textAlignment="center"/>
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scaleX="0.5"
+            android:scaleY="0.5"
+            android:text="End Test"
+            android:id="@+id/endTestBtn"
+            android:textSize="40sp"
+            android:onClick="endTest"
+            android:visibility="visible"/>
+
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/vibrationShader"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#CC000000"
+        android:visibility="gone"
+        android:clickable="true"
+        android:onClick="showTutorial"/>
+
+    <FrameLayout
+        android:id="@+id/vibrationFrame"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="#FFF6FF00"
+        android:layout_centerInParent="true"
+        android:layout_margin="15dp"
+        android:padding="2dp"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/vibrationInstructions"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="15dp"
+            android:background="#FF0b1b33"
+            android:text=""
+            android:textAlignment="center"
+            android:textSize="20sp"
+            />
+
+    </FrameLayout>
+
+    <ImageView
+        android:id="@+id/vibrationTutorialButton"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/ic_help_outline_black_24dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:clickable="true"
+        android:onClick="showTutorial"/>
+
+</RelativeLayout>

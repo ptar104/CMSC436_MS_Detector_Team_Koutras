@@ -73,8 +73,10 @@
         <activity
             android:name=".WalkingActivity"
             android:label="@string/title_activity_walking" />
-        <activity android:name=".SymbolActivity"
-            android:screenOrientation="landscape"/>
+        <activity
+            android:name=".SymbolActivity"
+            android:screenOrientation="landscape" />
+        <activity android:name=".VibrationActivity"></activity>
     </application>
 
 </manifest>
