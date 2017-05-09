@@ -22,14 +22,21 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.capstone.petros.cmsc436msdetector.Sheets.Sheets;
+
 import java.text.DecimalFormat;
 
-public class FlexActivity extends Activity {
+public class FlexActivity extends Activity implements Sheets.Host {
     SensorEventListener sel;
     SensorManager sensorManager;
     Sensor accelerometer, magnetometer;
     private float roll = -1;
-
+    private Sheets sheet;
+    public static final int LIB_ACCOUNT_NAME_REQUEST_CODE = 1001;
+    public static final int LIB_AUTHORIZATION_REQUEST_CODE = 1002;
+    public static final int LIB_PERMISSION_REQUEST_CODE = 1003;
+    public static final int LIB_PLAY_SERVICES_REQUEST_CODE = 1004;
+    public static final int LIB_CONNECTION_REQUEST_CODE = 1005;
     private static final int STATE_IN_FIRST_HALF = 0,
             STATE_IN_SECOND_HALF = 1,
             STATE_OUT_FIRST_HALF = 2,
@@ -54,6 +61,7 @@ public class FlexActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_flex);
 
+        sheet = new Sheets(this, this, getString(R.string.app_name));
         sensorManager = (SensorManager) this.getSystemService(this.SENSOR_SERVICE);
         accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         magnetometer = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
@@ -217,7 +225,7 @@ public class FlexActivity extends Activity {
                         ((TextView)findViewById(R.id.flexResultsText2)).setText("      Completed Cycles: "+completedCycles);
                         ((TextView)findViewById(R.id.flexResultsText3)).setText("      Incomplete Cycles: "+incompletedCycles);
                         ((TextView)findViewById(R.id.flexResultsText4)).setText("      Time Taken: "+(totalTime/1000.0)+"s");
-
+                        sendToSheets(Sheets.TestType.LH_FLEX, totalTime/1000.0);
                         doneRightTest = true;
                         FragmentManager fragmentManager = getFragmentManager();
                         FlexInstructionFragment frag = new FlexInstructionFragment();
@@ -233,7 +241,7 @@ public class FlexActivity extends Activity {
                         ((TextView)findViewById(R.id.flexResultsText6)).setText("      Completed Cycles: "+completedCycles);
                         ((TextView)findViewById(R.id.flexResultsText7)).setText("      Incomplete Cycles: "+incompletedCycles);
                         ((TextView)findViewById(R.id.flexResultsText8)).setText("      Time Taken: "+(totalTime/1000.0)+"s");
-
+                        sendToSheets(Sheets.TestType.RH_FLEX, totalTime/1000.0);
                         FragmentManager fragmentManager = getFragmentManager();
                         FlexInstructionFragment frag = new FlexInstructionFragment();
 
@@ -250,6 +258,11 @@ public class FlexActivity extends Activity {
                 }
                 break;
         }
+    }
+
+    private void sendToSheets(Sheets.TestType sheetType, double result) {
+        //sheet.writeData(sheetType, getString(R.string.patientID), (float)result);
+        sheet.writeTrials(sheetType, getString(R.string.patientID), (float)result);
     }
 
     public void showTutorial(View v) {
@@ -292,5 +305,28 @@ public class FlexActivity extends Activity {
             mediaPlayer = null;
         }
         sensorManager.unregisterListener(sel);
+    }
+
+    @Override
+    public int getRequestCode(Sheets.Action action) {
+        switch (action) {
+            case REQUEST_ACCOUNT_NAME:
+                return LIB_ACCOUNT_NAME_REQUEST_CODE;
+            case REQUEST_AUTHORIZATION:
+                return LIB_AUTHORIZATION_REQUEST_CODE;
+            case REQUEST_PERMISSIONS:
+                return LIB_PERMISSION_REQUEST_CODE;
+            case REQUEST_PLAY_SERVICES:
+                return LIB_PLAY_SERVICES_REQUEST_CODE;
+            case REQUEST_CONNECTION_RESOLUTION:
+                return LIB_CONNECTION_REQUEST_CODE;
+            default:
+                return -1;
+        }
+    }
+
+    @Override
+    public void notifyFinished(Exception e) {
+
     }
 }
