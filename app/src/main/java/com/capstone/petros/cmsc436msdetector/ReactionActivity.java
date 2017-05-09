@@ -2,6 +2,7 @@ package com.capstone.petros.cmsc436msdetector;
 
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -96,5 +97,11 @@ public class ReactionActivity extends AppCompatActivity implements Sheets.Host {
     @Override
     public void notifyFinished(Exception e) {
 
+    }
+
+    @Override
+    protected void onStop(){
+        super.onStop();
+        finish();
     }
 }

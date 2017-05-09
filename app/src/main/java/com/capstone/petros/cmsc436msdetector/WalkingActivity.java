@@ -73,8 +73,10 @@ public class WalkingActivity extends FragmentActivity implements OnMapReadyCallb
     Bitmap bitmap;
     String fName;
 
-    /***DEBUG***/
+    LatLngBounds.Builder zoomBuilder;
     private ArrayList<LatLng> pointList;
+
+    /***DEBUG***/
     CountDownTimer fakePointsTimer;
     /***********/
 
@@ -84,6 +86,8 @@ public class WalkingActivity extends FragmentActivity implements OnMapReadyCallb
         setContentView(R.layout.activity_walking);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         sheet = new Sheets(this, this, getString(R.string.app_name));
+
+        zoomBuilder = new LatLngBounds.Builder();
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -98,20 +102,21 @@ public class WalkingActivity extends FragmentActivity implements OnMapReadyCallb
 //        pointList.add(new LatLng(-28, 160));
 
         //test points (View to AV Williams)
+        /*
         pointList.add(new LatLng(38.992646, -76.935111));
         pointList.add(new LatLng(38.992849, -76.935565));
         pointList.add(new LatLng(38.992670, -76.935814));
         pointList.add(new LatLng(38.991975, -76.935788));
         pointList.add(new LatLng(38.991263, -76.935747));
         pointList.add(new LatLng(38.990754, -76.936133));
+        */
 
         // REMOVE (Mark's phone cannot get a location update for some reason)
-        Button startButton = (Button) findViewById(R.id.startTestBtn);
-        startButton.setEnabled(true);
+        //Button startButton = (Button) findViewById(R.id.startTestBtn);
+        //startButton.setEnabled(true);
 
         locationListener = new LocationListener() {
             public void onLocationChanged(Location location) {
-                Toast.makeText(getApplicationContext(),"Got a location update",Toast.LENGTH_LONG).show();
                 handleLocationUpdates(location);
             }
 
@@ -166,7 +171,8 @@ public class WalkingActivity extends FragmentActivity implements OnMapReadyCallb
         long deltaTime = currTime - prevTime;
         if(location == null) {
             // Can't find location!
-            System.out.println("No location yet...");
+            //System.out.println("No location yet...");
+            findViewById(R.id.walkingSearchingFrame).setVisibility(View.VISIBLE);
             if(testOngoing && prevTime != -1){
                 if(!lostSig) {
                     lostSig = true;
@@ -183,14 +189,20 @@ public class WalkingActivity extends FragmentActivity implements OnMapReadyCallb
             }
         }
         else {
-            System.out.println("Lat: " + location.getLatitude() + " Long: "+location.getLongitude());
-
+            //System.out.println("Lat: " + location.getLatitude() + " Long: "+location.getLongitude());
+            findViewById(R.id.walkingSearchingFrame).setVisibility(View.INVISIBLE);
             if(!foundLocation){
                 foundLocation = true;
 
+                // Set the zoom to where the user is.
+                LatLngBounds.Builder builder = new LatLngBounds.Builder();
+                builder.include(new LatLng(location.getLatitude(), location.getLongitude()));
+                LatLngBounds bounds = builder.build();
+                mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 100));
                 // TODO(MARK): Enable test to begin.
                 Button startButton = (Button) findViewById(R.id.startTestBtn);
                 startButton.setEnabled(true);
+
             }
             if(testOngoing && prevTime != -1){
                 if(lostSig){
@@ -212,6 +224,7 @@ public class WalkingActivity extends FragmentActivity implements OnMapReadyCallb
                 }
                 else if(prevLatLngLine == null){
                     prevLatLngLine = new LatLng(location.getLatitude(),location.getLongitude());
+                    zoomBuilder.include(prevLatLngLine);
                     prevLatVel = location.getLatitude();
                     prevLongVel = location.getLongitude();
                     timeSinceLastUpdateLine = 0;
@@ -224,9 +237,9 @@ public class WalkingActivity extends FragmentActivity implements OnMapReadyCallb
                         float [] results = new float[1];
                         Location.distanceBetween(prevLatVel, prevLongVel,
                                 location.getLatitude(), location.getLongitude(), results);
+                        System.out.println("Detected movement: "+results[0]);
                         totalSpeed += results[0];
-                        totalTimeRecorded += deltaTime;
-                        averageSpeed = totalSpeed / totalTimeRecorded;                          // TODO(Mark): Average speed = totalSpeed / totalTimeRecorded.
+                        totalTimeRecorded += timeSinceLastUpdateVel;
                         prevLatVel = location.getLatitude();
                         prevLongVel = location.getLongitude();
                         timeSinceLastUpdateVel = 0;
@@ -234,6 +247,11 @@ public class WalkingActivity extends FragmentActivity implements OnMapReadyCallb
                     if(timeSinceLastUpdateLine >= 2000) { //Every 2 seconds
                         addPolyLine(prevLatLngLine, new LatLng(location.getLatitude(),location.getLongitude()), false);
                         prevLatLngLine = new LatLng(location.getLatitude(),location.getLongitude());
+                        // Zoom to include this:
+                        zoomBuilder.include(prevLatLngLine);
+                        LatLngBounds bounds = zoomBuilder.build();
+
+                        mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 100));
                         timeSinceLastUpdateLine = 0;
                     }
                 }
@@ -354,6 +372,8 @@ public class WalkingActivity extends FragmentActivity implements OnMapReadyCallb
         locationManager = null;
 
         fakePointsTimer.cancel();
+
+        finish();
     }
 
     public void addPolyLine(LatLng point1, LatLng point2, boolean signalLost){
@@ -402,9 +422,11 @@ public class WalkingActivity extends FragmentActivity implements OnMapReadyCallb
 
         testOngoing = true;
 
+        uiSettings.setZoomGesturesEnabled(false);
+
         /********DEBUG***********/
-        drawPoints();
-        averageSpeed = 2.0f;
+        //drawPoints();
+        //averageSpeed = 2.0f;
         /***********************/
 
         Button startButton = (Button) findViewById(R.id.startTestBtn);
@@ -424,6 +446,8 @@ public class WalkingActivity extends FragmentActivity implements OnMapReadyCallb
 
         endButton.setEnabled(false);
 
+        averageSpeed = totalSpeed / (totalTimeRecorded/1000);
+
         // Display results
         AlertDialog builder;
         builder = new AlertDialog.Builder(this).create();
@@ -433,6 +457,7 @@ public class WalkingActivity extends FragmentActivity implements OnMapReadyCallb
             public void onClick(DialogInterface dialog, int id) {
                 saveMap();
                 sendToSheets(Sheets.TestType.OUTDOOR_WALKING);
+                finish();
             }
         });
 

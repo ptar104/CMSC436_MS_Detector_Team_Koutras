@@ -10,9 +10,12 @@ import android.speech.RecognitionListener;
 import android.speech.SpeechRecognizer;
 import android.support.annotation.NonNull;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 import android.widget.ImageView;
 import android.widget.Button;
+import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -51,7 +54,7 @@ public class SymbolActivity extends Activity implements Sheets.Host {
     private String startPrompt = "Say the number now.";
     private boolean firstVoice = true, testDone = false;
 
-    private static final int TEST_DURATION = 15000;
+    private static final int TEST_DURATION = 90000; // 90 seconds in total
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -527,6 +530,35 @@ public class SymbolActivity extends Activity implements Sheets.Host {
                 return LIB_CONNECTION_REQUEST_CODE;
             default:
                 return -1;
+        }
+    }
+
+    public void showTutorial(View v) {
+        ScrollView frame = (ScrollView)findViewById(R.id.symbolFrame);
+        TextView tutorialView = (TextView) findViewById(R.id.symbolInstructions);
+        RelativeLayout shader = (RelativeLayout)findViewById(R.id.symbolShader);
+        ImageView tutorialButton = (ImageView)findViewById(R.id.symbolTutorialButton);
+
+        if (frame.getVisibility() == View.GONE) {
+            frame.setVisibility(View.VISIBLE);
+            tutorialView.setText("INSTRUCTIONS:\n\n" +
+                    "This is the symbol test.\n\n" +
+                    "It measures your ability to map symbols to numbers. This test lasts 90 seconds.\n\n" +
+                    "During the test, a symbol will appear on the left side of the screen. When it comes up, " +
+                    "check the key at the top of the screen to associate that symbol with its corresponding number.\n\n" +
+                    "For the numpad test, enter the number of that symbol on the numpad. If your answer is right, a new symbol " +
+                    "will appear. If your answer is incorrect, the symbol will stay until you choose correctly.\n\n" +
+                    "For the voice test, say what the number is. The screen will display what number we detected you saying, " +
+                    "and whether that was the correct number or not.\n\n"+
+                    "For the voice test, if the app is having a hard time recognizing the number you are saying, try saying, " +
+                    "\"The number is...\" and then saying the number.");
+            shader.setVisibility(View.VISIBLE);
+            tutorialButton.setColorFilter(0xFFF6FF00);
+        }
+        else {
+            frame.setVisibility(View.GONE);
+            shader.setVisibility(View.GONE);
+            tutorialButton.setColorFilter(0xFF000000);
         }
     }
 

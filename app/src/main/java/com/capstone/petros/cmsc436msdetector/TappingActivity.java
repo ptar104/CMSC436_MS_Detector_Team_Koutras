@@ -176,6 +176,7 @@ public class TappingActivity extends AppCompatActivity implements Sheets.Host {
         clearText.cancel();
         tenSeconds.cancel();
         finishedText.cancel();
+        finish();
     }
 
     public void showTutorial(View v) {

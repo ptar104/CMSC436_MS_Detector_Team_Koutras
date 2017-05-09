@@ -115,6 +115,7 @@ public class SpiralActivity extends AppCompatActivity implements Sheets.Host {
         if(spiralView != null) {
             spiralView.stopTimer();
         }
+        finish();
     }
 
     @Override

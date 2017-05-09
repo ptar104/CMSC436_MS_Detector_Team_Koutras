@@ -223,6 +223,7 @@ public class SwayActivity extends Activity implements Sheets.Host {
             timer.cancel();
             timer = null;
         }
+        finish();
     }
 
     private void finishAllTests() {

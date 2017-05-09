@@ -3,6 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+
+    android:background="#FF88AAE0"
     tools:context="com.capstone.petros.cmsc436msdetector.WalkingActivity">
 
     <LinearLayout
@@ -27,13 +29,6 @@
                 android:enabled="false"
                 android:onClick="endTest"
                 android:id="@+id/endTestBtn"/>
-            <ImageView
-                android:id="@+id/walkingTutorialButton"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:src="@drawable/ic_help_outline_black_24dp"
-                android:clickable="true"
-                android:onClick="showTutorial"/>
         </LinearLayout>
 
         <fragment
@@ -42,6 +37,29 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
     </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/walkingSearchingFrame"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="#99000000"
+        android:layout_centerInParent="true"
+        android:layout_margin="15dp"
+        android:padding="2dp"
+        android:visibility="visible">
+
+        <TextView
+            android:id="@+id/walkingSearchingText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="15dp"
+            android:background="#99000000"
+            android:text="Searching for GPS...\nMake sure you are outside\nand your location is enabled."
+            android:textAlignment="center"
+            android:textSize="20sp"
+            />
+
+    </FrameLayout>
 
     <RelativeLayout
         android:id="@+id/walkingShader"
@@ -74,6 +92,19 @@
             />
 
     </FrameLayout>
+
+    <ImageView
+        android:id="@+id/walkingTutorialButton"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:src="@drawable/ic_help_outline_black_24dp"
+        android:clickable="true"
+        android:onClick="showTutorial"/>
+
+
+
 
 </RelativeLayout>
 

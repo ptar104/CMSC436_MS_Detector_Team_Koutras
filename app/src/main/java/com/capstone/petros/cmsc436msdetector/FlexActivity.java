@@ -305,6 +305,7 @@ public class FlexActivity extends Activity implements Sheets.Host {
             mediaPlayer = null;
         }
         sensorManager.unregisterListener(sel);
+        finish();
     }
 
     @Override

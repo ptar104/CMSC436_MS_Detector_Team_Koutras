@@ -18,6 +18,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.capstone.petros.cmsc436msdetector.Sheets.Sheets;
 
@@ -74,11 +75,11 @@ public class StepActivity extends Activity implements Sheets.Host {
             usedAccelerometer = linAccelerometer;
         }
         stepDetector = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR);
-       /* if(stepDetector == null){
+       if(stepDetector == null){
             // Can replace with accelerometer, but for now, I quit.
-            System.out.println("Tsk tsk... no step detector.");
-            finish();
-        }*/
+           Toast.makeText(this, "This test requires the step detector sensor to run.", Toast.LENGTH_LONG).show();
+           finish();
+       }
 
 
         // Accelerometer listener
@@ -161,6 +162,7 @@ public class StepActivity extends Activity implements Sheets.Host {
             mediaPlayer.release();
             mediaPlayer = null;
         }
+        finish();
     }
 
     public void startTest(View v) {
