@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Vibrator;
+import android.text.Layout;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -18,7 +19,6 @@ public class VibrationActivity extends Activity {
     CountDownTimer vibrationTimer1, vibrationTimer2, vibrationTimer3;
     Vibrator vibrator;
     private int vibrationTime = 1000;
-    private boolean blueBackground = false;
 
     private CountDownTimer returnVibrationTimer1() {
         return new CountDownTimer((1000+(1000-vibrationTime)/2), 5000) {
@@ -149,6 +149,7 @@ public class VibrationActivity extends Activity {
     }
 
     public void endTest(View view) {
+        findViewById(R.id.activity_vibration).setBackgroundColor(0xFF88AAE0);
         testTimer1.cancel();
         testTimer2.cancel();
         testTimer3.cancel();
@@ -157,9 +158,14 @@ public class VibrationActivity extends Activity {
         vibrationTimer2.cancel();
         vibrationTimer3.cancel();
 
-        //TODO: Provide feedback that the test is over?
-        TextView tv = (TextView) findViewById(R.id.vibrationTopText);
-        tv.setText("The test is complete.");
+        Button endBtn = (Button) findViewById(R.id.endTestBtn);
+        endBtn.setVisibility(View.GONE);
+
+        TextView vibrationTopText = (TextView) findViewById(R.id.vibrationTopText);
+        vibrationTopText.setVisibility(View.INVISIBLE);
+        TextView resultsText = (TextView) findViewById(R.id.results_text);
+        resultsText.setVisibility(View.VISIBLE);
+        resultsText.setText("RESULTS: Your threshold is "+vibrationTime+"ms.");
 
         System.out.println(vibrationTime);
         // The score is vibrationTime - The lower, the better.

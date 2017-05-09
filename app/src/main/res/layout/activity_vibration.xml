@@ -43,7 +43,7 @@
             android:id="@+id/vibrationBottomText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="\nPress the End Test button when you can no longer feel the vibrations."
+            android:text="Place your knuckles on the screen after you hit 'Start'.\n\nPress the End Test button when you can no longer feel the vibrations."
             android:textSize="20sp"
             android:textAlignment="center"/>
 
@@ -67,6 +67,15 @@
         android:visibility="gone"
         android:clickable="true"
         android:onClick="showTutorial"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:gravity="center"
+        android:id="@+id/results_text"
+        android:textSize="60dp"
+        android:visibility="invisible"/>
 
     <ScrollView
         android:id="@+id/vibrationFrame"
@@ -103,5 +112,4 @@
         android:layout_alignParentBottom="true"
         android:clickable="true"
         android:onClick="showTutorial"/>
-
 </RelativeLayout>
