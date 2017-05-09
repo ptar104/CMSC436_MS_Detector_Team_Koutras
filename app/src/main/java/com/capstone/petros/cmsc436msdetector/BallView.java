@@ -32,7 +32,7 @@ import java.util.UUID;
 
 public class BallView extends View {
     private Canvas _reportCanvas = null;
-    private Bitmap _reportBitmap = null;
+    public static Bitmap _reportBitmap = null;
     private Path currPath = new Path();
     private Paint touchPaint = new Paint();
     Paint paint1 = new Paint();
@@ -43,6 +43,7 @@ public class BallView extends View {
     private int y = -1;
     double fScore;
     String grade = "N/A";
+    public static String fName;
 
     // these variables represent the amount of time that the user spent in each particular circle for the duration of the test
     // CircleOne is the innermost, CircleTwo is the middle circle, CircleThree is the outermost
@@ -359,7 +360,7 @@ public class BallView extends View {
 
         _reportCanvas.drawText("Jitteryness Score: "+ df.format(fScore) + " (Grade: " + grade + ")", 20,_reportCanvas.getHeight()*2/3+460, paintText);
 
-        String fName = UUID.randomUUID().toString() + ".png";
+        fName = UUID.randomUUID().toString();
 
         File folder = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "/Ball Test Results");
         if(!folder.exists()){
@@ -369,7 +370,7 @@ public class BallView extends View {
             }
         }
 
-        File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "/Ball Test Results/"+fName);
+        File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "/Ball Test Results/"+fName + ".png");
         try {
             _reportBitmap.compress(Bitmap.CompressFormat.PNG, 100, new FileOutputStream(file));
 

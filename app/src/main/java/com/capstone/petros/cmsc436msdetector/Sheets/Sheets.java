@@ -60,6 +60,7 @@ public class Sheets implements GoogleApiClient.ConnectionCallbacks, GoogleApiCli
     private String privateSpreadsheetId;
 
     private enum ServiceType {
+        UploadPhoto,
         WriteData,
         WriteTrials
     }
@@ -98,17 +99,20 @@ public class Sheets implements GoogleApiClient.ConnectionCallbacks, GoogleApiCli
     }
 
     public void uploadToDrive(String folderId, String fileName, Bitmap image) {
+        cache_service = ServiceType.UploadPhoto;
         cache_folderId = folderId;
         cache_fileName = fileName;
         cache_image = image;
 
-        new GoogleApiClient.Builder(hostActivity)
-                .addApi(Drive.API)
-                .addScope(Drive.SCOPE_FILE)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .build()
-                .connect();
+        if (checkConnection()) {
+            new GoogleApiClient.Builder(hostActivity)
+                    .addApi(Drive.API)
+                    .addScope(Drive.SCOPE_FILE)
+                    .addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this)
+                    .build()
+                    .connect();
+        }
     }
 
     @Override
@@ -180,6 +184,8 @@ public class Sheets implements GoogleApiClient.ConnectionCallbacks, GoogleApiCli
             case WriteTrials:
                 writeTrials(cache_type, cache_userId, cache_trials);
                 break;
+            case UploadPhoto:
+                uploadToDrive(cache_folderId, cache_fileName, cache_image);
             default:
                 break;
         }
@@ -269,7 +275,8 @@ public class Sheets implements GoogleApiClient.ConnectionCallbacks, GoogleApiCli
         SWAY_MOVEMENT("'Sway Test (Movement)'"),
         INDOOR_WALKING("'Walking Test (IN)'"),
         OUTDOOR_WALKING("'Walking Test (OUT)'"),
-        SYMBOL("'Symbol Test'");
+        SYMBOL("'Symbol Test'"),
+        VIBRATION("'Vibration Test'");
 
         private final String id;
 

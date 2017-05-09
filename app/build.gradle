@@ -39,4 +39,9 @@ dependencies {
     compile 'pub.devrel:easypermissions:0.2.1'
     compile 'com.google.android.gms:play-services-maps:10.2.1'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
+    compile 'com.google.android.gms:play-services-drive:10.2.1'
+    compile('com.google.apis:google-api-services-drive:v3-rev69-1.22.0') {
+        exclude group: 'org.apache.httpcomponents'
+        exclude group: 'com.google.code.findbugs'
+    }
 }

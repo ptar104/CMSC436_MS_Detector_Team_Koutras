@@ -70,6 +70,8 @@ public class WalkingActivity extends FragmentActivity implements OnMapReadyCallb
     private float averageSpeed = 0;
     private long totalTimeRecorded = 0;
     private boolean lostSig = false;
+    Bitmap bitmap;
+    String fName;
 
     /***DEBUG***/
     private ArrayList<LatLng> pointList;
@@ -284,21 +286,20 @@ public class WalkingActivity extends FragmentActivity implements OnMapReadyCallb
 
     public void saveMap() {
         GoogleMap.SnapshotReadyCallback callback = new GoogleMap.SnapshotReadyCallback() {
-            Bitmap bitmap;
 
             @Override
             public void onSnapshotReady(Bitmap snapshot) {
                 bitmap = snapshot;
                 try {
                     // Need to be at a new folder
-                    String fName = UUID.randomUUID().toString() + ".png";
+                    fName = UUID.randomUUID().toString();
                     File folder = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "/Walking Test Results");
                     if(!folder.exists()){
                         if(!folder.mkdirs()){
                             System.out.println("Folder creation failed...");
                         }
                     }
-                    File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "/Walking Test Results/"+fName);
+                    File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "/Walking Test Results/"+fName + ".png");
 
                     FileOutputStream out = new FileOutputStream(file);
                     bitmap.compress(Bitmap.CompressFormat.PNG, 90, out);
@@ -469,8 +470,9 @@ public class WalkingActivity extends FragmentActivity implements OnMapReadyCallb
     }
 
     private void sendToSheets(Sheets.TestType sheetType) {
-        sheet.writeData(sheetType, getString(R.string.patientID), (float)averageSpeed);
+        //sheet.writeData(sheetType, getString(R.string.patientID), (float)averageSpeed);
         sheet.writeTrials(sheetType, getString(R.string.patientID), (float)averageSpeed);
+        sheet.uploadToDrive("0B_ZudzTKOJeEWG5vWXVOb2JIMGs", fName + ".png", bitmap);
     }
 
     @Override

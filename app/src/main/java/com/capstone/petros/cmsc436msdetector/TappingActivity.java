@@ -165,7 +165,7 @@ public class TappingActivity extends AppCompatActivity implements Sheets.Host {
     }
 
     private void sendToSheets(float numTaps, Sheets.TestType sheetType) {
-        sheet.writeData(sheetType, getString(R.string.patientID), numTaps);
+        //sheet.writeData(sheetType, getString(R.string.patientID), numTaps);
         sheet.writeTrials(sheetType, getString(R.string.patientID), numTaps);
     }
 

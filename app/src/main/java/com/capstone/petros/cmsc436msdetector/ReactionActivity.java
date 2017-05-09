@@ -71,7 +71,7 @@ public class ReactionActivity extends AppCompatActivity implements Sheets.Host {
 
     private void sendToSheets(Sheets.TestType sheetType) {
         ReactionView reactionView = (ReactionView) findViewById(R.id.reactionView);
-        sheet.writeData(sheetType, getString(R.string.patientID), (float)reactionView.average);
+        //sheet.writeData(sheetType, getString(R.string.patientID), (float)reactionView.average);
         sheet.writeTrials(sheetType, getString(R.string.patientID), (float)reactionView.average);
     }
 

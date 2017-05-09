@@ -1,9 +1,11 @@
 package com.capstone.petros.cmsc436msdetector;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Vibrator;
+import android.support.annotation.NonNull;
 import android.text.Layout;
 import android.view.View;
 import android.widget.Button;
@@ -13,8 +15,15 @@ import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-public class VibrationActivity extends Activity {
+import com.capstone.petros.cmsc436msdetector.Sheets.Sheets;
 
+public class VibrationActivity extends Activity implements Sheets.Host {
+    private Sheets sheet;
+    public static final int LIB_ACCOUNT_NAME_REQUEST_CODE = 1001;
+    public static final int LIB_AUTHORIZATION_REQUEST_CODE = 1002;
+    public static final int LIB_PERMISSION_REQUEST_CODE = 1003;
+    public static final int LIB_PLAY_SERVICES_REQUEST_CODE = 1004;
+    public static final int LIB_CONNECTION_REQUEST_CODE = 1005;
     CountDownTimer testTimer1, testTimer2, testTimer3, delay5;
     CountDownTimer vibrationTimer1, vibrationTimer2, vibrationTimer3;
     Vibrator vibrator;
@@ -77,6 +86,7 @@ public class VibrationActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_vibration);
 
+        sheet = new Sheets(this, this, getString(R.string.app_name));
         vibrator = (Vibrator)getSystemService(VIBRATOR_SERVICE);
 
         // The first one is the length, the second is the tick.
@@ -150,6 +160,17 @@ public class VibrationActivity extends Activity {
         delay5.start();
     }
 
+    @Override
+    public void onRequestPermissionsResult (int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
+        this.sheet.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        this.sheet.onActivityResult(requestCode, resultCode, data);
+    }
+
     public void endTest(View view) {
         findViewById(R.id.activity_vibration).setBackgroundColor(0xFF88AAE0);
         testTimer1.cancel();
@@ -168,9 +189,14 @@ public class VibrationActivity extends Activity {
         TextView resultsText = (TextView) findViewById(R.id.results_text);
         resultsText.setVisibility(View.VISIBLE);
         resultsText.setText("RESULTS: Your threshold is "+vibrationTime+"ms.");
-
+        sendToSheets(Sheets.TestType.VIBRATION, vibrationTime);
         System.out.println(vibrationTime);
         // The score is vibrationTime - The lower, the better.
+    }
+
+    private void sendToSheets(Sheets.TestType sheetType, int result) {
+        //sheet.writeData(sheetType, getString(R.string.patientID), (float)result);
+        sheet.writeTrials(sheetType, getString(R.string.patientID), (float)result);
     }
 
     public void showTutorial(View view) {
@@ -209,5 +235,28 @@ public class VibrationActivity extends Activity {
         vibrationTimer2.cancel();
         vibrationTimer3.cancel();
         finish();
+    }
+
+    @Override
+    public int getRequestCode(Sheets.Action action) {
+        switch (action) {
+            case REQUEST_ACCOUNT_NAME:
+                return LIB_ACCOUNT_NAME_REQUEST_CODE;
+            case REQUEST_AUTHORIZATION:
+                return LIB_AUTHORIZATION_REQUEST_CODE;
+            case REQUEST_PERMISSIONS:
+                return LIB_PERMISSION_REQUEST_CODE;
+            case REQUEST_PLAY_SERVICES:
+                return LIB_PLAY_SERVICES_REQUEST_CODE;
+            case REQUEST_CONNECTION_RESOLUTION:
+                return LIB_CONNECTION_REQUEST_CODE;
+            default:
+                return -1;
+        }
+    }
+
+    @Override
+    public void notifyFinished(Exception e) {
+
     }
 }

@@ -39,7 +39,8 @@ import java.util.UUID;
 
 public class SpiralView extends View {
     private Canvas _offScreenCanvas = null, _reportCanvas = null;
-    private Bitmap _offScreenBitmap = null, _reportBitmap = null;
+    private Bitmap _offScreenBitmap = null;
+    public static Bitmap _reportBitmap = null;
     private Path currPath = new Path();
     private Paint touchPaint = new Paint();
 
@@ -49,6 +50,7 @@ public class SpiralView extends View {
     public static double testDuration;
     public static String grade;
     public static double score;
+    public static String fName;
 
     int numCycles;
     Point closestPoint;
@@ -408,7 +410,7 @@ public class SpiralView extends View {
         _reportCanvas.drawText("Test grade: "+ grade, 20,_offScreenCanvas.getHeight()+300, paintText);
 
         // Taken from code in Jon Froehlich's CMSC434 class.
-        String fName = UUID.randomUUID().toString() + ".png";
+        fName = UUID.randomUUID().toString();
         File folder = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "/Spiral Test Results");
         if(!folder.exists()){
             if(!folder.mkdirs()){
@@ -417,7 +419,7 @@ public class SpiralView extends View {
             }
         }
 
-        File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "/Spiral Test Results/"+fName);
+        File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "/Spiral Test Results/"+fName + ".png");
         try {
             _reportBitmap.compress(Bitmap.CompressFormat.PNG, 100, new FileOutputStream(file));
 

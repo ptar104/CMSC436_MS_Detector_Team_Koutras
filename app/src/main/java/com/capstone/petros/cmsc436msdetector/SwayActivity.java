@@ -404,7 +404,7 @@ public class SwayActivity extends Activity implements Sheets.Host {
     }
 
     private void sendToSheets(double averageAngle, double averageAcceleration) {
-        sheet.writeData(Sheets.TestType.HEAD_SWAY, getString(R.string.patientID), (float)averageAcceleration);
+        //sheet.writeData(Sheets.TestType.HEAD_SWAY, getString(R.string.patientID), (float)averageAcceleration);
         sheet.writeTrials(Sheets.TestType.SWAY_ANGEL, getString(R.string.patientID), (float) averageAngle);
         sheet.writeTrials(Sheets.TestType.SWAY_MOVEMENT, getString(R.string.patientID), (float) averageAcceleration);
     }

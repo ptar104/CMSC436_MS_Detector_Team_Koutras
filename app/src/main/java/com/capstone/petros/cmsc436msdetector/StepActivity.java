@@ -377,7 +377,7 @@ public class StepActivity extends Activity implements Sheets.Host {
     }
 
     private void sendToSheets(Sheets.TestType sheetType) {
-        sheet.writeData(sheetType, getString(R.string.patientID), (float)averageSpeed);
+        //sheet.writeData(sheetType, getString(R.string.patientID), (float)averageSpeed);
         sheet.writeTrials(sheetType, getString(R.string.patientID), (float)averageSpeed);
     }
 

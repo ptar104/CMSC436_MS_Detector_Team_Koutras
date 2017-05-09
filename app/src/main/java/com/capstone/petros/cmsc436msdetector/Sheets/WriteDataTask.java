@@ -12,8 +12,12 @@ import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.sheets.v4.model.AddSheetRequest;
 import com.google.api.services.sheets.v4.model.BatchUpdateSpreadsheetRequest;
+import com.google.api.services.sheets.v4.model.DimensionRange;
+import com.google.api.services.sheets.v4.model.InsertDimensionRequest;
 import com.google.api.services.sheets.v4.model.Request;
+import com.google.api.services.sheets.v4.model.Sheet;
 import com.google.api.services.sheets.v4.model.SheetProperties;
+import com.google.api.services.sheets.v4.model.Spreadsheet;
 import com.google.api.services.sheets.v4.model.ValueRange;
 
 import java.io.IOException;
@@ -22,6 +26,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Background task to write the data
@@ -164,6 +170,62 @@ class WriteDataTask extends AsyncTask<WriteDataTask.WriteData, Void, Exception> 
                 .execute();
     }
 
+    private Exception expandSheetAndRetry(WriteData wd, int column) {
+        // Get sheet id
+        Spreadsheet response;
+        try {
+            response = sheetsService.spreadsheets().get(spreadsheetId).execute();
+        } catch (Exception e) {
+            return e;
+        }
+        int sheetID = -1;
+        for (Sheet sheet : response.getSheets()) {
+            if (sheet.getProperties().getTitle().equals(wd.testType.toId().substring(1,
+                    wd.testType.toId().length()-1))) {
+                sheetID = sheet.getProperties().getSheetId();
+            }
+        }
+        if (sheetID != -1) {
+            // Double the sheet size
+            DimensionRange range = new DimensionRange();
+            range.setSheetId(sheetID);
+            range.setDimension("COLUMNS");
+            range.setStartIndex(column);
+            range.setEndIndex(column * 2);
+            // Create request to expand the sheet
+            InsertDimensionRequest insertReq = new InsertDimensionRequest();
+            insertReq.setRange(range);
+            insertReq.setInheritFromBefore(true);
+            // A bunch of stupid shit for sheets API request building
+            Request req = new Request();
+            req.setInsertDimension(insertReq);
+            ArrayList<Request> reqList = new ArrayList<>();
+            reqList.add(req);
+            BatchUpdateSpreadsheetRequest batchReq = new BatchUpdateSpreadsheetRequest();
+            batchReq.setRequests(reqList);
+            // Send the request to add a new sheet
+            try {
+                sheetsService.spreadsheets().batchUpdate(spreadsheetId, batchReq).execute();
+            } catch (Exception e) {
+                return e;
+            }
+            // Retry our original write
+            try {
+                if (wd.central) {
+                    this.writeToCentral(wd);
+                } else {
+                    this.writeToPrivate(wd);
+                }
+            } catch (Exception e) {
+                return e;
+            }
+            // Success
+            return null;
+        } else {
+            return new Exception("Failed to find sheet ID");
+        }
+    }
+
     private Exception addNewSheetAndRetry(WriteData wd) {
         // Create request to add a new sheet
         AddSheetRequest addReq = new AddSheetRequest();
@@ -209,6 +271,16 @@ class WriteDataTask extends AsyncTask<WriteDataTask.WriteData, Void, Exception> 
             } catch (com.google.api.client.googleapis.json.GoogleJsonResponseException e) {
                 if (e.getDetails().getErrors().get(0).getMessage().contains("Unable to parse range:")) {
                     return addNewSheetAndRetry(wd);
+                } else if (e.getDetails().getErrors().get(0).getMessage().contains("exceeds grid limits")) {
+                    Pattern p = Pattern.compile("max columns: (\\d+)");
+                    Matcher m = p.matcher(e.getDetails().getErrors().get(0).getMessage());
+                    boolean found = m.find();
+                    if (found) {
+                        int column = Integer.valueOf(m.group(1));
+                        return expandSheetAndRetry(wd, column);
+                    } else {
+                        return e;
+                    }
                 } else {
                     return e;
                 }

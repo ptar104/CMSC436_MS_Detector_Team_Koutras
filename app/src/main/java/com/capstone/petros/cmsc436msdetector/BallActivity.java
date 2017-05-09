@@ -4,6 +4,7 @@ import android.app.FragmentManager;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -76,7 +77,7 @@ public class BallActivity extends Activity implements TimedActivity, Sheets.Host
                 ((BallView)findViewById(R.id.ballView)).resetTest();
                 FragmentManager fragmentManager = getFragmentManager();
                 InstructionFragment frag = new InstructionFragment();
-                sendToSheets(ballView.fScore, Sheets.TestType.LH_LEVEL);
+                sendToSheets(ballView.fScore, Sheets.TestType.LH_LEVEL, "Left", ballView.fName, ballView._reportBitmap);
                 Bundle bundle = new Bundle();
                 bundle.putString(InstructionFragment.MESSAGE_KEY, "Test complete! The test results can be viewed in your gallery.");
                 frag.setArguments(bundle);
@@ -91,7 +92,7 @@ public class BallActivity extends Activity implements TimedActivity, Sheets.Host
                 Utils.appendResultsToInternalStorage(activity, BALL_TEST_DATA_FILENAME, ballView.totalScore);
 
                 // write the results to the google sheets
-                sendToSheets(ballView.fScore, Sheets.TestType.RH_LEVEL);
+                sendToSheets(ballView.fScore, Sheets.TestType.RH_LEVEL, "Right", ballView.fName, ballView._reportBitmap);
 
                 ((BallView)findViewById(R.id.ballView)).resetTest();
 
@@ -105,9 +106,10 @@ public class BallActivity extends Activity implements TimedActivity, Sheets.Host
         }
     };
 
-    private void sendToSheets(double score, Sheets.TestType sheetType) {
-        sheet.writeData(sheetType, getString(R.string.patientID), (float)score);
+    private void sendToSheets(double score, Sheets.TestType sheetType, String hand, String name, Bitmap bitmap) {
+        //sheet.writeData(sheetType, getString(R.string.patientID), (float)score);
         sheet.writeTrials(sheetType, getString(R.string.patientID), (float)score);
+        sheet.uploadToDrive("0B_ZudzTKOJeEa2pNcU5EOThGLUE", name + "-" + hand + ".png", bitmap);
     }
 
     @Override
