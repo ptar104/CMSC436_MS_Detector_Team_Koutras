@@ -15,6 +15,8 @@ import android.view.ViewGroup;
 
 public class CompletionFragment extends DialogFragment {
 
+    public static final String MESSAGE_KEY = "MESSAGE";
+
     public CompletionFragment() {
         // Required empty public constructor
 
@@ -25,8 +27,9 @@ public class CompletionFragment extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         // Use the Builder class for convenient dialog construction
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        String message = getArguments().getString(MESSAGE_KEY);
 
-        builder.setMessage("Test done!")
+        builder.setMessage(message)
                 .setPositiveButton(R.string.continue_string, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         // getActivity().findViewById(R.id.ballView).setBackgroundColor(Color.RED);

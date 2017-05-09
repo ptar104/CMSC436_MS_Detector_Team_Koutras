@@ -121,6 +121,36 @@ public class WalkingActivity extends FragmentActivity implements OnMapReadyCallb
 
             public void onProviderDisabled(String provider) {}
         };
+
+        int timerInterval = 4000;
+        fakePointsTimer = new CountDownTimer(timerInterval*pointList.size(),timerInterval) {
+            int c = 0;
+
+            @Override
+            public void onTick(long l) {
+                PolylineOptions options = new PolylineOptions().width(5).color(Color.BLUE).geodesic(true);
+                LatLngBounds.Builder builder = new LatLngBounds.Builder();
+
+                for(int i = 0; i < 2+c; i++){
+                    LatLng point = pointList.get(i);
+                    options.add(point);
+                    builder.include(point);
+                }
+
+                mMap.addPolyline(options);
+
+                LatLngBounds bounds = builder.build();
+                mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 20));
+
+                c++;
+            }
+
+            @Override
+            public void onFinish() {
+                // After the fake data is done, finish the test
+                endTest(null);
+            }
+        };
     }
 
     @Override
@@ -237,36 +267,6 @@ public class WalkingActivity extends FragmentActivity implements OnMapReadyCallb
                         , MY_LOCATION_REQUEST_CODE);
             }
         }
-
-        // Add a marker in Sydney and move the camera
-        //LatLng sydney = new LatLng(-34, 151);
-        //mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        //mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-
-        // Test
-        /*
-        Location l1 = new Location(LocationManager.GPS_PROVIDER);
-        l1.setLatitude(0); l1.setLongitude(0);
-        handleLocationUpdates(l1);
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e){}
-        Location l2 = new Location(LocationManager.GPS_PROVIDER);
-        l2.setLatitude(50); l2.setLongitude(50);
-        handleLocationUpdates(l2);
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e){}
-        Location l3 = new Location(LocationManager.GPS_PROVIDER);
-        l3.setLatitude(75); l3.setLongitude(75);
-        handleLocationUpdates(l3);
-        try {
-            Thread.sleep(3000);
-        } catch (InterruptedException e){}
-        Location l4 = new Location(LocationManager.GPS_PROVIDER);
-        l4.setLatitude(-50); l4.setLongitude(-50);
-        handleLocationUpdates(l4);
-        */
     }
 
     @Override
@@ -386,35 +386,6 @@ public class WalkingActivity extends FragmentActivity implements OnMapReadyCallb
 
     public void drawPoints() {
         // MARK CODE: Generate the fake points around your last known location
-        int timerInterval = 4000;
-        fakePointsTimer = new CountDownTimer(timerInterval*pointList.size(),timerInterval) {
-            int c = 0;
-
-            @Override
-            public void onTick(long l) {
-                PolylineOptions options = new PolylineOptions().width(5).color(Color.BLUE).geodesic(true);
-                LatLngBounds.Builder builder = new LatLngBounds.Builder();
-
-                for(int i = 0; i < 2+c; i++){
-                    LatLng point = pointList.get(i);
-                    options.add(point);
-                    builder.include(point);
-                }
-
-                mMap.addPolyline(options);
-
-                LatLngBounds bounds = builder.build();
-                mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 20));
-
-                c++;
-            }
-
-            @Override
-            public void onFinish() {
-                // After the fake data is done, finish the test
-                endTest(null);
-            }
-        };
         fakePointsTimer.start();
     }
 

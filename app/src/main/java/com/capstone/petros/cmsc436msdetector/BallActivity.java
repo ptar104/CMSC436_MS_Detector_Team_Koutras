@@ -78,7 +78,7 @@ public class BallActivity extends Activity implements TimedActivity, Sheets.Host
                 InstructionFragment frag = new InstructionFragment();
                 sendToSheets(ballView.fScore, Sheets.TestType.LH_LEVEL);
                 Bundle bundle = new Bundle();
-                bundle.putString(InstructionFragment.MESSAGE_KEY, "Use your right hand to keep the ball in the center of the screen");
+                bundle.putString(InstructionFragment.MESSAGE_KEY, "Test complete! The test results can be viewed in your gallery.");
                 frag.setArguments(bundle);
                 frag.show(fragmentManager, null);
             }
@@ -97,6 +97,9 @@ public class BallActivity extends Activity implements TimedActivity, Sheets.Host
 
                 FragmentManager fragmentManager = getFragmentManager();
                 CompletionFragment frag = new CompletionFragment();
+                Bundle bundle = new Bundle();
+                bundle.putString(InstructionFragment.MESSAGE_KEY, "");
+                frag.setArguments(bundle);
                 frag.show(fragmentManager, null);
             }
         }

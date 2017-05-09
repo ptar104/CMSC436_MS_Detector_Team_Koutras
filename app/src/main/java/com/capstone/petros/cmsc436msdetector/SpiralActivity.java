@@ -31,7 +31,7 @@ public class SpiralActivity extends AppCompatActivity implements Sheets.Host {
         setContentView(R.layout.activity_spiral);
         sheet = new Sheets(this, this, getString(R.string.app_name));
         final TextView instruction = (TextView) findViewById(R.id.Instructions);
-        SpiralView spiralView = (SpiralView)findViewById(R.id.SpiralView);
+        spiralView = (SpiralView)findViewById(R.id.SpiralView);
         spiralView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {

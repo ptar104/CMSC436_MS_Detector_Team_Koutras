@@ -116,6 +116,18 @@ public class VibrationActivity extends Activity {
             }
         };
 
+        delay5 = new CountDownTimer(5000, 6000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+            }
+
+            @Override
+            public void onFinish() {
+                testTimer1.start();
+                vibrationTimer1.start();
+            }
+        };
+
         vibrationTimer1 = returnVibrationTimer1();
 
         vibrationTimer2 = returnVibrationTimer2();
@@ -135,17 +147,7 @@ public class VibrationActivity extends Activity {
 
         topText.setText("Place your knuckles on the screen.");
 
-        delay5 = new CountDownTimer(5000, 6000) {
-            @Override
-            public void onTick(long millisUntilFinished) {
-            }
-
-            @Override
-            public void onFinish() {
-                testTimer1.start();
-                vibrationTimer1.start();
-            }
-        }.start();
+        delay5.start();
     }
 
     public void endTest(View view) {
