@@ -61,20 +61,21 @@ public class SpiralActivity extends AppCompatActivity implements Sheets.Host {
         this.sheet.onActivityResult(requestCode, resultCode, data);
     }
 
-    private void sendToSheets(Sheets.TestType sheetType, String hand) {
+    private void sendToSheets(Sheets.TestType sheetType, Sheets.TestType timeSheet, String hand) {
         //sheet.writeData(sheetType, getString(R.string.patientID), (float)SpiralView.score);
         sheet.writeTrials(sheetType, getString(R.string.patientID), (float)SpiralView.score);
+        sheet.writeTrials(timeSheet, getString(R.string.patientID), (float)SpiralView.testDuration);
         sheet.uploadToDrive("0B_ZudzTKOJeEUUY2bnhjd3JNbVk", SpiralView.fName + "-" + hand + ".png", SpiralView._reportBitmap);
     }
 
     public void saveImageLeft(View view){
         ((SpiralView)findViewById(R.id.SpiralView)).saveTestToGallery();
-        sendToSheets(Sheets.TestType.LH_SPIRAL, "Left");
+        sendToSheets(Sheets.TestType.LH_SPIRAL, Sheets.TestType.LH_SPIRAL_TIME, "Left");
     }
 
     public void saveImageRight(View view){
         ((SpiralView)findViewById(R.id.SpiralView)).saveTestToGallery();
-        sendToSheets(Sheets.TestType.RH_SPIRAL, "Right");
+        sendToSheets(Sheets.TestType.RH_SPIRAL, Sheets.TestType.RH_SPIRAL_TIME, "Right");
     }
 
     public void resetTest(View view){

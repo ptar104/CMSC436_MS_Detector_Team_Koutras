@@ -416,9 +416,10 @@ public class SymbolActivity extends Activity implements Sheets.Host {
         findViewById(R.id.button9).setEnabled(doEnable);
     }
 
-    private void sendToSheets(Sheets.TestType sheetType, double result) {
+    private void sendToSheets(Sheets.TestType sheetType, Sheets.TestType sheetType1, double result, int correctSymbols) {
         //sheet.writeData(sheetType, getString(R.string.patientID), (float)result);
         sheet.writeTrials(sheetType, getString(R.string.patientID), (float)result);
+        sheet.writeTrials(sheetType1, getString(R.string.patientID), (float)correctSymbols);
     }
 
     public void reorderSymbols() {
@@ -460,7 +461,7 @@ public class SymbolActivity extends Activity implements Sheets.Host {
 
         average /= numSymbolsCorrect;
         boolean timesDecrease = numDecreasingSymbolAverages > 9 / 2;
-        sendToSheets(Sheets.TestType.SYMBOL, average/1000);
+        sendToSheets(Sheets.TestType.SYMBOL, Sheets.TestType.SYMBOL_CORRECT, average/1000, numSymbolsCorrect);
         DecimalFormat df = new DecimalFormat("#.000");
         if(timesDecrease) {
             return "Num symbols gotten: " + numSymbolsCorrect + ". Average time: " + df.format(average / 1000) + "s. The reactions are faster.";

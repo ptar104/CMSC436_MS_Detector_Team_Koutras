@@ -376,7 +376,7 @@ public class SpiralView extends View {
     public void saveTestToGallery(){
         countdown.cancel();
         // recording how much time the test took
-        testDuration = endTime - startTime;
+        testDuration = (endTime - startTime)/1000.0;
         grade = evaluateTrace();
         //Set up the report.
 
