@@ -54,6 +54,20 @@ public class SymbolActivity extends Activity implements Sheets.Host {
     private String startPrompt = "Say the number now.";
     private boolean firstVoice = true, testDone = false;
 
+    // Restarting right after a timeout caused issues. A small delay helps.
+    private CountDownTimer delayer = new CountDownTimer(100,101){
+
+        @Override
+        public void onTick(long l) {
+
+        }
+
+        @Override
+        public void onFinish() {
+            startListening();
+        }
+    };
+
     private static final int TEST_DURATION = 90000; // 90 seconds in total
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,7 +129,6 @@ public class SymbolActivity extends Activity implements Sheets.Host {
                 numSymbolsCorrect = 0;
                 numGuesses = 0;
                 symbolTimes.clear();
-
                 Button startButton = (Button)findViewById(R.id.symbolStartNumpadButton);
                 startButton.setEnabled(true);
                 findViewById(R.id.symbolStartNumpadButton).setEnabled(true);
@@ -231,7 +244,7 @@ public class SymbolActivity extends Activity implements Sheets.Host {
                                 detectedNumber = -2;
                             }
                         }
-                        if (results.contains("6") || results.contains("six")) {
+                        if (result.contains("6") || result.contains("six")) {
                             if (detectedNumber == -1 || detectedNumber == 6) {
                                 detectedNumber = 6;
                             } else {
@@ -328,8 +341,12 @@ public class SymbolActivity extends Activity implements Sheets.Host {
     }
 
     public void recognizeSpeech(String startMessage){
-        Intent i = new Intent();
         startPrompt = startMessage;
+        delayer.start();
+    }
+
+    private void startListening(){
+        Intent i = new Intent();
         sr.startListening(i);
     }
 
@@ -501,12 +518,13 @@ public class SymbolActivity extends Activity implements Sheets.Host {
     }
 
 
-    protected void onPause(){
-        super.onPause();
+    protected void onStop(){
+        super.onStop();
         sr.stopListening();
         testTimer.cancel();
         secondDelayRight.cancel();
         secondDelayWrong.cancel();
+        delayer.cancel();
         // Finishing is dangerous, but if a test stops...
         finish();
     }

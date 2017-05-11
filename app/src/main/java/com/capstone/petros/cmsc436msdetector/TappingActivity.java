@@ -170,8 +170,8 @@ public class TappingActivity extends AppCompatActivity implements Sheets.Host {
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
+    protected void onStop() {
+        super.onStop();
         countDown.cancel();
         clearText.cancel();
         tenSeconds.cancel();

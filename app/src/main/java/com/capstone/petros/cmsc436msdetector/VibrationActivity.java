@@ -225,8 +225,8 @@ public class VibrationActivity extends Activity implements Sheets.Host {
     }
 
     @Override
-    protected void onPause(){
-        super.onPause();
+    protected void onStop(){
+        super.onStop();
         testTimer1.cancel();
         testTimer2.cancel();
         testTimer3.cancel();

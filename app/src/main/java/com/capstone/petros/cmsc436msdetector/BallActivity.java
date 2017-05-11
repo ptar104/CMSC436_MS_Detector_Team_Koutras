@@ -79,7 +79,7 @@ public class BallActivity extends Activity implements TimedActivity, Sheets.Host
                 InstructionFragment frag = new InstructionFragment();
                 sendToSheets(ballView.fScore, Sheets.TestType.LH_LEVEL, "Left", ballView.fName, ballView._reportBitmap);
                 Bundle bundle = new Bundle();
-                bundle.putString(InstructionFragment.MESSAGE_KEY, "Test complete! The test results can be viewed in your gallery.");
+                bundle.putString(InstructionFragment.MESSAGE_KEY, "Use your right hand to keep the ball in the center of the screen.");
                 frag.setArguments(bundle);
                 frag.show(fragmentManager, null);
             }
@@ -99,7 +99,7 @@ public class BallActivity extends Activity implements TimedActivity, Sheets.Host
                 FragmentManager fragmentManager = getFragmentManager();
                 CompletionFragment frag = new CompletionFragment();
                 Bundle bundle = new Bundle();
-                bundle.putString(InstructionFragment.MESSAGE_KEY, "");
+                bundle.putString(InstructionFragment.MESSAGE_KEY, "Test complete! You can view your results in the gallery.");
                 frag.setArguments(bundle);
                 frag.show(fragmentManager, null);
             }
@@ -167,10 +167,11 @@ public class BallActivity extends Activity implements TimedActivity, Sheets.Host
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
+    protected void onStop() {
+        super.onStop();
         prepTimer.cancel();
         testTimer.cancel();
+        sensorManager.unregisterListener(sel);
         finish();
     }
 
@@ -181,18 +182,12 @@ public class BallActivity extends Activity implements TimedActivity, Sheets.Host
         sensorManager.registerListener(sel, magnetometer, SensorManager.SENSOR_DELAY_GAME);
     }
 
-    @Override
-    protected void onStop(){
-        super.onStop();
-        sensorManager.unregisterListener(sel);
-    }
-
     public void startTest() {
         FragmentManager fragmentManager = getFragmentManager();
         InstructionFragment frag = new InstructionFragment();
 
         Bundle bundle = new Bundle();
-        bundle.putString(InstructionFragment.MESSAGE_KEY,"Use your left hand to keep the ball in the center of the screen");
+        bundle.putString(InstructionFragment.MESSAGE_KEY,"Use your left hand to keep the ball in the center of the screen.");
         frag.setArguments(bundle);
 
         frag.show(fragmentManager, null);
