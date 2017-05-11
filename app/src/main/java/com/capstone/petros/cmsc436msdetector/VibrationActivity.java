@@ -27,7 +27,7 @@ public class VibrationActivity extends Activity implements Sheets.Host {
     CountDownTimer testTimer1, testTimer2, testTimer3, delay5;
     CountDownTimer vibrationTimer1, vibrationTimer2, vibrationTimer3;
     Vibrator vibrator;
-    private int vibrationTime = 1000;
+    private int vibrationTime = 1000, prevVibrationTime = 1000, vibrationThrshold = 1000;
 
     private CountDownTimer returnVibrationTimer1() {
         return new CountDownTimer((1000+(1000-vibrationTime)/2), 5000) {
@@ -39,6 +39,7 @@ public class VibrationActivity extends Activity implements Sheets.Host {
             @Override
             public void onFinish() {
                 //Vibrate for vibrationTime here:
+                vibrationThrshold = prevVibrationTime;
                 vibrator.vibrate(vibrationTime);
                 vibrationTimer2 = returnVibrationTimer2();
                 vibrationTimer2.start();
@@ -55,6 +56,7 @@ public class VibrationActivity extends Activity implements Sheets.Host {
 
             @Override
             public void onFinish() {
+                prevVibrationTime = vibrationTime;
                 vibrationTimer3 = returnVibrationTimer3();
                 vibrationTimer3.start();
             }
@@ -188,7 +190,12 @@ public class VibrationActivity extends Activity implements Sheets.Host {
         vibrationTopText.setVisibility(View.INVISIBLE);
         TextView resultsText = (TextView) findViewById(R.id.results_text);
         resultsText.setVisibility(View.VISIBLE);
-        resultsText.setText("RESULTS: Your threshold is "+vibrationTime+"ms.");
+        if(vibrationTime > 10) {
+            resultsText.setText("RESULTS: Your threshold is " + vibrationThrshold + "ms.");
+        }
+        else{
+            resultsText.setText("RESULTS: Lowest threshold ("+vibrationTime+"ms) reached.");
+        }
         sendToSheets(Sheets.TestType.VIBRATION, vibrationTime);
         System.out.println(vibrationTime);
         // The score is vibrationTime - The lower, the better.
