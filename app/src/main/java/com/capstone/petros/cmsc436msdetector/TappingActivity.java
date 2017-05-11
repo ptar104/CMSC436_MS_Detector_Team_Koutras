@@ -128,6 +128,7 @@ public class TappingActivity extends AppCompatActivity implements Sheets.Host {
                     }
 
                 } else if(tryNumber == 6) {
+                    leftSum += previousTextNumberOfTaps;
                     sendToSheets(rightSum/3, Sheets.TestType.RH_TAP);
                     sendToSheets(leftSum/3, Sheets.TestType.LH_TAP);
                     DecimalFormat df = new DecimalFormat("#.#");

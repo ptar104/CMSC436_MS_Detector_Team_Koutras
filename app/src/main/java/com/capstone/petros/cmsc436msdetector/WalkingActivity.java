@@ -67,7 +67,7 @@ public class WalkingActivity extends FragmentActivity implements OnMapReadyCallb
     private LatLng prevLatLngLine;
     private double prevLatVel = 0, prevLongVel = 0;
     private float totalSpeed = 0;
-    private float averageSpeed = 0;
+    private double averageSpeed = 0;
     private long totalTimeRecorded = 0;
     private boolean lostSig = false;
     Bitmap bitmap;
@@ -446,7 +446,12 @@ public class WalkingActivity extends FragmentActivity implements OnMapReadyCallb
 
         endButton.setEnabled(false);
 
-        averageSpeed = totalSpeed / (totalTimeRecorded/1000);
+        if(totalTimeRecorded != 0) {
+            averageSpeed = totalSpeed / (totalTimeRecorded / 1000.0);
+        }
+        else{
+            averageSpeed = 0;
+        }
 
         // Display results
         AlertDialog builder;

@@ -9,7 +9,7 @@
     <string name="continue_string">Continue</string>
     <string name="back_string">Back</string>
     <string name="title_activity_reaction_graph_demo">ReactionGraphDemo</string>
-    <string name="patientID">t06p05</string>
+    <string name="patientID">t06p04</string>
     <string name="no_goog">No Google Service.</string>
     <string name="no_net">No Google Service.</string>
     <string name="title_activity_walking">Map</string>

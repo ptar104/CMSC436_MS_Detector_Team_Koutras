@@ -30,26 +30,27 @@
             android:layout_weight=".1">
 
             <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.33"
                 android:text="Reset Test"
                 android:textSize="15sp"
                 android:onClick="resetTest"/>
 
             <Button
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_weight="0.33"
                 android:onClick="saveImageLeft"
-                android:text="Save Test (L)"
+                android:text="Save to sheets (L)"
                 android:textSize="15sp" />
 
             <Button
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_weight="0.33"
                 android:onClick="saveImageRight"
-                android:text="Save Test (R)"
+                android:text="Save to sheets (R)"
                 android:textSize="15sp" />
         </LinearLayout>
 
