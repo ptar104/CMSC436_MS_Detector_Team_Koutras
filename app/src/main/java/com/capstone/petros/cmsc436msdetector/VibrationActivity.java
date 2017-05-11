@@ -155,7 +155,7 @@ public class VibrationActivity extends Activity implements Sheets.Host {
         bottomText.setVisibility(View.GONE);
         endBtn.setVisibility(View.VISIBLE);
 
-        topText.setText("Place your knuckles on the screen.");
+        topText.setText("Place your knuckles on the screen. Press the \"END TEST\" button when you can no longer feel the vibrations.");
 
         delay5.start();
     }
